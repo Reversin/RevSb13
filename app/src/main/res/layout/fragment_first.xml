@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Views.FirstFragment"
+    android:orientation="vertical"
+    android:theme="@style/AppTheme.Dark">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieButton_1"
+        android:layout_width="223dp"
+        android:layout_height="222dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.477"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.699"
+        app:lottie_rawRes="@raw/upload_button" />
+
+    <TextView
+        android:id="@+id/tvFileName"
+        android:layout_width="382dp"
+        android:layout_height="66dp"
+        android:gravity="center"
+        android:text="@string/click_on_the_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4"
+        />
+
+    <Switch
+        android:id="@+id/language_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="312dp"
+        android:layout_marginTop="80dp"
+        android:checked="true"
+        android:scaleX="1.7"
+        android:scaleY="1.57"
+        android:showText="true"
+        android:switchTextAppearance="@style/SwitchTextAppearence"
+        android:textOff="@string/rus"
+        android:textOn="@string/eng"
+        android:theme="@style/MySwitch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
