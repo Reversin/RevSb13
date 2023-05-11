@@ -7,11 +7,11 @@ class FileNameModel(private val prefs: SharedPreferences)
     : GetActionContract.Model {
     private var keyName: String = "key-1"
 
-    override fun saveNameinModel(text: String) {
+    override fun saveName(text: String) {
         prefs.edit()?.putString(keyName, text)?.apply()
     }
 
-    override fun extractNameFromModel(): String? {
+    override fun getFileName(): String? {
         return prefs.getString(keyName, "null")
 
     }

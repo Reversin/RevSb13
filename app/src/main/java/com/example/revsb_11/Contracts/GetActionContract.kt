@@ -2,22 +2,28 @@ package com.example.revsb_11.Contracts
 
 
 interface GetActionContract {
-    interface View {
-        fun takeFileNameDialog()
-        fun editTVFileName(text: String, key: Boolean)
+    interface FirstFragmentView {
+        fun openFileSelector()
+        fun setFileNameTitle(fileName: String)
         fun setLocale(langKey: String)
     }
+    interface MainActivityView{
+        fun setLang(langKey: String)
+    }
 
-    interface Presenter {
-        fun recoveryLastFileName()
-        fun buttonFileDialogReaction()
-        fun processFileName(text: String)
-        fun changeLocalization(langKey: String)
+    interface FirstFragmentPresenter {
+        fun onScreenOpened()
+        fun onBlaBlaButtonClicked()
+        fun onFileNameSelected(text: String)
+
+    }
+    interface MainActivityPresenter {
+        fun onOptionLangSelected(langKey: String)
     }
 
     interface Model {
-        fun saveNameinModel(text: String)
-        fun extractNameFromModel(): String?// context
+        fun saveName(text: String)
+        fun getFileName(): String?
         // +pass name
     }
 //    interface Files {

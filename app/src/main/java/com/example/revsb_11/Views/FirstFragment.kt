@@ -24,11 +24,11 @@ import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
 
 
-class FirstFragment : Fragment(), GetActionContract.View {
+class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
 
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
-    private lateinit var presenter: GetActionContract.Presenter
+    private lateinit var presenter: GetActionContract.FirstFragmentPresenter
     private lateinit var model: GetActionContract.Model
     private lateinit var currentLang: String
     private lateinit var myString: String
@@ -43,7 +43,7 @@ class FirstFragment : Fragment(), GetActionContract.View {
                 }
             }
             if (fileName != null) {
-                presenter.processFileName(fileName)
+                presenter.onFileNameSelected(fileName)
             }
         }
 
@@ -60,13 +60,9 @@ class FirstFragment : Fragment(), GetActionContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val title = context?.getString(R.string.title_name).toString()
         this.activity?.title = title
-
         currentLang = Locale.getDefault().displayLanguage
-        val infoSnackbar = view.let { Snackbar.make(it, "Click button", Snackbar.LENGTH_LONG) }
-        infoSnackbar.show()
 
         val prefs = context?.getSharedPreferences("fname_prefs", Context.MODE_PRIVATE)
 
@@ -74,45 +70,40 @@ class FirstFragment : Fragment(), GetActionContract.View {
         myString = context?.getString(R.string.last_file_name).toString()
 
         presenter = FirstFragmentPresenter(this, model)
-        view.findViewById<LottieAnimationView?>(R.id.lottieButton_1)?.setOnClickListener {
-            presenter.buttonFileDialogReaction()
-        }
-        val languageButton = view.findViewById<Switch>(R.id.language_switch)
-        languageButton?.setOnClickListener {
-            if (languageButton.isChecked) {
-                setLocale("en")
-
-            } else {
-                setLocale("ru")
-            }
-        }
-
+//        view.findViewById<LottieAnimationView?>(R.id.lottieButton_1)?.setOnClickListener {
+//            presenter.buttonFileDialogReaction()
+//        }
+//        view.findViewById.()
+//        val languageButton = view.findViewById<Switch>(R.id.language_switch)
+//        languageButton?.setOnClickListener {
+//            if (languageButton.isChecked) {
+//                setLocale("en")
+//
+//            } else {
+//                setLocale("ru")
+//            }
+//        }
+//
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.recoveryLastFileName()
+        presenter.onScreenOpened()
     }
 
-    override fun takeFileNameDialog() {
+    override fun openFileSelector() {
         getContent.launch("*/*")
 
     }
 
-    override fun editTVFileName(text: String, key: Boolean) {
+    override fun setFileNameTitle(text: String) {
 
 
-        if (key) {
-            binding.tvFileName.text = buildString {
-                append(myString)
-                append(text)
-            }
-            val lottieFileFounded: LottieAnimationView? = view?.findViewById(R.id.lottieButton_1)
-            if (lottieFileFounded != null) {
-                lottieFileFounded.speed = 2f
-                lottieFileFounded.playAnimation()
-            }
+        binding.tvFileName.text = buildString {
+            append(myString)
+            append(text)
         }
+
     }
 
     override fun setLocale(langKey: String) {

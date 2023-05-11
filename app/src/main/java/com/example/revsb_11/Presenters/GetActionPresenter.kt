@@ -4,32 +4,41 @@ import com.example.revsb_11.Contracts.GetActionContract
 
 
 class FirstFragmentPresenter(
-    private val view: GetActionContract.View,
+    private val view: GetActionContract.FirstFragmentView,
     private val model: GetActionContract.Model
-) : GetActionContract.Presenter {
+) : GetActionContract.FirstFragmentPresenter {
     //private val files: GetActionContract.Files): GetActionContract.Presenter {//FileNameModel) : GetActionContract.Presenter {
 
 
-    override fun buttonFileDialogReaction() {
-        view.takeFileNameDialog()
+    override fun onBlaBlaButtonClicked() {
+        view.openFileSelector()
     }
 
-    override fun processFileName(text: String) {
-        view.editTVFileName(text, true)
-        model.saveNameinModel(text)
+    override fun onFileNameSelected(text: String) {
+        view.setFileNameTitle(text)
+        model.saveName(text)
     }
 
-    override fun changeLocalization(langKey: String) {
-        view.setLocale(langKey)
-    }
+//    override fun onLanguageSelected(langKey: String) {
+//        view.setLocale(langKey)
+//    }
 
 
-    override fun recoveryLastFileName() {
-        val lastFileName = model.extractNameFromModel()
+    override fun onScreenOpened() {
+        val lastFileName = model.getFileName()
         if (lastFileName != null) {
-            view.editTVFileName(lastFileName, false)
+            view.setFileNameTitle(lastFileName)
         }
     }
+}
+
+class MainActivityPresenter(private val view: GetActionContract.MainActivityView) : GetActionContract.MainActivityPresenter{
+
+    override fun onOptionLangSelected(langKey: String) {
+        view.setLang(langKey)
+    }
+
+
 }
 
 

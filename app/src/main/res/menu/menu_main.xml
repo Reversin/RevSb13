@@ -1,4 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.revsb_11.Views.MainActivity"/>
+    tools:context="com.example.revsb_11.Views.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:backgroundTint="#801652"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/engLang"
+                app:showAsAction="always"
+                android:title="@string/eng"/>
+            <item
+                android:id="@+id/rusLang"
+                app:showAsAction="always"
+                android:title="@string/rus"/>
+
+        </menu>
+    </item>
+</menu>
