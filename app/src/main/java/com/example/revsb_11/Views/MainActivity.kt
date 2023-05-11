@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity(), GetActionContract.MainActivityView {
             }
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
+            //test git
         }
     }
 
