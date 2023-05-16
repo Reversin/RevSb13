@@ -7,7 +7,8 @@ interface GetActionContract {
         fun setFileNameTitle(fileName: String)
         fun setLocale(langKey: String)
     }
-    interface MainActivityView{
+
+    interface MainActivityView {
         fun setLang(langKey: String)
     }
 
@@ -17,6 +18,7 @@ interface GetActionContract {
         fun onFileNameSelected(text: String)
 
     }
+
     interface MainActivityPresenter {
         fun onOptionLangSelected(langKey: String)
     }
@@ -26,10 +28,4 @@ interface GetActionContract {
         fun getFileName(): String?
         // +pass name
     }
-//    interface Files {
-//        fun takeFileNameDialog(firstFragmentPresenter: FirstFragmentPresenter, ActivityResultLauncher<String!>)
-//
-//
-//    }
-
 }

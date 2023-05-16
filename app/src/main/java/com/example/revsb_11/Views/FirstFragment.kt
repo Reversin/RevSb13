@@ -1,7 +1,6 @@
 package com.example.revsb_11.Views
 
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -9,18 +8,18 @@ import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
-import com.airbnb.lottie.LottieAnimationView
+import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.Contracts.GetActionContract
 import com.example.revsb_11.Models.FileNameModel
 import com.example.revsb_11.Presenters.FirstFragmentPresenter
 import com.example.revsb_11.R
 import com.example.revsb_11.databinding.FragmentFirstBinding
-import com.google.android.material.snackbar.Snackbar
+import java.io.File
 import java.util.Locale
 
 
@@ -33,30 +32,21 @@ class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
     private lateinit var currentLang: String
     private lateinit var myString: String
 
-    private var getContent =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            val fileName: String? = uri?.let { uri ->
-                context?.contentResolver?.query(uri, null, null, null, null)?.use { cursor ->
-                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    cursor.moveToFirst()
-                    cursor.getString(nameIndex)
-                }
-            }
-            if (fileName != null) {
-                presenter.onFileNameSelected(fileName)
-            }
-        }
+
+    private var getContent = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { handleFileUri(it) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
     }
 
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,27 +57,23 @@ class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
         val prefs = context?.getSharedPreferences("fname_prefs", Context.MODE_PRIVATE)
 
         model = prefs?.let { FileNameModel(it) }!!
-        myString = context?.getString(R.string.last_file_name).toString()
+        myString = context?.getString(R.string.last_file).toString()
 
         presenter = FirstFragmentPresenter(this, model)
-//        view.findViewById<LottieAnimationView?>(R.id.lottieButton_1)?.setOnClickListener {
-//            presenter.buttonFileDialogReaction()
-//        }
-//        view.findViewById.()
-//        val languageButton = view.findViewById<Switch>(R.id.language_switch)
-//        languageButton?.setOnClickListener {
-//            if (languageButton.isChecked) {
-//                setLocale("en")
-//
-//            } else {
-//                setLocale("ru")
-//            }
-//        }
-//
+
+        view.findViewById<Button>(R.id.fileButton_1).setOnClickListener {
+            presenter.onBlaBlaButtonClicked()
+        }
+
+        view.findViewById<Button>(R.id.button2).setOnClickListener{
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
+
         presenter.onScreenOpened()
     }
 
@@ -96,12 +82,10 @@ class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
 
     }
 
-    override fun setFileNameTitle(text: String) {
-
-
+    override fun setFileNameTitle(fileName: String) {
         binding.tvFileName.text = buildString {
             append(myString)
-            append(text)
+            append(fileName)
         }
 
     }
@@ -115,47 +99,25 @@ class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun handleFileUri(uri: Uri?) {
+        uri?.let { selectedUri ->
+            val path = context?.contentResolver?.query(selectedUri, null, null, null, null)
+                ?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val pathIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        val fileName = cursor.getString(pathIndex)
+                        val file = selectedUri.path?.let { File(it) }
+                        val fullPath = file?.absolutePath
+                        return@use "$fullPath/$fileName"
+                    }
+                    null
+                }
+            if (path != null) {
+                presenter.onFileNameSelected(path)
+            }
+
+        }
+    }
+
 }
-//class FirstFragmentFiles: Fragment(), GetActionContract.Files{
-//
-//    private lateinit var getContentLauncher: ActivityResultLauncher<Intent>
-//    private var selectedFile: Uri? = null
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        getContentLauncher =
-//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//                if (result.resultCode == RESULT_OK) {
-//                    selectedFile = result.data?.data
-//                }
-//            }
-//
-//    }
-//
-//    @SuppressLint("Range")
-//    override fun takeFileNameDialog(firstFragmentPresenter: FirstFragmentPresenter) {
-//        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-//            type = "*/*"
-//        }
-//        getContentLauncher.launch(Intent.createChooser(intent, "Select a file"))
-//        selectedFile?.let { uri ->
-//            val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
-//            val fileName = cursor?.use {
-//                it.moveToFirst()
-//                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-//            }
-//            cursor?.close()
-//            if (fileName != null) {
-//                firstFragmentPresenter.processFileName(fileName)
-//            }
-//        }
-//    }
-//}
-// Call openFilePicker() to launch the file picker dialog
-
-
-//        val intent = Intent()
-//            .setType("*/*")
-//            .setAction(Intent.ACTION_GET_CONTENT)
-//            startActivityForResult(intent, 1) // TODO FragmentResultApi
-//    }
