@@ -8,13 +8,13 @@ import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.revsb_11.Contracts.GetActionContract
+import com.example.revsb_11.Contracts.FirstFragmentContract
+import com.example.revsb_11.Contracts.FoundationContract
 import com.example.revsb_11.Models.FileNameModel
 import com.example.revsb_11.Presenters.FirstFragmentPresenter
 import com.example.revsb_11.R
@@ -23,12 +23,12 @@ import java.io.File
 import java.util.Locale
 
 
-class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
+class FirstFragment : Fragment(), FirstFragmentContract.View {
 
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
-    private lateinit var presenter: GetActionContract.FirstFragmentPresenter
-    private lateinit var model: GetActionContract.Model
+    private lateinit var presenter: FirstFragmentContract.Presenter
+    private lateinit var model: FirstFragmentContract.Model
     private lateinit var currentLang: String
     private lateinit var myString: String
 
@@ -57,15 +57,14 @@ class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
         val prefs = context?.getSharedPreferences("fname_prefs", Context.MODE_PRIVATE)
 
         model = prefs?.let { FileNameModel(it) }!!
-        myString = context?.getString(R.string.last_file).toString()
 
         presenter = FirstFragmentPresenter(this, model)
 
-        view.findViewById<Button>(R.id.fileButton_1).setOnClickListener {
+        binding.fileButton1?.setOnClickListener {
             presenter.onBlaBlaButtonClicked()
         }
 
-        view.findViewById<Button>(R.id.button2).setOnClickListener{
+        binding.button2?.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
@@ -82,11 +81,9 @@ class FirstFragment : Fragment(), GetActionContract.FirstFragmentView {
 
     }
 
-    override fun setFileNameTitle(fileName: String) {
-        binding.tvFileName.text = buildString {
-            append(myString)
-            append(fileName)
-        }
+    override fun setFileNameTitle(filePath: String) {
+        binding.tvFileName.text = getString(R.string.last_file, filePath)
+
 
     }
 

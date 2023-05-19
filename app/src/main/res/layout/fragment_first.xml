@@ -28,7 +28,7 @@
         android:layout_height="47dp"
         android:layout_marginStart="124dp"
         android:layout_marginTop="408dp"
-        android:backgroundTint="#801652"
+        android:backgroundTint="@color/second"
         android:padding="16dp"
         android:text="@string/click_to_find_file"
         android:textColor="@color/white"

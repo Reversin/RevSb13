@@ -32,24 +32,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.185" />
 
-    <Switch
-        android:id="@+id/language_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="160dp"
-        android:checked="true"
-        android:scaleX="1.7"
-        android:scaleY="1.57"
-        android:showText="true"
-        android:switchTextAppearance="@style/SwitchTextAppearence"
-        android:textOff="@string/rus"
-        android:textOn="@string/eng"
-        android:theme="@style/MySwitch"
-        app:layout_constraintStart_toEndOf="@+id/lottieButton_1"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,17 +13,17 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
-import com.example.revsb_11.Contracts.GetActionContract
-import com.example.revsb_11.Presenters.MainActivityPresenter
+import com.example.revsb_11.Contracts.FoundationContract
+import com.example.revsb_11.Presenters.FoundationPresenter
 import com.example.revsb_11.R
 import com.example.revsb_11.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity(), GetActionContract.MainActivityView {
+class MainActivity : AppCompatActivity(), FoundationContract.View {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var presenter: GetActionContract.MainActivityPresenter
+    private lateinit var presenter: FoundationContract.Presenter
     private lateinit var menu: Menu
 
 
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), GetActionContract.MainActivityView {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        presenter = MainActivityPresenter(this)
+        presenter = FoundationPresenter(this)
 
     }
 

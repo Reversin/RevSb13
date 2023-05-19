@@ -3,19 +3,19 @@
     <style name="Theme.RevSb_11" parent="Theme.AppCompat.NoActionBar">
 
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#801652</item>
-        <item name="colorSecondaryVariant">#801652</item>
-        <item name="colorOnSecondary">#999999</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">#801652</item>
+        <item name="android:statusBarColor">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/black</item>
     </style>
 
     <style name="Theme.RevSb_11.NoActionBar">
-        <item name="android:itemBackground">#801652</item>
-        <item name="android:actionMenuTextColor">#801652</item>
-        <item name="windowActionBar">false</item>
+        <item name="android:itemBackground">@color/third</item>
+        <item name="android:actionMenuTextColor">@color/third</item>
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
     </style>
 

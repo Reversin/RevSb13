@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.RevSb_11.NoActionBar">
-        <item name="android:itemBackground">#801652</item>
-        <item name="android:actionMenuTextColor">#801652</item>
+        <item name="android:itemBackground">@color/fourth</item>
+        <item name="android:actionMenuTextColor">@color/third</item>
+        <item name="android:statusBarColor">@color/third</item>
+
     </style>
     <style name="AppTheme.Dark" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:itemBackground">#801652</item>
-        <item name="android:actionMenuTextColor">#801652</item>
+        <item name="android:itemBackground">@color/black</item>
+        <item name="android:actionMenuTextColor">@color/black</item>
     </style>
     <style name="MySwitch" parent="Theme.AppCompat.Light">
         <!-- активное состояние (30% прозрачности для фона) -->
@@ -15,7 +17,7 @@
         <item name="colorSwitchThumbNormal">@color/design_default_color_primary</item>
 
 
-        <item name="colorControlActivated">#801652</item>
+        <item name="colorControlActivated">#FF4D00</item>
 
         <!-- неактивное состояние ползунка -->
 
