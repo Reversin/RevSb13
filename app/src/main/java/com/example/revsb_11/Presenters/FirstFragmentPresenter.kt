@@ -1,15 +1,17 @@
 package com.example.revsb_11.Presenters
 
+import android.content.ContentResolver
+import android.net.Uri
 import com.example.revsb_11.Contracts.FirstFragmentContract
 
 
 class FirstFragmentPresenter(
     private val view: FirstFragmentContract.View,
-    private val model: FirstFragmentContract.Model
+    private val model: FirstFragmentContract.Model,
 ) : FirstFragmentContract.Presenter {
 
 
-    override fun onBlaBlaButtonClicked() {
+    override fun onFindFIleButtonClicked() {
         view.openFileSelector()
     }
 
@@ -24,6 +26,10 @@ class FirstFragmentPresenter(
         if (lastFileName != null) {
             view.setFileNameTitle(lastFileName)
         }
+    }
+
+    override fun uriPassedContext(path: ContentResolver?, selectedUri: Uri) {
+//        val filePath = data.recyclePath(path, selectedUri)
     }
 }
 

@@ -1,21 +1,17 @@
 package com.example.revsb_11.Models
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.example.revsb_11.Contracts.FirstFragmentContract
 
-import com.example.revsb_11.Views.FirstFragment
-
-class FileNameModel(private val prefs: SharedPreferences)
+class FileNameModel(private val prefs: SharedPreferences?)
     : FirstFragmentContract.Model{
-    private var keyName: String = "1"
+    private val keyName: String = "1"
 
-    override fun saveName(text: String) {
-        prefs.edit()?.putString(keyName, text)?.apply()
+    override fun saveName(text: String)  {
+        prefs?.edit { putString(keyName, text) }
     }
-
-    override fun getFileName(): String? {
-        return prefs.getString(keyName, null)
-
-    }
+    override fun getFileName(): String? =
+        prefs?.getString(keyName, null)
 
 }
