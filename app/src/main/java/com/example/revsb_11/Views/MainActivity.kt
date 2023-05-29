@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -32,7 +33,9 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         setSupportActionBar(binding.toolbar)
         presenter = FoundationPresenter(this)
 
+
     }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

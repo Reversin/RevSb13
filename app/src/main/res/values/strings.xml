@@ -10,7 +10,8 @@
     <string name="todo">TODO</string>
     <string name="tap_to_find_file">Tap to find file</string>
     <string name="click_on_the_button">Click on ↓ the button</string>
-    <string name="title_name">Find filename</string>
+    <string name="fTitle_name">Find filename</string>
+    <string name="sTitle_name">Change filename</string>
     <string name="rus">RUS</string>
     <string name="eng">ENG</string>
     <string name="click_to_find_file">find file</string>

@@ -1,6 +1,8 @@
 package com.example.revsb_11.Views
 
 
+import android.annotation.SuppressLint
+import android.content.ClipData
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -10,7 +12,11 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.revsb_11.Adapters.ItemRecycleAdapter
 import com.example.revsb_11.Contracts.FirstFragmentContract
+import com.example.revsb_11.Data.Item
 import com.example.revsb_11.Data.getNameFromUri
 import com.example.revsb_11.Models.FileNameModel
 import com.example.revsb_11.Presenters.FirstFragmentPresenter
@@ -25,6 +31,9 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
     private val binding get() = _binding!!
     private lateinit var presenter: FirstFragmentContract.Presenter
     private lateinit var model: FirstFragmentContract.Model
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ItemRecycleAdapter
+    private val items: MutableList<Item> = mutableListOf()
     private val typeDialog = "*/*"
     private val nameSP = "fname_prefs"
 
@@ -32,6 +41,8 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
     private var getContent = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { handleFileUri(it) }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,16 +56,23 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val activity = this.activity
-        if (activity != null) {
-            val title = activity.getString(R.string.title_name)
-            activity.title = title
-        }
-
         initModel()
         currentLang()
         initPresenter()
         setClickListeners()
+
+        recyclerView = view.findViewById(R.id.filesRV)
+        adapter = ItemRecycleAdapter(items)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+
+        items.add(Item("test/File"))
+
+        val newitem = Item("testOld")
+        adapter.addItem(newitem)
+
+
 
     }
 
@@ -72,7 +90,7 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
     }
 
 
-    fun setClickListeners() {
+    private fun setClickListeners() {
         binding.fileButton1?.setOnClickListener {
             presenter.onFindFIleButtonClicked()
         }
@@ -83,7 +101,8 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
 
     override fun onStart() {
         super.onStart()
-        presenter.onScreenOpened()
+        requireActivity().title = activity?.getString(R.string.fTitle_name)
+//        presenter.onScreenOpened()
     }
 
     override fun openFileSelector() {
@@ -91,7 +110,10 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun setFileNameTitle(filePath: String) {
+        adapter.addItem(Item(filePath))
+        adapter.notifyDataSetChanged()
         binding.tvFileName.text = getString(R.string.last_file, filePath)
     }
 

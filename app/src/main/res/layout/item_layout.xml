@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/fileTextView"
+        android:layout_width="321dp"
+        android:layout_height="39dp"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/editFileButton"
+        android:layout_width="66dp"
+        android:layout_height="39dp"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/testpen" />
+</LinearLayout>

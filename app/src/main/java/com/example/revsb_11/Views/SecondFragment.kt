@@ -38,4 +38,8 @@ class SecondFragment : Fragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        requireActivity().title = activity?.getString(R.string.sTitle_name)
+    }
 }

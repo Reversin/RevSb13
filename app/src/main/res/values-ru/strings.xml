@@ -11,7 +11,8 @@
     <string name="todo">TODO</string>
     <string name="tap_to_find_file">Нажмите что мы найти файл</string>
     <string name="click_on_the_button">Нажмите на ↓ кнопку</string>
-    <string name="title_name">Поиск имени файа</string>
+    <string name="fTitle_name">Поиск файа</string>
+    <string name="sTitle_name">Изменение файла</string>
     <string name="rus">РУС</string>
     <string name="eng">АНГЛ</string>
     <string name="click_to_find_file">Поиск файла</string>
