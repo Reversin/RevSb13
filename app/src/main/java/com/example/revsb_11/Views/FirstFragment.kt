@@ -2,8 +2,8 @@ package com.example.revsb_11.Views
 
 
 import android.annotation.SuppressLint
-import android.content.ClipData
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.Adapters.ItemRecycleAdapter
 import com.example.revsb_11.Contracts.FirstFragmentContract
 import com.example.revsb_11.Data.Item
-import com.example.revsb_11.Data.getNameFromUri
+import com.example.revsb_11.Data.GetNameFromUri
 import com.example.revsb_11.Models.FileNameModel
 import com.example.revsb_11.Presenters.FirstFragmentPresenter
 import com.example.revsb_11.R
@@ -31,6 +31,7 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
     private val binding get() = _binding!!
     private lateinit var presenter: FirstFragmentContract.Presenter
     private lateinit var model: FirstFragmentContract.Model
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ItemRecycleAdapter
     private val items: MutableList<Item> = mutableListOf()
@@ -61,23 +62,22 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
         initPresenter()
         setClickListeners()
 
+
+
         recyclerView = view.findViewById(R.id.filesRV)
         adapter = ItemRecycleAdapter(items)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-
-        items.add(Item("test/File"))
-
-        val newitem = Item("testOld")
-        adapter.addItem(newitem)
-
+//
+//        items.add(Item("test/File"))
 
 
     }
 
     private fun initModel() {
         val prefs = context?.getSharedPreferences(nameSP, Context.MODE_PRIVATE)
+
         model = FileNameModel(prefs)
     }
 
@@ -110,11 +110,17 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun setFileNameTitle(filePath: String) {
-        adapter.addItem(Item(filePath))
+    override fun recoveryFileNames(items: List<Item>) {
+        adapter.notifyItemInserted(items.size - 1)
         adapter.notifyDataSetChanged()
-        binding.tvFileName.text = getString(R.string.last_file, filePath)
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun setFileNameTitle(item: Item) {
+        adapter.addItem(item)
+        adapter.notifyDataSetChanged()
+//        binding.tvFileName.text = getString(R.string.last_file, filePath)
     }
 
     override fun onDestroyView() {
@@ -125,8 +131,8 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
     private fun handleFileUri(uri: Uri?) {
         uri?.let { selectedUri ->
             val path = context?.contentResolver
-            getNameFromUri().recyclePath(path, selectedUri)
-                ?.let { presenter.onFileNameSelected(it) }
+            GetNameFromUri().recyclePath(path, selectedUri)
+                .let { presenter.onFileNameSelected(Item(it)) }
         }
     }
 

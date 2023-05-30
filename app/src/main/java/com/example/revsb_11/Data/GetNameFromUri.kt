@@ -7,7 +7,7 @@ import com.example.revsb_11.Contracts.FirstFragmentContract
 import java.io.File
 
 
-class getNameFromUri : FirstFragmentContract.Data {
+class GetNameFromUri : FirstFragmentContract.Data {
 
     override fun recyclePath(path:  ContentResolver?, selectedUri: Uri): String? {
 
@@ -23,6 +23,7 @@ class getNameFromUri : FirstFragmentContract.Data {
                 return null
             }
         return resPath
-
     }
+
+
 }

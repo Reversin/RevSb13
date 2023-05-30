@@ -41,10 +41,17 @@ class ItemRecycleAdapter (private val items: MutableList<Item>) : RecyclerView.A
         fun bind(item: Item) {
             fileTextView.text = item.fileName
 
-//            editButton.setOnClickListener {
-//                val editItem = items[adapterPosition]
-//                items.removeAt(adapterPosition)
-//            }
+            editButton.setOnClickListener {
+                deleteItem(item)
+            }
+        }
+
+        private fun deleteItem(item: Item) {
+            val position  = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                items.removeAt(position)
+                notifyItemRemoved(position)
+            }
         }
     }
 
