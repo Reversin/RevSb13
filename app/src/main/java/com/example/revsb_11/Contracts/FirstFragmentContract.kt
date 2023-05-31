@@ -9,21 +9,22 @@ interface FirstFragmentContract {
     interface View {
         fun openFileSelector()
         fun setFileNameTitle(item: Item)
-        fun recoveryFileNames(items: List<Item>)
+        fun recoveryRV(items: List<Item>)
     }
+
     interface Presenter {
         fun onScreenOpened()
         fun onFindFIleButtonClicked()
         fun onFileNameSelected(item: Item)
-        fun uriPassedContext(path:  ContentResolver?, selectedUri: Uri)
-
     }
+
     interface Model {
         fun saveItems(items: List<Item>)
         fun saveFileName(item: Item)
         fun recoveryFileNames(): List<Item>
     }
-    interface Data{
-        fun recyclePath(path:  ContentResolver?, selectedUri: Uri): String?
+
+    interface Data {
+        fun recyclePath(path: ContentResolver?, selectedUri: Uri): String?
     }
 }

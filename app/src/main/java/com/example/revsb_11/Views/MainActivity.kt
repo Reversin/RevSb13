@@ -6,7 +6,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -22,8 +21,8 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
     private lateinit var binding: ActivityMainBinding
     private lateinit var presenter: FoundationContract.Presenter
     private lateinit var menu: Menu
-    private val en = "en"
-    private val ru = "ru"
+    private val en = R.string.en
+    private val ru = R.string.ru
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,18 +31,12 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         presenter = FoundationPresenter(this)
-
-
     }
-
-
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         this.menu = menu
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -51,6 +44,7 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
                 presenter.onOptionLangSelected(en)
                 true
             }
+
             R.id.rusLang -> {
                 presenter.onOptionLangSelected(ru)
                 true
@@ -62,8 +56,8 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         }
     }
 
-    override fun setLang(langKey: String) {
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(langKey))
+    override fun setLang(langKey: Int) {
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(getString(langKey)))
     }
 
     override fun onSupportNavigateUp(): Boolean {

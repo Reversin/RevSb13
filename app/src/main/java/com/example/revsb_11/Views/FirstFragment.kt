@@ -1,9 +1,7 @@
 package com.example.revsb_11.Views
 
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,8 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.Adapters.ItemRecycleAdapter
 import com.example.revsb_11.Contracts.FirstFragmentContract
-import com.example.revsb_11.Data.Item
 import com.example.revsb_11.Data.GetNameFromUri
+import com.example.revsb_11.Data.Item
 import com.example.revsb_11.Models.FileNameModel
 import com.example.revsb_11.Presenters.FirstFragmentPresenter
 import com.example.revsb_11.R
@@ -25,59 +23,40 @@ import com.example.revsb_11.databinding.FragmentFirstBinding
 import java.util.Locale
 
 
-class FirstFragment() : Fragment(), FirstFragmentContract.View {
+class FirstFragment : Fragment(), FirstFragmentContract.View {
 
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
     private lateinit var presenter: FirstFragmentContract.Presenter
     private lateinit var model: FirstFragmentContract.Model
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var recyclerView: RecyclerView
+    private var recyclerView: RecyclerView? = null
     private lateinit var adapter: ItemRecycleAdapter
     private val items: MutableList<Item> = mutableListOf()
-    private val typeDialog = "*/*"
-    private val nameSP = "fname_prefs"
-
-
+    private val typeDialog = R.string.typeDialog
+    private val nameSP = R.string.nameSP
     private var getContent = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { handleFileUri(it) }
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initModel()
+        initAdapterRV()
         currentLang()
         initPresenter()
         setClickListeners()
 
-
-
-        recyclerView = view.findViewById(R.id.filesRV)
-        adapter = ItemRecycleAdapter(items)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
-
-//
-//        items.add(Item("test/File"))
-
-
     }
 
     private fun initModel() {
-        val prefs = context?.getSharedPreferences(nameSP, Context.MODE_PRIVATE)
-
+        val prefs = context?.getSharedPreferences(getString(nameSP), Context.MODE_PRIVATE)
         model = FileNameModel(prefs)
     }
 
@@ -85,10 +64,17 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
         Locale.getDefault().displayLanguage
     }
 
+    private fun initAdapterRV() {
+        recyclerView = view?.findViewById(R.id.filesRV)
+        adapter = ItemRecycleAdapter(items)
+        recyclerView?.adapter = adapter
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+
+    }
+
     private fun initPresenter() {
         presenter = FirstFragmentPresenter(this, model)
     }
-
 
     private fun setClickListeners() {
         binding.fileButton1?.setOnClickListener {
@@ -101,26 +87,22 @@ class FirstFragment() : Fragment(), FirstFragmentContract.View {
 
     override fun onStart() {
         super.onStart()
-        requireActivity().title = activity?.getString(R.string.fTitle_name)
-//        presenter.onScreenOpened()
+        requireActivity().title = getString(R.string.fTitle_name)
+        presenter.onScreenOpened()
     }
 
     override fun openFileSelector() {
-        getContent.launch(typeDialog)
+        getContent.launch(getString(typeDialog))
 
     }
 
-    override fun recoveryFileNames(items: List<Item>) {
-        adapter.notifyItemInserted(items.size - 1)
-        adapter.notifyDataSetChanged()
+    override fun recoveryRV(items: List<Item>) {
+        adapter.addItem(items)
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun setFileNameTitle(item: Item) {
         adapter.addItem(item)
-        adapter.notifyDataSetChanged()
-//        binding.tvFileName.text = getString(R.string.last_file, filePath)
     }
 
     override fun onDestroyView() {

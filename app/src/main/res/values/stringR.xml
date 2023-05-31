@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ru" translatable="false">ru</string>
+    <string name="en" translatable="false">en</string>
+    <string name="typeDialog" translatable="false">*/*</string>
+    <string name="nameSP" translatable="false">fname_prefs</string>
+</resources>

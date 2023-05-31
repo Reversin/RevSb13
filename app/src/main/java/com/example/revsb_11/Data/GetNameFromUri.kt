@@ -9,7 +9,7 @@ import java.io.File
 
 class GetNameFromUri : FirstFragmentContract.Data {
 
-    override fun recyclePath(path:  ContentResolver?, selectedUri: Uri): String? {
+    override fun recyclePath(path: ContentResolver?, selectedUri: Uri): String? {
 
         val resPath = path?.query(selectedUri, null, null, null, null)
             ?.use { cursor ->

@@ -15,21 +15,25 @@ class ItemRecycleAdapter (private val items: MutableList<Item>) : RecyclerView.A
       val view = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
       return ItemViewHolder(view)
   }
-
     override fun onBindViewHolder(holder: ItemRecycleAdapter.ItemViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
     }
-
     override fun getItemCount(): Int {
         return items.size
     }
-
-    fun addItem(item: Item) {
-        items.add(item)
-
-        notifyItemInserted(items.size - 1)
-
+    fun addItem(item: Any) {
+        when (item) {
+            is Item -> {
+                items.add(item)
+                notifyItemInserted(items.size - 1)
+            }
+            is List<*> -> {
+                val startPosition = item.size
+                items.addAll(item as List<Item>)
+                notifyItemRangeInserted(startPosition, item.size)
+            }
+        }
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -37,15 +41,12 @@ class ItemRecycleAdapter (private val items: MutableList<Item>) : RecyclerView.A
         private val fileTextView: TextView = itemView.findViewById(R.id.fileTextView)
         private val editButton: ImageButton = itemView.findViewById(R.id.editFileButton)
 
-
         fun bind(item: Item) {
             fileTextView.text = item.fileName
-
             editButton.setOnClickListener {
                 deleteItem(item)
             }
         }
-
         private fun deleteItem(item: Item) {
             val position  = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
@@ -54,5 +55,4 @@ class ItemRecycleAdapter (private val items: MutableList<Item>) : RecyclerView.A
             }
         }
     }
-
 }

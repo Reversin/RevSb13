@@ -4,53 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Views.FirstFragment"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tvFileName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="middle"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/click_on_the_button"
-        app:layout_constraintBottom_toTopOf="@+id/fileButton_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.776" />
+    android:orientation="vertical"
+    tools:context=".Views.FirstFragment">
 
     <Button
         android:id="@+id/fileButton_1"
         android:layout_width="161dp"
         android:layout_height="47dp"
         android:layout_marginStart="124dp"
-        android:layout_marginTop="408dp"
+
+        android:layout_marginTop="44dp"
         android:backgroundTint="@color/second"
         android:padding="16dp"
         android:text="@string/click_to_find_file"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/filesRV" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="60dp"
         android:text="Button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fileButton_1" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filesRV"
-        android:layout_width="393dp"
-        android:layout_height="285dp"
-        android:layout_marginStart="9dp"
+        android:layout_width="378dp"
+        android:layout_height="456dp"
         android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
