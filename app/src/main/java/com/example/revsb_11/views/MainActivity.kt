@@ -1,4 +1,4 @@
-package com.example.revsb_11.Views
+package com.example.revsb_11.views
 
 import android.os.Bundle
 import android.view.Menu
@@ -9,8 +9,8 @@ import androidx.core.os.LocaleListCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.example.revsb_11.Contracts.FoundationContract
-import com.example.revsb_11.Presenters.FoundationPresenter
+import com.example.revsb_11.contracts.FoundationContract
+import com.example.revsb_11.presenters.FoundationPresenter
 import com.example.revsb_11.R
 import com.example.revsb_11.databinding.ActivityMainBinding
 

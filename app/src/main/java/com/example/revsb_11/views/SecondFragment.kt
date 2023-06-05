@@ -1,4 +1,4 @@
-package com.example.revsb_11.Views
+package com.example.revsb_11.views
 
 
 import android.os.Bundle

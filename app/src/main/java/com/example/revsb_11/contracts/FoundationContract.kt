@@ -1,4 +1,4 @@
-package com.example.revsb_11.Contracts
+package com.example.revsb_11.contracts
 
 interface FoundationContract {
     interface View {

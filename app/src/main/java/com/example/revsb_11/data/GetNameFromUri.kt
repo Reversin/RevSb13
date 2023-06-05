@@ -1,9 +1,9 @@
-package com.example.revsb_11.Data
+package com.example.revsb_11.data
 
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.example.revsb_11.Contracts.FirstFragmentContract
+import com.example.revsb_11.contracts.FirstFragmentContract
 import java.io.File
 
 

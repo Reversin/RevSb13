@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@style/AppTheme.Dark"
-    tools:context=".Views.FirstFragment">
+    tools:context=".views.FirstFragment">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieButton_1"

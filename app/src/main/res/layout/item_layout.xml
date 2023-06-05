@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:padding="8dp">
 
@@ -9,7 +10,8 @@
         android:layout_width="321dp"
         android:layout_height="39dp"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="@tools:sample/lorem/random"/>
 
     <ImageButton
         android:id="@+id/editFileButton"
