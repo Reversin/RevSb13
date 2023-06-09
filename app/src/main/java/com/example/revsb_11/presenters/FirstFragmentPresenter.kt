@@ -10,18 +10,26 @@ class FirstFragmentPresenter(
 ) : FirstFragmentContract.Presenter {
     
     
-    override fun onFindFIleButtonClicked() {
+    override fun onFindFIleButtonClicked() =
         view.openFileSelector()
-    }
     
     override fun onFileNameSelected(item: Item) {
-        view.setFileNameTitle(item)
+        model.saveItem(item)
+        val itemsList = model.getItems()
+        view.setFileNameTitle(itemsList)
     }
     
-    override fun onScreenOpened() {
-        val lastFileName = model.getItems()
-        view.recoveryRV(lastFileName)
+    override fun modelInitialized() {
+        val itemsList = model.getItems()
+        view.initAdapterRecycleView(itemsList)
     }
+    
+    override fun onItemClicked(item: Item) {
+        view.changeFragment(item)
+    }
+//    override fun setSecondPresenter(secondFragmentPresenter: SecondFragmentPresenter) {
+//        this.secondFragmentPresenter = secondFragmentPresenter
+//    }
 }
 
 

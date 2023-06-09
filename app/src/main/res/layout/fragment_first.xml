@@ -12,30 +12,19 @@
         android:layout_width="161dp"
         android:layout_height="47dp"
         android:layout_marginStart="124dp"
-
         android:layout_marginTop="44dp"
         android:backgroundTint="@color/second"
         android:padding="16dp"
         android:text="@string/click_to_find_file"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filesRV" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="60dp"
-        android:text="Button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fileButton_1" />
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewFiles" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/filesRV"
-        android:layout_width="378dp"
+        android:id="@+id/recyclerViewFiles"
+        android:layout_width="wrap_content"
         android:layout_height="456dp"
-        android:layout_marginTop="15dp"
+        android:layout_margin="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

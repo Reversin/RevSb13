@@ -7,19 +7,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.revsb_11.R
 import com.example.revsb_11.adapters.ItemRecycleAdapter
 import com.example.revsb_11.contracts.FirstFragmentContract
 import com.example.revsb_11.data.GetNameFromUri
 import com.example.revsb_11.data.Item
+import com.example.revsb_11.databinding.FragmentFirstBinding
 import com.example.revsb_11.models.FileNameModel
 import com.example.revsb_11.presenters.FirstFragmentPresenter
-import com.example.revsb_11.R
-import com.example.revsb_11.databinding.FragmentFirstBinding
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 
@@ -27,13 +33,13 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
-    private lateinit var presenter: FirstFragmentContract.Presenter
+    private lateinit var firstPresenter: FirstFragmentContract.Presenter
     private lateinit var model: FirstFragmentContract.Model
     private var recyclerView: RecyclerView? = null
     private lateinit var adapter: ItemRecycleAdapter
-    private val items: MutableList<Item> = mutableListOf()
     private val typeDialog = R.string.typeDialog
     private val nameSP = R.string.nameSP
+    
     private var getContent = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { handleFileUri(it) }
@@ -48,9 +54,8 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initModel()
-        initAdapterRV()
-        currentLang()
-        initPresenter()
+        initPresenters()
+        firstPresenter.modelInitialized()
         setClickListeners()
         
     }
@@ -61,55 +66,61 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
             val prefs = context.getSharedPreferences(getString(nameSP), Context.MODE_PRIVATE)
             model = FileNameModel(prefs)
         } else {
-            //showToast("Все сломалось")
-            // close
+            Toast.makeText(
+                requireContext().applicationContext,
+                "Вась, мы модель уронили",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
         }
     }
     
-    private fun currentLang() {
-        Locale.getDefault().displayLanguage
-    }
-    
-    private fun initAdapterRV() {
-        recyclerView = view?.findViewById(R.id.filesRV)
-        adapter = ItemRecycleAdapter(model)
+    override fun initAdapterRecycleView(itemsList: List<Item>) {
+        recyclerView = view?.findViewById(R.id.recyclerViewFiles)
+        adapter = ItemRecycleAdapter { item ->
+            firstPresenter.onItemClicked(item)
+        }
+        adapter.setItems(itemsList)
         recyclerView?.adapter = adapter
         recyclerView?.layoutManager = LinearLayoutManager(context)
         
     }
+
+//    override fun onItemClick() =
+//        firstPresenter.onItemClicked()
     
-    private fun initPresenter() {
-        presenter = FirstFragmentPresenter(this, model)
+    override fun changeFragment(item: Item) {
+        val bundle = Bundle()
+        bundle.putString("1", item.fileName)
+        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+    }
+    
+    
+    
+    private fun initPresenters() {
+        firstPresenter = FirstFragmentPresenter(this, model)
+//        secondPresenter
+        
     }
     
     private fun setClickListeners() {
         binding.fileButton1?.setOnClickListener {
-            presenter.onFindFIleButtonClicked()
-        }
-        binding.button2?.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            firstPresenter.onFindFIleButtonClicked()
         }
     }
     
     override fun onStart() {
         super.onStart()
         requireActivity().title = getString(R.string.fTitle_name)
-        presenter.onScreenOpened()
     }
     
-    override fun openFileSelector() {
+    override fun openFileSelector() =
         getContent.launch(getString(typeDialog))
-        
-    }
     
-    override fun recoveryRV(items: List<Item>) {
     
-        //TODO
-    }
+    override fun setFileNameTitle(itemsList: List<Item>) =
+        adapter.setItems(itemsList)
     
-    override fun setFileNameTitle(item: Item) {
-        adapter.addItem(item)
-    }
     
     override fun onDestroyView() {
         super.onDestroyView()
@@ -118,9 +129,15 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     
     private fun handleFileUri(uri: Uri?) {
         uri?.let { selectedUri ->
-            val path = context?.contentResolver
-            GetNameFromUri().recyclePath(path, selectedUri)
-                .let { presenter.onFileNameSelected(Item(it)) }
+            val contentResolver = context?.contentResolver
+            val filepath = selectedUri.path
+            val fileCreationDate = GetNameFromUri().recyclePath(contentResolver, selectedUri)
+            val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+            val creationDate: String = dateFormat.format(File(filepath).lastModified())
+
+            firstPresenter.onFileNameSelected(Item(filepath, fileCreationDate))
+//            GetNameFromUri().recyclePath(path, selectedUri)
+//                .let { firstPresenter.onFileNameSelected(Item(it)) }
         }
     }
     

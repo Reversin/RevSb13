@@ -15,9 +15,10 @@ class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContrac
         prefs.edit { putString(PREF_KEY_NAME, json) }
     }
 
-    override fun saveItems(items: List<Item>) {
+    override fun saveItem(item: Item) {
         val existingItems = getItems().toMutableList()
-        existingItems.addAll(items)
+        existingItems.removeAll { it == item}
+        existingItems.add(0, item)
         saveInModel(existingItems)
     }
     
