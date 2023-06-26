@@ -1,7 +1,7 @@
 package com.example.revsb_11.presenters
 
 import com.example.revsb_11.contracts.FirstFragmentContract
-import com.example.revsb_11.data.Item
+import com.example.revsb_11.data.Data
 
 
 class FirstFragmentPresenter(
@@ -13,8 +13,8 @@ class FirstFragmentPresenter(
     override fun onFindFIleButtonClicked() =
         view.openFileSelector()
     
-    override fun onFileNameSelected(item: Item) {
-        model.saveItem(item)
+    override fun onFileNameSelected(data: Data) {
+        model.saveItem(data)
         val itemsList = model.getItems()
         view.setFileNameTitle(itemsList)
     }
@@ -24,8 +24,8 @@ class FirstFragmentPresenter(
         view.initAdapterRecycleView(itemsList)
     }
     
-    override fun onItemClicked(item: Item) {
-        view.changeFragment(item)
+    override fun onItemClicked(data: Data) {
+        view.changeFragment(data)
     }
 //    override fun setSecondPresenter(secondFragmentPresenter: SecondFragmentPresenter) {
 //        this.secondFragmentPresenter = secondFragmentPresenter

@@ -3,30 +3,31 @@ package com.example.revsb_11.models
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.revsb_11.contracts.FirstFragmentContract
-import com.example.revsb_11.data.Item
+import com.example.revsb_11.data.Data
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 
 class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContract.Model {
     
     private val gson = Gson()
-    override fun saveInModel(items: List<Item>) {
-        val json = gson.toJson(items)
+    override fun saveInModel(data: List<Data>) {
+        val json = gson.toJson(data)
         prefs.edit { putString(PREF_KEY_NAME, json) }
     }
 
-    override fun saveItem(item: Item) {
+    override fun saveItem(data: Data) {
         val existingItems = getItems().toMutableList()
-        existingItems.removeAll { it == item}
-        existingItems.add(0, item)
+        existingItems.removeAll { (it.filePath)?.equals(data.filePath) ?: false } // сравнение по имени
+        existingItems.add(0, data)
         saveInModel(existingItems)
     }
     
 
-    override fun getItems(): List<Item> {
+    override fun getItems(): List<Data> {
         val json = prefs.getString(PREF_KEY_NAME, null)
         val gson = Gson()
-        return gson.fromJson(json, object : TypeToken<List<Item>>() {}.type) ?: mutableListOf()
+        return gson.fromJson(json, object : TypeToken<List<Data>>() {}.type) ?: mutableListOf()
     }
 
     override fun removeItem(position: Int) {

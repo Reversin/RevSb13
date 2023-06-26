@@ -1,7 +1,7 @@
 package com.example.revsb_11.presenters
 
 import com.example.revsb_11.contracts.SecondFragmentContract
-import com.example.revsb_11.data.Item
+import com.example.revsb_11.data.Data
 
 class SecondFragmentPresenter(
     private val view: SecondFragmentContract.View
@@ -12,8 +12,8 @@ class SecondFragmentPresenter(
 //        this.firstFragmentPresenter = firstFragmentPresenter
 //    }
 
-    override fun getDataFromFirstFragment(item: Item) {
-        view.setText(item)
+    override fun getDataFromFirstFragment(data: Data) {
+        view.setText(data)
     }
     
 }

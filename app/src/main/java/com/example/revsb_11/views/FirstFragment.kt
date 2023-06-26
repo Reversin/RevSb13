@@ -16,15 +16,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.R
 import com.example.revsb_11.adapters.ItemRecycleAdapter
 import com.example.revsb_11.contracts.FirstFragmentContract
+import com.example.revsb_11.data.Data
 import com.example.revsb_11.data.GetNameFromUri
-import com.example.revsb_11.data.Item
 import com.example.revsb_11.databinding.FragmentFirstBinding
 import com.example.revsb_11.models.FileNameModel
 import com.example.revsb_11.presenters.FirstFragmentPresenter
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -75,7 +72,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         }
     }
     
-    override fun initAdapterRecycleView(itemsList: List<Item>) {
+    override fun initAdapterRecycleView(itemsList: List<Data>) {
         recyclerView = view?.findViewById(R.id.recyclerViewFiles)
         adapter = ItemRecycleAdapter { item ->
             firstPresenter.onItemClicked(item)
@@ -89,9 +86,9 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
 //    override fun onItemClick() =
 //        firstPresenter.onItemClicked()
     
-    override fun changeFragment(item: Item) {
+    override fun changeFragment(data: Data) {
         val bundle = Bundle()
-        bundle.putString("1", item.fileName)
+        bundle.putString("1", "${data.filePath}")
         findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
     }
     
@@ -118,7 +115,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         getContent.launch(getString(typeDialog))
     
     
-    override fun setFileNameTitle(itemsList: List<Item>) =
+    override fun setFileNameTitle(itemsList: List<Data>) =
         adapter.setItems(itemsList)
     
     
@@ -133,11 +130,11 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
             val filepath = selectedUri.path
             val fileCreationDate = GetNameFromUri().recyclePath(contentResolver, selectedUri)
             val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-            val creationDate: String = dateFormat.format(File(filepath).lastModified())
+            val creationDate: String = dateFormat.format(filepath?.let { File(it).lastModified() }) // date -> type
 
-            firstPresenter.onFileNameSelected(Item(filepath, fileCreationDate))
+            firstPresenter.onFileNameSelected(Data(Uri.parse(filepath), fileCreationDate))
 //            GetNameFromUri().recyclePath(path, selectedUri)
-//                .let { firstPresenter.onFileNameSelected(Item(it)) }
+//                .let { firstPresenter.onFileNameSelected(Data(it)) }
         }
     }
     

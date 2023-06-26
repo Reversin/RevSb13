@@ -8,15 +8,15 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.revsb_11.data.Item
+import com.example.revsb_11.data.Data
 import com.example.revsb_11.R
 import com.example.revsb_11.contracts.FirstFragmentContract
 import com.example.revsb_11.databinding.ItemLayoutBinding
 
 class ItemRecycleAdapter(
-    private val onEditButtonClicked: (Item) -> Unit
+    private val onEditButtonClicked: (Data) -> Unit
 ) : RecyclerView.Adapter<ItemRecycleAdapter.ItemViewHolder>() {
-    private var items: List<Item> = emptyList()
+    private var items: List<Data> = emptyList()
     
     override fun onCreateViewHolder(parent: ViewGroup, viewTypr: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,19 +30,19 @@ class ItemRecycleAdapter(
         items.size
 
 //    @SuppressLint("NotifyDataSetChanged")
-//    fun addItem(item: Item) {
+//    fun addItem(item: Data) {
 //        model.saveItem(item)
 //        notifyDataSetChanged()
 //    }
     
     @SuppressLint("NotifyDataSetChanged")
-    fun setItems(items: List<Item>) {
+    fun setItems(items: List<Data>) {
         this.items = items
         notifyDataSetChanged()
     }
 
 //        setItems(listOf(item))
-//    private fun setItems(items: List<Item>) {
+//    private fun setItems(items: List<Data>) {
 //        model.saveItems(items)
 //        notifyItemRangeInserted(0, items.size)
 //        notifyDataSetChanged()
@@ -50,15 +50,15 @@ class ItemRecycleAdapter(
     
     class ItemViewHolder(
         binding: ItemLayoutBinding,
-        private val onEditButtonClicked: (Item) -> Unit
+        private val onEditButtonClicked: (Data) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
         
         private val fileTextView: TextView = binding.fileTextView
         private val editButton: ImageButton = binding.editFileButton
         
-        fun bind(item: Item) {
-            val fileInfo = item.extraInfo
+        fun bind(item: Data) {
+            val fileInfo = item.filePath
             fileTextView.text = "$fileInfo"
             editButton.setOnClickListener {
                 onEditButtonClicked(item)

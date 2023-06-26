@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
 import com.example.revsb_11.contracts.SecondFragmentContract
-import com.example.revsb_11.data.Item
+import com.example.revsb_11.data.Data
 import com.example.revsb_11.databinding.FragmentSecondBinding
 
 class SecondFragment : Fragment(), SecondFragmentContract.View {
@@ -45,7 +45,7 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
         
     }
     
-    override fun setText(item: Item) {
+    override fun setText(data: Data) {
     
     }
 }

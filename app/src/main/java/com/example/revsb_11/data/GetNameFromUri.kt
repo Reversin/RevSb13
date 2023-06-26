@@ -6,9 +6,9 @@ import android.provider.MediaStore
 import com.example.revsb_11.contracts.FirstFragmentContract
 
 
-class GetNameFromUri : FirstFragmentContract.Data {
+class GetNameFromUri   {
 
-    override fun recyclePath(contentResolver: ContentResolver?, uri: Uri): String? {
+    fun recyclePath(contentResolver: ContentResolver?, uri: Uri): String? {
         val projection = arrayOf(MediaStore.MediaColumns.DATA)
         val resData = contentResolver
             ?.query(uri, projection, null, null, null)

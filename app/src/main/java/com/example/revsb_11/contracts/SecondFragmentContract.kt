@@ -1,19 +1,13 @@
 package com.example.revsb_11.contracts
 
-import android.content.ContentResolver
-import android.net.Uri
-import com.example.revsb_11.data.Item
-import com.example.revsb_11.presenters.FirstFragmentPresenter
-import com.example.revsb_11.presenters.SecondFragmentPresenter
-
 interface SecondFragmentContract {
     
     interface View {
-        fun setText(item: Item)
+        fun setText(data: com.example.revsb_11.data.Data)
     }
     
     interface Presenter {
-        fun getDataFromFirstFragment(item: Item)
+        fun getDataFromFirstFragment(data: com.example.revsb_11.data.Data)
 //        fun setFirstPresenter(firstFragmentPresenter: FirstFragmentPresenter)
     }
     
