@@ -18,7 +18,7 @@ class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContrac
 
     override fun saveItem(data: Data) {
         val existingItems = getItems().toMutableList()
-        existingItems.removeAll { (it.filePath)?.equals(data.filePath) ?: false } // сравнение по имени
+        existingItems.removeAll { (it.fileName)?.equals(data.fileName) ?: false } // сравнение по имени
         existingItems.add(0, data)
         saveInModel(existingItems)
     }

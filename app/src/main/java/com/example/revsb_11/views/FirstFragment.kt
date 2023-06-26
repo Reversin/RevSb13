@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -88,7 +89,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     
     override fun changeFragment(data: Data) {
         val bundle = Bundle()
-        bundle.putString("1", "${data.filePath}")
+        bundle.putString("1", "${data.fileName}")
         findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
     }
     
@@ -128,11 +129,15 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         uri?.let { selectedUri ->
             val contentResolver = context?.contentResolver
             val filepath = selectedUri.path
-            val fileCreationDate = GetNameFromUri().recyclePath(contentResolver, selectedUri)
-            val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-            val creationDate: String = dateFormat.format(filepath?.let { File(it).lastModified() }) // date -> type
 
-            firstPresenter.onFileNameSelected(Data(Uri.parse(filepath), fileCreationDate))
+            val file = GetNameFromUri().recyclePath(contentResolver, selectedUri)
+//            val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+//            val fileName: String? = null
+//            val documentFile = context?.let { DocumentFile.fromSingleUri(it, selectedUri)}
+//            val file = documentFile?.uri?.path
+//            val creationDate: String = dateFormat.format(filepath?.let { File(it).lastModified() }) // date -> type
+
+            firstPresenter.onFileNameSelected(file)
 //            GetNameFromUri().recyclePath(path, selectedUri)
 //                .let { firstPresenter.onFileNameSelected(Data(it)) }
         }

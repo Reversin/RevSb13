@@ -3,14 +3,10 @@ package com.example.revsb_11.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.data.Data
-import com.example.revsb_11.R
-import com.example.revsb_11.contracts.FirstFragmentContract
 import com.example.revsb_11.databinding.ItemLayoutBinding
 
 class ItemRecycleAdapter(
@@ -58,7 +54,7 @@ class ItemRecycleAdapter(
         private val editButton: ImageButton = binding.editFileButton
         
         fun bind(item: Data) {
-            val fileInfo = item.filePath
+            val fileInfo = item.fileSize
             fileTextView.text = "$fileInfo"
             editButton.setOnClickListener {
                 onEditButtonClicked(item)
