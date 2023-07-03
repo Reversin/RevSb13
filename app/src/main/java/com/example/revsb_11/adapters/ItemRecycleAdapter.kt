@@ -51,11 +51,12 @@ class ItemRecycleAdapter(
         RecyclerView.ViewHolder(binding.root) {
         
         private val fileTextView: TextView = binding.fileTextView
+        private val fileSizeTextView: TextView = binding.fileSizeTextView
         private val editButton: ImageButton = binding.editFileButton
         
         fun bind(item: Data) {
-            val fileInfo = item.fileSize
-            fileTextView.text = "$fileInfo"
+            fileTextView.text  = item.fileName
+            fileSizeTextView.text = item.fileSize
             editButton.setOnClickListener {
                 onEditButtonClicked(item)
             }

@@ -2,30 +2,24 @@ package com.example.revsb_11.data
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.support.v4.os.IResultReceiver._Parcel
-import com.example.revsb_11.contracts.FirstFragmentContract
 
 
 class GetNameFromUri {
 
-    fun recyclePath(contentResolver: ContentResolver?, uri: Uri): Data {
+    fun recyclePath(contentResolver: ContentResolver?, uri: Uri): String {
 
-        var fileName: String? = null
         var fileSize: String? = null
         val cursor = contentResolver
             ?.query(uri, null, null, null, null)
         cursor.use {
             if (it != null) {
                 if (it.moveToFirst()) {
-                    val displayName = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                     val size = it.getColumnIndex(OpenableColumns.SIZE)
-                    fileName = it.getString(displayName)
                     fileSize = formatFileSize(it.getLong(size))
                 }
             }
-            return Data(fileName, fileSize.toString())
+            return fileSize.toString()
         }
     }
 

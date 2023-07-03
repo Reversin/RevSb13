@@ -130,14 +130,8 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
             val contentResolver = context?.contentResolver
             val filepath = selectedUri.path
 
-            val file = GetNameFromUri().recyclePath(contentResolver, selectedUri)
-//            val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-//            val fileName: String? = null
-//            val documentFile = context?.let { DocumentFile.fromSingleUri(it, selectedUri)}
-//            val file = documentFile?.uri?.path
-//            val creationDate: String = dateFormat.format(filepath?.let { File(it).lastModified() }) // date -> type
-
-            firstPresenter.onFileNameSelected(file)
+            val fileSize = GetNameFromUri().recyclePath(contentResolver, selectedUri)
+            firstPresenter.onFileNameSelected(Data(filepath, fileSize))
 //            GetNameFromUri().recyclePath(path, selectedUri)
 //                .let { firstPresenter.onFileNameSelected(Data(it)) }
         }
