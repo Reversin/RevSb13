@@ -55,7 +55,7 @@ class ItemRecycleAdapter(
         private val editButton: ImageButton = binding.editFileButton
         
         fun bind(item: Data) {
-            fileTextView.text  = item.fileName
+            fileTextView.text  = item.filePath
             fileSizeTextView.text = item.fileSize
             editButton.setOnClickListener {
                 onEditButtonClicked(item)

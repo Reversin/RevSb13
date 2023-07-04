@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,9 +21,6 @@ import com.example.revsb_11.data.GetNameFromUri
 import com.example.revsb_11.databinding.FragmentFirstBinding
 import com.example.revsb_11.models.FileNameModel
 import com.example.revsb_11.presenters.FirstFragmentPresenter
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 
 class FirstFragment : Fragment(), FirstFragmentContract.View {
@@ -37,6 +33,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     private lateinit var adapter: ItemRecycleAdapter
     private val typeDialog = R.string.typeDialog
     private val nameSP = R.string.nameSP
+    private val bundleKey = R.string.bundleKey.toString()
     
     private var getContent = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -83,26 +80,22 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         recyclerView?.layoutManager = LinearLayoutManager(context)
         
     }
-
-//    override fun onItemClick() =
-//        firstPresenter.onItemClicked()
-    
     override fun changeFragment(data: Data) {
-        val bundle = Bundle()
-        bundle.putString("1", "${data.fileName}")
-        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+//        val bundle = Bundle()
+//        bundle.putString(bundleKey, "${data.filePath}")
+
+        val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment("${data.filePath}")
+        findNavController().navigate(action)
     }
     
     
     
     private fun initPresenters() {
         firstPresenter = FirstFragmentPresenter(this, model)
-//        secondPresenter
-        
     }
     
     private fun setClickListeners() {
-        binding.fileButton1?.setOnClickListener {
+        binding.fileButton1.setOnClickListener {
             firstPresenter.onFindFIleButtonClicked()
         }
     }
@@ -129,11 +122,8 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         uri?.let { selectedUri ->
             val contentResolver = context?.contentResolver
             val filepath = selectedUri.path
-
             val fileSize = GetNameFromUri().recyclePath(contentResolver, selectedUri)
             firstPresenter.onFileNameSelected(Data(filepath, fileSize))
-//            GetNameFromUri().recyclePath(path, selectedUri)
-//                .let { firstPresenter.onFileNameSelected(Data(it)) }
         }
     }
     
