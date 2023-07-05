@@ -1,5 +1,6 @@
 package com.example.revsb_11.models
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.revsb_11.contracts.FirstFragmentContract
@@ -9,7 +10,7 @@ import com.google.gson.reflect.TypeToken
 
 
 class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContract.Model {
-    
+
     private val gson = Gson()
     override fun saveInModel(data: List<Data>) {
         val json = gson.toJson(data)
@@ -18,11 +19,11 @@ class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContrac
 
     override fun saveItem(data: Data) {
         val existingItems = getItems().toMutableList()
-        existingItems.removeAll { (it.filePath)?.equals(data.filePath) ?: false } // сравнение по имени
+        existingItems.removeAll { (it.filePath)?.equals(data.filePath) ?: false }
         existingItems.add(0, data)
         saveInModel(existingItems)
     }
-    
+
 
     override fun getItems(): List<Data> {
         val json = prefs.getString(PREF_KEY_NAME, null)
@@ -30,15 +31,18 @@ class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContrac
         return gson.fromJson(json, object : TypeToken<List<Data>>() {}.type) ?: mutableListOf()
     }
 
-    override fun removeItem(position: Int) {
+    override fun deleteItem(data: Data) {
         val existingItems = getItems().toMutableList()
-        existingItems.removeAt(position)
+        existingItems.remove(data)
         saveInModel(existingItems)
     }
 
 
-    companion object {
 
-        private const val PREF_KEY_NAME = "2"
+
+
+
+    companion object {
+        private const val PREF_KEY_NAME = "1"
     }
 }

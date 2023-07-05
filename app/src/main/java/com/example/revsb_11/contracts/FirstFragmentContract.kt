@@ -10,7 +10,7 @@ interface FirstFragmentContract {
         fun openFileSelector()
         fun setFileNameTitle(itemsList: List<Data>)
         fun initAdapterRecycleView(itemsList: List<Data>)
-        fun changeFragment(data: Data)
+        fun goToFragmentForChanges(data: Data)
         
     }
     
@@ -20,6 +20,7 @@ interface FirstFragmentContract {
         fun modelInitialized()
         fun onItemClicked(data: Data)
 //        fun setSecondPresenter(secondFragmentPresenter: SecondFragmentPresenter)
+        fun swipeDeleteItem(data: Data)
     
     }
     
@@ -27,7 +28,7 @@ interface FirstFragmentContract {
         fun saveInModel(data: List<Data>)
         fun saveItem(data: Data)
         fun getItems(): List<Data>
-        fun removeItem(position: Int)
+        fun deleteItem(data: Data)
     }
     
 }

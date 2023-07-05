@@ -4,19 +4,16 @@
     tools:context="com.example.revsb_11.views.MainActivity">
     <item
         android:id="@+id/action_settings"
-
-        android:orderInCategory="100"
+        android:orderInCategory="103"
         android:title="@string/action_language"
         app:showAsAction="never">
         <menu>
             <item
                 android:id="@+id/engLang"
-                app:showAsAction="ifRoom"
-                android:title="@string/eng"/>
+                android:title="@string/eng" />
             <item
                 android:id="@+id/rusLang"
-                app:showAsAction="always"
-                android:title="@string/rus"/>
+                android:title="@string/rus" />
 
         </menu>
     </item>

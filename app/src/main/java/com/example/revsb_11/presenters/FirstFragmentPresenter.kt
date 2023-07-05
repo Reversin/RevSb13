@@ -18,18 +18,20 @@ class FirstFragmentPresenter(
         val itemsList = model.getItems()
         view.setFileNameTitle(itemsList)
     }
+
     
     override fun modelInitialized() {
         val itemsList = model.getItems()
         view.initAdapterRecycleView(itemsList)
     }
-    
+
     override fun onItemClicked(data: Data) {
-        view.changeFragment(data)
+        view.goToFragmentForChanges(data)
     }
-//    override fun setSecondPresenter(secondFragmentPresenter: SecondFragmentPresenter) {
-//        this.secondFragmentPresenter = secondFragmentPresenter
-//    }
+
+    override fun swipeDeleteItem(data: Data) {
+        model.deleteItem(data)
+    }
 }
 
 

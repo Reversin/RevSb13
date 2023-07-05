@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'com.example.revsb_11'
-    compileSdk 34
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.revsb_11"
         minSdk 30
-        targetSdk 34
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -25,16 +25,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         viewBinding true
     }
-    buildToolsVersion '34.0.0'
+    buildToolsVersion '33.0.0'
 }
 
 dependencies {
@@ -46,6 +46,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'androidx.mediarouter:mediarouter:1.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

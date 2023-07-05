@@ -16,4 +16,5 @@
     <string name="eng">ENG</string>
     <string name="click_to_find_file">find file</string>
     <string name="second_fragment_label">Сhange file</string>
+    <string name="delete_all">Delete all</string>
 </resources>

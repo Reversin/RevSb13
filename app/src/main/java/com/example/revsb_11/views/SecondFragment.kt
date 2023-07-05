@@ -5,14 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
 import com.example.revsb_11.contracts.SecondFragmentContract
+import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.FragmentSecondBinding
-import com.example.revsb_11.presenters.FirstFragmentPresenter
 import com.example.revsb_11.presenters.SecondFragmentPresenter
 
 class SecondFragment : Fragment(), SecondFragmentContract.View {
@@ -22,7 +24,6 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
     private lateinit var secondPresenter: SecondFragmentContract.Presenter
     private val args: SecondFragmentArgs by navArgs()
 
-    
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +31,6 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -44,6 +44,7 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
         }
 
     }
+
     private fun initPresenters() {
         secondPresenter = SecondFragmentPresenter(this)
     }
@@ -52,9 +53,13 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
         super.onStart()
         requireActivity().title = activity?.getString(R.string.sTitle_name)
     }
-    
+
     override fun setText(dataFragmentArgument: SecondFragmentArgs) {
-        val filePath = dataFragmentArgument.secondFragmentArgument
-        binding.editFileTextView.text = filePath
+        val filePath = dataFragmentArgument.secondFragmentArgument.toUri()
+        filePath.let { selectedUri ->
+            val contentResolver = context?.contentResolver
+            val fileName = WorkingWithFiles().filePathHandlingName(contentResolver, selectedUri)
+            binding.editFileTextView.setText(fileName)
+        }
     }
 }

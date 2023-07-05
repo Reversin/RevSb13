@@ -6,4 +6,5 @@ class FoundationPresenter(private val view: FoundationContract.View) : Foundatio
     override fun onOptionLangSelected(langKey: Int) {
         view.setLang(langKey)
     }
+
 }

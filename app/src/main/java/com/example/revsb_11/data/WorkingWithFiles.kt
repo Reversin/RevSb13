@@ -5,10 +5,9 @@ import android.net.Uri
 import android.provider.OpenableColumns
 
 
-class GetNameFromUri {
+class WorkingWithFiles {
 
-    fun recyclePath(contentResolver: ContentResolver?, uri: Uri): String {
-
+    fun filePathHandlingSize(contentResolver: ContentResolver?, uri: Uri): String {
         var fileSize: String? = null
         val cursor = contentResolver
             ?.query(uri, null, null, null, null)
@@ -23,7 +22,7 @@ class GetNameFromUri {
         }
     }
 
-    fun formatFileSize(fileSizeBytes: Long): String {
+    private fun formatFileSize(fileSizeBytes: Long): String {
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
 
         var fileSize = fileSizeBytes.toDouble()
@@ -37,6 +36,21 @@ class GetNameFromUri {
             unitIndex++
         }
         return "%.2f %s".format(fileSize, units[unitIndex])
+    }
+
+    fun filePathHandlingName(contentResolver: ContentResolver?, uri: Uri): String {
+        var fileName: String? = null
+        val cursor = contentResolver
+            ?.query(uri, null, null, null, null)
+        cursor.use {
+            if (it != null) {
+                if (it.moveToFirst()) {
+                    val displayName = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    fileName = it.getString(displayName)
+                }
+            }
+            return fileName.toString()
+        }
     }
 
 }

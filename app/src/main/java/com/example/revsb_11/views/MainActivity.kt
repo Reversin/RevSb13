@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         setSupportActionBar(binding.toolbar)
         presenter = FoundationPresenter(this)
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         this.menu = menu
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
                 presenter.onOptionLangSelected(ru)
                 true
             }
+
             R.id.action_settings -> true
             else -> {
                 super.onOptionsItemSelected(item)
