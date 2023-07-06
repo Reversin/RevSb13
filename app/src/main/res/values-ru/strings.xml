@@ -18,4 +18,5 @@
     <string name="click_to_find_file">Поиск файла</string>
     <string name="second_fragment_label">изменить файл</string>
     <string name="delete_all">Удалить всё</string>
+    <string name="save">Сохранить</string>
 </resources>

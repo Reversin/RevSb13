@@ -6,11 +6,13 @@ interface SecondFragmentContract {
     
     interface View {
         fun setText(dataFragmentArgument: SecondFragmentArgs)
+        fun backToThePreviousFragment(): Boolean
+        fun onTextChanged()
     }
     
     interface Presenter {
         fun secondFragmentInitialized(dataFragmentArgument: SecondFragmentArgs)
-//        fun setFirstPresenter(firstFragmentPresenter: FirstFragmentPresenter)
+        fun onBackArrowClicked(): Boolean
     }
     
     interface Model {

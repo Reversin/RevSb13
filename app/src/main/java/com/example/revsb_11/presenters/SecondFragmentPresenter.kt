@@ -7,10 +7,10 @@ import com.example.revsb_11.views.SecondFragmentArgs
 class SecondFragmentPresenter(
     private val view: SecondFragmentContract.View
 ) : SecondFragmentContract.Presenter {
-    private lateinit var firstFragmentPresenter: FirstFragmentPresenter
 
-    override fun secondFragmentInitialized(dataFragmentArgument: SecondFragmentArgs) {
+    override fun secondFragmentInitialized(dataFragmentArgument: SecondFragmentArgs) =
         view.setText(dataFragmentArgument)
-    }
-    
+
+    override fun onBackArrowClicked() =
+        view.backToThePreviousFragment()
 }

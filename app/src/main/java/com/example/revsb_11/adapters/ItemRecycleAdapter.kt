@@ -24,7 +24,7 @@ class ItemRecycleAdapter(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) =
         holder.bind(items[position])
 
-    fun attachSwipeToDelet(recyclerView: RecyclerView) {
+    fun attachSwipeToDelete(recyclerView: RecyclerView) {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
