@@ -5,14 +5,18 @@ import com.example.revsb_11.views.SecondFragmentArgs
 interface SecondFragmentContract {
     
     interface View {
-        fun setText(dataFragmentArgument: SecondFragmentArgs)
+        fun setText()
         fun backToThePreviousFragment(): Boolean
-        fun onTextChanged()
+        fun showAlertDialog()
+        fun backToThePreviousFragmentWithChanges()
+
     }
     
     interface Presenter {
-        fun secondFragmentInitialized(dataFragmentArgument: SecondFragmentArgs)
+        fun secondFragmentInitialized()
         fun onBackArrowClicked(): Boolean
+        fun onSaveButtonClicked()
+        fun onConsentSaveButton()
     }
     
     interface Model {

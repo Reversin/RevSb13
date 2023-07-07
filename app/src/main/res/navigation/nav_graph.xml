@@ -13,6 +13,9 @@
         <argument
             android:name="firstFragmentArgument"
             app:argType="string" />
+        <argument
+            android:name="firstFragmentArgument2"
+            app:argType="string" />
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
@@ -37,6 +40,9 @@
             app:destination="@id/firstFragment">
             <argument
                 android:name="firstFragmentArgument"
+                app:argType="string" />
+            <argument
+                android:name="firstFragmentArgument2"
                 app:argType="string" />
         </action>
 

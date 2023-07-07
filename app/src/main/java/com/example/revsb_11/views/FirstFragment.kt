@@ -1,23 +1,21 @@
 package com.example.revsb_11.views
 
 
-import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.R
@@ -28,8 +26,6 @@ import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.FragmentFirstBinding
 import com.example.revsb_11.models.FileNameModel
 import com.example.revsb_11.presenters.FirstFragmentPresenter
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 
 
 class FirstFragment : Fragment(), FirstFragmentContract.View {
@@ -42,8 +38,9 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     private lateinit var adapter: ItemRecycleAdapter
     private val typeDialog = R.string.typeDialog
     private val nameSP = R.string.nameSP
+    private val args: FirstFragmentArgs by navArgs()
 
-    //TODO private var requestPermission https://www.youtube.com/watch?v=Gwu_iS-Z48U
+
     private var getContent = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { handleFileUri(it) }
@@ -92,7 +89,6 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         super.onViewCreated(view, savedInstanceState)
         initModel()
         initPresenters()
-
 //        if(this.context?.let { ActivityCompat.checkSelfPermission(it, Manifest.permission.READ_MEDIA_IMAGES) } == PackageManager.PERMISSION_GRANTED){
 //            Toast.makeText(
 //                requireContext().applicationContext, "вроде да", Toast.LENGTH_SHORT
@@ -104,13 +100,10 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
 //            requestStoragePermission()
 //        }
         firstPresenter.modelInitialized()
+        navigationListener()
         setClickListeners()
 
     }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    private fun requestStoragePermission() {
-//        requestPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
-//    }
 
     private fun initModel() {
         val context = this.context
@@ -123,12 +116,6 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
             ).show()
             return
         }
-    }
-    private fun grantUriPermissions(uri: Uri): Uri {
-        val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        context?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
-        return uri
     }
 
     override fun initAdapterRecycleView(itemsList: List<Data>) {
@@ -147,6 +134,16 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     override fun goToFragmentForChanges(data: Data) {
         val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment("${data.fullPath}")
         findNavController().navigate(action)
+    }
+
+    private fun navigationListener() {
+        val argums = arguments
+        if (argums != null) {
+            if (!argums.isEmpty){
+                val arg1 = args.firstFragmentArgument
+                firstPresenter.onFileNameSelected(Data("filepath", "fileSize", "longFileUri.toString()"))
+            }
+        }
     }
 
 
@@ -177,10 +174,11 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         _binding = null
     }
 
+
     private fun handleFileUri(uri: Uri?) {
         uri?.let { selectedUri ->
-            val longFileUri = grantUriPermissions(selectedUri)
             val contentResolver = context?.contentResolver
+            val longFileUri = WorkingWithFiles().grantUriPermissions(contentResolver, selectedUri)
             val filepath = selectedUri.path
             val fileSize = filepath?.let {
                 WorkingWithFiles().filePathHandlingSize(

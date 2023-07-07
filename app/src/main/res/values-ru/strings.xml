@@ -19,4 +19,9 @@
     <string name="second_fragment_label">изменить файл</string>
     <string name="delete_all">Удалить всё</string>
     <string name="save">Сохранить</string>
+    <string name="change_file_name">Изменение имени файла</string>
+    <string name="alert_message">Вы уверены в изменении имени файла?</string>
+    <string name="name_is_null">Имя файла не может быть пустым</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>
