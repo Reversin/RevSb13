@@ -1,9 +1,7 @@
 package com.example.revsb_11.contracts
 
-import com.example.revsb_11.views.SecondFragmentArgs
-
 interface SecondFragmentContract {
-    
+
     interface View {
         fun setText()
         fun backToThePreviousFragment(): Boolean
@@ -11,17 +9,11 @@ interface SecondFragmentContract {
         fun backToThePreviousFragmentWithChanges()
 
     }
-    
+
     interface Presenter {
-        fun secondFragmentInitialized()
+        fun onScreenOpened()
         fun onBackArrowClicked(): Boolean
         fun onSaveButtonClicked()
-        fun onConsentSaveButton()
-    }
-    
-    interface Model {
-    }
-    
-    interface Data {
+        fun onConsentSaveButtonClicked()
     }
 }

@@ -8,20 +8,18 @@ interface FirstFragmentContract {
     interface View {
         fun openFileSelector()
         fun setFileNameTitle(itemsList: List<Data>)
-        fun initAdapterRecycleView(itemsList: List<Data>)
+        fun initAdapterRecycleView(itemsList: List<Data>)// initAdapterRecycleView объединить с setFileNameTitle
         fun goToFragmentForChanges(data: Data)
         fun renameFile()
-
     }
 
     interface Presenter {
-        fun onFindFIleButtonClicked()
+        fun onFindFileButtonClicked()
         fun onFileNameSelected(data: Data)
-        fun modelInitialized()
+        fun onScreenOpened()
         fun onItemClicked(data: Data)
-        fun swipeDeleteItem(data: Data)
+        fun onSwipeDeleteItem(data: Data)
         fun fileNameHasChanged()
-
     }
 
     interface Model {

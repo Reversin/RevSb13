@@ -10,7 +10,7 @@ class FirstFragmentPresenter(
 ) : FirstFragmentContract.Presenter {
     
     
-    override fun onFindFIleButtonClicked() =
+    override fun onFindFileButtonClicked() =
         view.openFileSelector()
     
     override fun onFileNameSelected(data: Data) {
@@ -20,7 +20,7 @@ class FirstFragmentPresenter(
     }
 
     
-    override fun modelInitialized() {
+    override fun onScreenOpened() {
         val itemsList = model.getItems()
         view.initAdapterRecycleView(itemsList)
     }
@@ -29,7 +29,7 @@ class FirstFragmentPresenter(
         view.goToFragmentForChanges(data)
     }
 
-    override fun swipeDeleteItem(data: Data) {
+    override fun onSwipeDeleteItem(data: Data) {
         model.deleteItem(data)
     }
 

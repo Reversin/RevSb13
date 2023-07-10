@@ -88,7 +88,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         super.onViewCreated(view, savedInstanceState)
         initModel()
         initPresenters()
-        firstPresenter.modelInitialized()
+        firstPresenter.onScreenOpened()
         navigationListener()
         setClickListeners()
 
@@ -112,7 +112,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         adapter = ItemRecycleAdapter(onEditButtonClicked = { item ->
             firstPresenter.onItemClicked(item)
         }, onSwipeToDelete = { item ->
-            firstPresenter.swipeDeleteItem(item)
+            firstPresenter.onSwipeDeleteItem(item)
         })
         adapter.setItems(itemsList)
         recyclerView?.let { adapter.attachSwipeToDelete(it) }
@@ -142,7 +142,7 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
 
     private fun setClickListeners() {
         binding.fileButton1.setOnClickListener {
-            firstPresenter.onFindFIleButtonClicked()
+            firstPresenter.onFindFileButtonClicked()
         }
     }
 

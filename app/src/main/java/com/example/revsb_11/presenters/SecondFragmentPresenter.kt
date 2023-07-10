@@ -8,17 +8,17 @@ class SecondFragmentPresenter(
     private val view: SecondFragmentContract.View
 ) : SecondFragmentContract.Presenter {
 
-    override fun secondFragmentInitialized() =
+    override fun onScreenOpened() =
         view.setText()
 
-    override fun onBackArrowClicked() : Boolean =
+    override fun onBackArrowClicked(): Boolean =
         view.backToThePreviousFragment()
 
     override fun onSaveButtonClicked() {
         view.showAlertDialog()
     }
 
-    override fun onConsentSaveButton() {
+    override fun onConsentSaveButtonClicked() {
         view.backToThePreviousFragmentWithChanges()
     }
 }

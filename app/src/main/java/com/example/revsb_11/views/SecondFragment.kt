@@ -25,7 +25,6 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
     private val binding get() = _binding!!
     private lateinit var secondPresenter: SecondFragmentContract.Presenter
     private val args: SecondFragmentArgs by navArgs()
-    private val dot = "."
 
 
     override fun onCreateView(
@@ -41,7 +40,7 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
         super.onViewCreated(view, savedInstanceState)
 
         initPresenters()
-        secondPresenter.secondFragmentInitialized()
+        secondPresenter.onScreenOpened()
         setClickListeners()
         editTextListener()
     }
@@ -93,7 +92,7 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
                 .setTitle(R.string.change_file_name)
                 .setMessage(R.string.change_file_name)
                 .setPositiveButton(R.string.yes) { dialog, _ ->
-                    secondPresenter.onConsentSaveButton()
+                    secondPresenter.onConsentSaveButtonClicked()
                     dialog.dismiss()
                 }
                 .setNegativeButton(R.string.no) { dialog, _ ->
@@ -127,6 +126,10 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
         binding.editFileNameText.setText(fileName)
         binding.fileFormatTextView.text = fileFormat
 
+    }
+
+    companion object {
+        private const val dot = "."
     }
 
 }
