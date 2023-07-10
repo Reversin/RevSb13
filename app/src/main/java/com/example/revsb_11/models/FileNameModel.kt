@@ -1,6 +1,6 @@
 package com.example.revsb_11.models
 
-import android.annotation.SuppressLint
+
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.revsb_11.contracts.FirstFragmentContract
@@ -37,9 +37,12 @@ class FileNameModel(private val prefs: SharedPreferences) : FirstFragmentContrac
         saveInModel(existingItems)
     }
 
-
-
-
+    override fun deleteChangedFileItem(uri: String) {
+        val existingItems = getItems().toMutableList()
+//        existingItems.removeAll { (it.filePath)?.equals(uri) ?: false }
+//        existingItems.add(0, data)
+//        saveInModel(existingItems)
+    }
 
 
     companion object {

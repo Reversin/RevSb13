@@ -6,4 +6,5 @@
     <string name="nameSP" translatable="false">fname_prefs</string>
     <string name="contextBreak" translatable="false">Вась, мы модель уронили</string>
     <string name="bundleKey" translatable="false">535</string>
+    <string name="dot" translatable="false">.</string>
 </resources>

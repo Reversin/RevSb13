@@ -1,19 +1,24 @@
 package com.example.revsb_11.views
 
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,37 +50,31 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         ActivityResultContracts.OpenDocument()
     ) { handleFileUri(it) }
 
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    private var requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-//        if(it) {
-//            Toast.makeText(
-//                requireContext().applicationContext, "requestPermission if 1", Toast.LENGTH_SHORT
-//            ).show()
-//        }else{
-//            if(ActivityCompat.shouldShowRequestPermissionRationale(this.requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-//                this.context?.let { it1 ->
-//                    MaterialAlertDialogBuilder(it1)
-//                        .setTitle("Permission Required")
-//                        .setMessage("Жопа чё")
-//                        .setNegativeButton("No"){ d, _ ->
-//                            d.dismiss()
-//                        }.setPositiveButton("Ask Permission Again"){ d, _ ->
-//                            requestStoragePermission()
-//                            d.dismiss()
-//                        }
-//                }
-//
-//            }else{
-//                Snackbar.make(binding.root, "Permission Required For App Func", Snackbar.LENGTH_LONG)
-//                    .setAction("Settings") {
-//                        val intent = Intent()
-//                        intent.data = Uri.fromParts("package", "com.example.revsb_11", null)
-//                        intent.action = Uri.decode(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//                        startActivity(intent)
-//                    }
-//            }
-//        }
-//    }
+    val requestManageStoragePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            renameFile()
+
+        } else {
+            Toast.makeText(
+                requireContext().applicationContext, "неа1", Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+
+    val requestManageAppFilesAccessLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            renameFile()
+        } else {
+            Toast.makeText(
+                requireContext().applicationContext, "неа2", Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -89,16 +88,6 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         super.onViewCreated(view, savedInstanceState)
         initModel()
         initPresenters()
-//        if(this.context?.let { ActivityCompat.checkSelfPermission(it, Manifest.permission.READ_MEDIA_IMAGES) } == PackageManager.PERMISSION_GRANTED){
-//            Toast.makeText(
-//                requireContext().applicationContext, "вроде да", Toast.LENGTH_SHORT
-//            ).show()
-//        }else{
-//            Toast.makeText(
-//                requireContext().applicationContext, "неа", Toast.LENGTH_SHORT
-//            ).show()
-//            requestStoragePermission()
-//        }
         firstPresenter.modelInitialized()
         navigationListener()
         setClickListeners()
@@ -139,9 +128,9 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
     private fun navigationListener() {
         val argums = arguments
         if (argums != null) {
-            if (!argums.isEmpty){
-                val arg1 = args.firstFragmentArgument
-                firstPresenter.onFileNameSelected(Data("filepath", "fileSize", "longFileUri.toString()"))
+            if (!argums.isEmpty) {
+
+                renameFile()
             }
         }
     }
@@ -174,6 +163,42 @@ class FirstFragment : Fragment(), FirstFragmentContract.View {
         _binding = null
     }
 
+    override fun renameFile() {
+        val manageStoragePermission = Manifest.permission.MANAGE_EXTERNAL_STORAGE
+
+        val settingsIntent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+        val packageUri = Uri.fromParts("package", context?.packageName, null)
+        settingsIntent.data = packageUri
+
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                manageStoragePermission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+        } else {
+            if (true && !Environment.isExternalStorageManager()) {
+                // Разрешение не было предоставлено, открываем экран настроек
+                requestManageAppFilesAccessLauncher.launch(settingsIntent)
+            } else {
+                val arg1 = args.firstFragmentArgument
+                val arg2 = args.firstFragmentArgument2
+                val contentResolver = context?.contentResolver
+                val dir = context?.cacheDir
+                val newPath =
+                    contentResolver?.let { WorkingWithFiles().renameFile(it, dir, arg1, arg2) }
+                firstPresenter.onFileNameSelected(
+                    Data(
+                        newPath,
+                        "fileSize",
+                        "longFileUri.toString()"
+                    )
+                )
+
+            }
+        }
+
+    }
 
     private fun handleFileUri(uri: Uri?) {
         uri?.let { selectedUri ->

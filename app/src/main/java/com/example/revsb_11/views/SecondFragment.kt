@@ -1,7 +1,6 @@
 package com.example.revsb_11.views
 
-import android.app.Activity
-import android.content.Intent
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,13 +18,14 @@ import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.FragmentSecondBinding
 import com.example.revsb_11.presenters.SecondFragmentPresenter
 
+
 class SecondFragment : Fragment(), SecondFragmentContract.View {
 
     private var _binding: FragmentSecondBinding? = null
     private val binding get() = _binding!!
     private lateinit var secondPresenter: SecondFragmentContract.Presenter
     private val args: SecondFragmentArgs by navArgs()
-    private val ARG_DATA = "data"
+    private val dot = "."
 
 
     override fun onCreateView(
@@ -82,7 +82,7 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
     override fun backToThePreviousFragmentWithChanges() {
         val action = SecondFragmentDirections.actionSecondFragmentToFirstFragment(
             args.secondFragmentArgument,
-            "${binding.editFileNameText.text}"
+            "${binding.editFileNameText.text}.jpg"
         )
         findNavController().navigate(action)
     }
@@ -112,21 +112,19 @@ class SecondFragment : Fragment(), SecondFragmentContract.View {
     }
 
     override fun setText() {
-        val filePath = args.secondFragmentArgument.toUri()
-        val fileName: String?
-        filePath.let { selectedUri ->
+        val fileUri = args.secondFragmentArgument.toUri()
+        val file: Pair<String, String>?
+        fileUri.let { selectedUri ->
             val contentResolver = context?.contentResolver
-            fileName =
-                contentResolver?.let {
-                    WorkingWithFiles().getFileNameFromUri(it, selectedUri)
-                }.toString()
+            file = contentResolver?.let { WorkingWithFiles().getFileNameFromUri(it, selectedUri) }
+
         }
 
-        val dotIndex = fileName?.indexOf(".")
-        val nameTillDot = dotIndex?.let { fileName.substring(0, it) }
-        val fileFormat = dotIndex?.let { fileName.substring(it) }
+        val fileFormat = ".${file?.second?.substringAfter("/")}"
+        val indexFormat = file?.first?.lastIndexOf(dot)
+        val fileName = indexFormat?.let { file.first.substring(0, it) }
 
-        binding.editFileNameText.setText(nameTillDot)
+        binding.editFileNameText.setText(fileName)
         binding.fileFormatTextView.text = fileFormat
 
     }

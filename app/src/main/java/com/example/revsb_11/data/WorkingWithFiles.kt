@@ -5,13 +5,10 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import androidx.core.content.FileProvider
-import androidx.documentfile.provider.DocumentFile
 import java.io.File
-import java.io.FileOutputStream
+
 
 
 class WorkingWithFiles {
@@ -54,33 +51,38 @@ class WorkingWithFiles {
         return uri
     }
 
-    fun getFileNameFromUri(contentResolver: ContentResolver, fileUri: Uri): String? {
-        val cursor = contentResolver.query(fileUri, null, null, null, null)
+    @SuppressLint("Range")
+    fun getFileNameFromUri(contentResolver: ContentResolver, fileUri: Uri): Pair<String, String>? {
+        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
+        val cursor = contentResolver.query(fileUri, projection, null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
-                val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (displayNameIndex != -1) {
-                    return it.getString(displayNameIndex)
-                }
+                val fileName = it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                val format = it.getString(it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+                return Pair(fileName,format)
+
             }
         }
         return null
     }
-    fun renameFile(oldFilePath: String, newFileName: String): String {
-        val oldFile = File(oldFilePath)
-        val newFilePath = "${oldFile.parent}/$newFileName"
-        val newFile = File(newFilePath)
-        return newFilePath
-    }
-    fun parseStringToData(string: String): Data {
-        val parts = string.split("filePath","fileSize","fullPath")
-        val filePath = parts[0].trim()
-        val fileSize = parts[1].trim()
-        val fullPath = parts[2].trim()
-        return Data(filePath, fileSize, fullPath)
 
+    @SuppressLint("Range")
+    fun renameFile(
+        contentResolver: ContentResolver,
+        dir: File?,
+        oldFilePath: String,
+        newFileName: String
+    ): String {
+        val contentUri: Uri = Uri.parse(oldFilePath)
 
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, newFileName)
+        }
+
+        contentResolver.update(contentUri, contentValues, null, null)
+        return "0"
     }
+
 
 }
 

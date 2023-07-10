@@ -32,6 +32,10 @@ class FirstFragmentPresenter(
     override fun swipeDeleteItem(data: Data) {
         model.deleteItem(data)
     }
+
+    override fun fileNameHasChanged() {
+        TODO("Not yet implemented")
+    }
 }
 
 
