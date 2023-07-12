@@ -4,21 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.SecondFragment"
+    tools:context=".views.ChangeFileNameFragment"
     android:orientation="vertical">
 
-
-    <ImageButton
-        android:id="@+id/backArrow"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:background="?attr/selectableItemBackground"
-        android:importantForAccessibility="no"
-        android:src="@drawable/arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -31,23 +19,34 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="7dp">
 
-        <EditText
-            android:id="@+id/editFileNameText"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end"
-            android:inputType="textPersonName"
-            android:textSize="15sp"
-            android:autofillHints=""
-            tools:ignore="LabelFor" />
+            android:textSize="7sp"
+            android:hint="@string/file_name"
+            tools:ignore="SmallSp">
+            <EditText
+                android:id="@+id/editFileNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:inputType="textPersonName"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeTextType="uniform"
+                tools:ignore="LabelFor"
+                android:autofillHints="" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <TextView
             android:id="@+id/fileFormatTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:textSize="15sp" />
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeTextType="uniform"/>
 
     </LinearLayout>
 
@@ -57,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="0dp"
         android:text="@string/save"
-        android:shadowColor="@color/white"
+        android:textColor="@color/black"
         android:backgroundTint="@color/teal_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

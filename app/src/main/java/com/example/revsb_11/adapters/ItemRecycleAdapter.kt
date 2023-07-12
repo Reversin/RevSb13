@@ -7,14 +7,14 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.revsb_11.data.Data
+import com.example.revsb_11.data.SelectedFile
 import com.example.revsb_11.databinding.ItemLayoutBinding
 
 class ItemRecycleAdapter(
-    private val onEditButtonClicked: (Data) -> Unit,
-    private val onSwipeToDelete: (Data) -> Unit
+    private val onEditButtonClicked: (SelectedFile) -> Unit,
+    private val onSwipeToDelete: (SelectedFile) -> Unit
 ) : RecyclerView.Adapter<ItemRecycleAdapter.ItemViewHolder>() {
-    private var items: List<Data> = emptyList()
+    private var items: List<SelectedFile> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypr: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -49,7 +49,7 @@ class ItemRecycleAdapter(
         items.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setItems(items: List<Data>) {
+    fun setItems(items: List<SelectedFile>) {
         this.items = items
         notifyDataSetChanged()
     }
@@ -65,7 +65,7 @@ class ItemRecycleAdapter(
 
     class ItemViewHolder(
         binding: ItemLayoutBinding,
-        private val onEditButtonClicked: (Data) -> Unit
+        private val onEditButtonClicked: (SelectedFile) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -73,7 +73,7 @@ class ItemRecycleAdapter(
         private val fileSizeTextView: TextView = binding.fileSizeTextView
         private val editButton: ImageButton = binding.editFileButton
 
-        fun bind(item: Data) {
+        fun bind(item: SelectedFile) {
             fileTextView.text = item.filePath
             fileSizeTextView.text = item.fileSize
             editButton.setOnClickListener {

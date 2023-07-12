@@ -3,48 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/firstFragment">
+    app:startDestination="@id/selectedFilesFragment">
 
     <fragment
-        android:id="@+id/firstFragment"
-        android:name="com.example.revsb_11.views.FirstFragment"
+        android:id="@+id/selectedFilesFragment"
+        android:name="com.example.revsb_11.views.SelectedFilesFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/selected_files_fragment">
         <argument
-            android:name="firstFragmentArgument"
+            android:name="selectedFilesFragmentArgument"
             app:argType="string" />
         <argument
-            android:name="firstFragmentArgument2"
+            android:name="selectedFilesFragmentArgument2"
             app:argType="string" />
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/secondFragment">
+            android:id="@+id/action_SelectedFilesFragment_to_ChangeFileNameFragment"
+            app:destination="@id/changeFileNameFragment">
             <argument
-                android:name="secondFragmentArgument"
+                android:name="changeFileNameArgument"
                 app:argType="string" />
         </action>
 
     </fragment>
     <fragment
-        android:id="@+id/secondFragment"
-        android:name="com.example.revsb_11.views.SecondFragment"
+        android:id="@+id/changeFileNameFragment"
+        android:name="com.example.revsb_11.views.ChangeFileNameFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        tools:layout="@layout/change_file_name_fragment">
         <argument
-            android:name="secondFragmentArgument"
+            android:name="changeFileNameArgument"
             app:argType="string" />
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/firstFragment">
+            android:id="@+id/action_ChangeFileNameFragment_to_SelectedFilesFragment"
+            app:destination="@id/selectedFilesFragment">
             <argument
-                android:name="firstFragmentArgument"
+                android:name="selectedFilesFragmentArgument"
                 app:argType="string" />
             <argument
-                android:name="firstFragmentArgument2"
+                android:name="selectedFilesFragmentArgument2"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_to_selectedFilesFragment"
+            app:destination="@id/selectedFilesFragment"
+            app:popUpTo="@id/changeFileNameFragment"
+            app:popUpToInclusive="true"
+            />
 
     </fragment>
 </navigation>
