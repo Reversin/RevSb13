@@ -20,4 +20,5 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="file_name">Имя файла</string>
+    <string name="file_comment">Комментарий к файлу</string>
 </resources>

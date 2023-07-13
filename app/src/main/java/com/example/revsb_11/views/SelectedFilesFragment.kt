@@ -91,7 +91,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
     override fun goToFragmentForChanges(selectedFile: SelectedFile) {
         val action =
             selectedFile.longTermPath?.let {
-                SelectedFilesFragmentDirections.actionSelectedFilesFragmentToChangeFileNameFragment(
+                SelectedFilesFragmentDirections.actionSelectedFilesFragmentToAddFileCommentsFragment(
                     it
                 )
             }

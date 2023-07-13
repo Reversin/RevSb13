@@ -47,12 +47,12 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         appBarConfiguration = AppBarConfiguration.Builder(
             R.id.selectedFilesFragment,
-            R.id.changeFileNameFragment
+            R.id.addFileCommentsFragment
         ).build()
         navController = navHostFragment.navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Проверка текущего фрагмента и добавление кнопки в Toolbar при необходимости
-            if (destination.id == R.id.changeFileNameFragment) {
+            if (destination.id == R.id.addFileCommentsFragment) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
                 // Другие операции, связанные с кнопкой Toolbar
             } else {

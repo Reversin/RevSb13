@@ -20,4 +20,5 @@
     <string name="ok" translatable="false">OK</string>
     <string name="fTitle_name">Selected files</string>
     <string name="file_name">File name</string>
+    <string name="file_comment">File comment</string>
 </resources>

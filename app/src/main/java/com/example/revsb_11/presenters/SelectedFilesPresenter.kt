@@ -25,7 +25,7 @@ class SelectedFilesPresenter(
                     contentResolver, longFileUri
                 )
             }
-            model.saveItem(SelectedFile(filepath, fileSize, longFileUri.toString()))
+            model.saveItem(SelectedFile(longFileUri.toString(), fileSize, longFileUri.toString()))
         }
         val itemsList = model.getItems()
         view.setFileNameTitle(itemsList)

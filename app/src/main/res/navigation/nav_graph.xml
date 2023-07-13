@@ -18,25 +18,26 @@
             app:argType="string" />
 
         <action
-            android:id="@+id/action_SelectedFilesFragment_to_ChangeFileNameFragment"
-            app:destination="@id/changeFileNameFragment">
+            android:id="@+id/action_SelectedFilesFragment_to_AddFileCommentsFragment"
+            app:destination="@id/addFileCommentsFragment">
             <argument
                 android:name="changeFileNameArgument"
                 app:argType="string" />
+
         </action>
 
     </fragment>
     <fragment
-        android:id="@+id/changeFileNameFragment"
-        android:name="com.example.revsb_11.views.ChangeFileNameFragment"
+        android:id="@+id/addFileCommentsFragment"
+        android:name="com.example.revsb_11.views.AddFileCommentsFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/change_file_name_fragment">
+        tools:layout="@layout/add_file_comments_fragment">
         <argument
             android:name="changeFileNameArgument"
             app:argType="string" />
 
         <action
-            android:id="@+id/action_ChangeFileNameFragment_to_SelectedFilesFragment"
+            android:id="@+id/action_AddFileCommentsFragment_to_SelectedFilesFragment"
             app:destination="@id/selectedFilesFragment">
             <argument
                 android:name="selectedFilesFragmentArgument"
@@ -48,7 +49,7 @@
         <action
             android:id="@+id/action_to_selectedFilesFragment"
             app:destination="@id/selectedFilesFragment"
-            app:popUpTo="@id/changeFileNameFragment"
+            app:popUpTo="@id/addFileCommentsFragment"
             app:popUpToInclusive="true"
             />
 

@@ -51,14 +51,13 @@ class WorkingWithFiles {
 
     @SuppressLint("Range")
     fun getFileNameFromUri(contentResolver: ContentResolver, fileUri: Uri): FileName? {
-        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
+        val projection =
+            arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
         val cursor = contentResolver.query(fileUri, projection, null, null, null)
         cursor?.use {
-            if (it.moveToFirst()) {
-                val fileName = it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
-                val format = it.getString(it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
-                return FileName(fileName,format)
-            }
+            val fileName = it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+            val format = it.getString(it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+            return FileName(fileName, format)
         }
         return null
     }
