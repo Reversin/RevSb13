@@ -8,19 +8,20 @@ interface AddFileCommentsContract {
 
     interface View {
         fun setImageInImageView(imageUri: Uri)
-        fun showAlertDialog()
+        fun showConfirmationOfTheChanges()
         fun backToThePreviousFragmentWithChanges(originalFile: String, fileName: String)
         fun disableSaveButton()
         fun enableSaveButton()
         fun setFileNameHint(fileName: String)
+        fun setFileComments(fileComments: String)
         fun processingLinkToFile(fileUri: Uri): FileName?
         fun processingImageFile(fileUri: Uri): Bitmap
     }
 
     interface Presenter {
-        fun onScreenOpened(changeFileNameArgument: String)
+        fun onScreenOpened(addFileCommentsArgument1: String, addFileCommentsArgument2: String)
         fun onSaveButtonClicked()
         fun onConsentSaveButtonClicked(changedFileName: String)
-        fun textHasBeenChanged(editFileNameText: String)
+        fun onTextHasBeenChanged(editFileCommentText: String)
     }
 }

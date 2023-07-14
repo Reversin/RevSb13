@@ -14,7 +14,7 @@ class ItemRecycleAdapter(
     private val onEditButtonClicked: (SelectedFile) -> Unit,
     private val onSwipeToDelete: (SelectedFile) -> Unit
 ) : RecyclerView.Adapter<ItemRecycleAdapter.ItemViewHolder>() {
-    private var items: List<SelectedFile> = emptyList()
+    private var selectedFiles: List<SelectedFile> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypr: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,7 +22,7 @@ class ItemRecycleAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) =
-        holder.bind(items[position])
+        holder.bind(selectedFiles[position])
 
     fun attachSwipeToDelete(recyclerView: RecyclerView) {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
@@ -46,19 +46,19 @@ class ItemRecycleAdapter(
     }
 
     override fun getItemCount(): Int =
-        items.size
+        selectedFiles.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun setItems(items: List<SelectedFile>) {
-        this.items = items
+        this.selectedFiles = items
         notifyDataSetChanged()
     }
 
     fun removeItem(position: Int) {
-        val updatedList = items.toMutableList()
-        onSwipeToDelete(items[position])
+        val updatedList = selectedFiles.toMutableList()
+        onSwipeToDelete(selectedFiles[position])
         updatedList.removeAt(position)
-        items = updatedList
+        selectedFiles = updatedList
         notifyItemRemoved(position)
     }
 
@@ -71,13 +71,16 @@ class ItemRecycleAdapter(
 
         private val fileTextView: TextView = binding.fileTextView
         private val fileSizeTextView: TextView = binding.fileSizeTextView
+        private val fileCommentsTextView:TextView = binding.fileCommentsTextView
         private val editButton: ImageButton = binding.editFileButton
 
-        fun bind(item: SelectedFile) {
-            fileTextView.text = item.filePath
-            fileSizeTextView.text = item.fileSize
+        fun bind(selectedFile: SelectedFile) {
+            fileTextView.text = selectedFile.filePath
+            fileSizeTextView.text = selectedFile.fileSize
+            fileCommentsTextView.text = selectedFile.fileComments
+
             editButton.setOnClickListener {
-                onEditButtonClicked(item)
+                onEditButtonClicked(selectedFile)
             }
         }
     }

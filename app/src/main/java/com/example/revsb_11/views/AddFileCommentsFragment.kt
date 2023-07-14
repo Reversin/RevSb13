@@ -11,14 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
 import com.example.revsb_11.contracts.AddFileCommentsContract
 import com.example.revsb_11.data.FileName
-import com.example.revsb_11.data.SelectedFile
 import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.AddFileCommentsFragmentBinding
 import com.example.revsb_11.presenters.AddFileCommentsPresenter
@@ -33,9 +31,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = AddFileCommentsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,9 +41,12 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         super.onViewCreated(view, savedInstanceState)
 
         initPresenters()
-        changeFileNamePresenter.onScreenOpened(args.changeFileNameArgument)
+        changeFileNamePresenter.onScreenOpened(
+            args.addFileCommentsArgument,
+            args.addFileCommentsArgument2
+        )
         setClickListeners()
-        //editTextListener()
+        editTextListener()
         setTitle()
     }
 
@@ -79,17 +78,14 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     private fun editTextListener() {
 
-        binding.editFileNameText.addTextChangedListener(object : TextWatcher {
+        binding.addFileCommentText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
+                s: CharSequence?, start: Int, count: Int, after: Int
             ) {/*Not used*/
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                changeFileNamePresenter.textHasBeenChanged(binding.editFileNameText.text.toString())
+                changeFileNamePresenter.onTextHasBeenChanged(binding.addFileCommentText.text.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {/*Not used*/
@@ -100,29 +96,22 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
     override fun backToThePreviousFragmentWithChanges(originalFile: String, fileName: String) {
         val action =
             AddFileCommentsFragmentDirections.actionAddFileCommentsFragmentToSelectedFilesFragment(
-                originalFile,
-                fileName
+                originalFile, fileName
             )
         findNavController().navigate(action)
     }
 
-    override fun showAlertDialog() {
+    override fun showConfirmationOfTheChanges() {
         context?.let {
-            AlertDialog.Builder(it)
-                .setTitle(R.string.change_file_name)
-                .setMessage(R.string.alert_message)
-                .setPositiveButton(R.string.yes) { dialog, _ ->
+            AlertDialog.Builder(it).setTitle(R.string.change_file_name)
+                .setMessage(R.string.alert_message).setPositiveButton(R.string.yes) { dialog, _ ->
                     changeFileNamePresenter.onConsentSaveButtonClicked(
-                        binding.editFileNameText.text.toString()
+                        binding.addFileCommentText.text.toString()
                     )
                     dialog.dismiss()
-                }
-                .setNegativeButton(R.string.no) { dialog, _ ->
+                }.setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()
-                }
-                .setCancelable(false)
-                .create()
-                .show()
+                }.setCancelable(false).create().show()
         }
     }
 
@@ -137,11 +126,13 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         binding.fileCommentsInputLayout.hint = fileName
     }
 
+    override fun setFileComments(fileComments: String) {
+        binding.addFileCommentText.setText(fileComments)
+    }
     override fun setImageInImageView(imageUri: Uri) {
-        val bitmap = context?.contentResolver?.openInputStream(imageUri)
-            .use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
-            }
+        val bitmap = context?.contentResolver?.openInputStream(imageUri).use { inputStream ->
+            BitmapFactory.decodeStream(inputStream)
+        }
         binding.imageView.setImageBitmap(bitmap)
     }
 }

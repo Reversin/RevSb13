@@ -1,11 +1,8 @@
 package com.example.revsb_11.presenters
 
 import android.content.ContentResolver
-import android.graphics.BitmapFactory
 import androidx.core.net.toUri
 import com.example.revsb_11.contracts.AddFileCommentsContract
-import com.example.revsb_11.data.FileName
-import com.example.revsb_11.data.WorkingWithFiles
 
 
 class AddFileCommentsPresenter(
@@ -14,12 +11,18 @@ class AddFileCommentsPresenter(
 ) : AddFileCommentsContract.Presenter {
 
     private lateinit var originalFile: String
+    private lateinit var originalFileComment: String
+    private lateinit var newFileComment: String
     private lateinit var fileFormat: String
 
-    override fun onScreenOpened(changeFileNameArgument: String) {
+    override fun onScreenOpened(
+        addFileCommentsArgument1: String,
+        addFileCommentsArgument2: String
+    ) {
         view.disableSaveButton()
-        originalFile = changeFileNameArgument
-        val fileUri = changeFileNameArgument.toUri()
+        originalFile = addFileCommentsArgument1
+        originalFileComment = addFileCommentsArgument2
+        val fileUri = addFileCommentsArgument1.toUri()
 //        fileUri.let { selectedUri ->
 //            val file =
 //                contentResolver?.let { WorkingWithFiles().getFileNameFromUri(it, selectedUri) }
@@ -31,30 +34,29 @@ class AddFileCommentsPresenter(
 //                view.setText(fileName, fileFormat)
 //            }
         val fileName = view.processingLinkToFile(fileUri)
+
         if (fileName != null) {
             view.setFileNameHint(fileName.fileName)
         }
 
         view.setImageInImageView(fileUri)
+        view.setFileComments(originalFileComment)
     }
 
-    override fun textHasBeenChanged(editFileNameText: String) {
-//        if (editFileNameText != originalFileName) {
-//            view.enableSaveButton()
-//        } else {
-//            view.disableSaveButton()
-//        }
+    override fun onTextHasBeenChanged(editFileCommentText: String) {
+        newFileComment = editFileCommentText
+        if (editFileCommentText != originalFileComment) {
+            view.enableSaveButton()
+        } else {
+            view.disableSaveButton()
+        }
     }
 
     override fun onSaveButtonClicked() {
-        view.showAlertDialog()
+        view.showConfirmationOfTheChanges()
     }
 
     override fun onConsentSaveButtonClicked(changedFileName: String) {
-        view.backToThePreviousFragmentWithChanges(originalFile, "$changedFileName,$fileFormat" )
-    }
-
-    companion object {
-        private const val dot = "."
+        view.backToThePreviousFragmentWithChanges(originalFile, changedFileName)
     }
 }

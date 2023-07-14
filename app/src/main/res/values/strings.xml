@@ -4,21 +4,18 @@
     <string name="first_fragment_label">Find file name</string>
     <string name="find_file_name">Find file</string>
     <string name="todo">TODO</string>
-    <string name="tap_to_find_file">Tap to find file</string>
-    <string name="sTitle_name">Change filename</string>
+    <string name="sTitle_name">Commenting out a file</string>
     <string name="rus">RUS</string>
     <string name="eng">ENG</string>
     <string name="click_to_find_file">File selection</string>
     <string name="second_fragment_label">Сhange file</string>
     <string name="delete_all">Delete all</string>
     <string name="save">Save</string>
-    <string name="change_file_name">Filename change</string>
-    <string name="alert_message">Do you want about  to change the file name?</string>
-    <string name="name_is_null">File name cannot be empty</string>
+    <string name="change_file_name">File comment change</string>
+    <string name="alert_message">Do you want to save a comment on a file?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok" translatable="false">OK</string>
     <string name="fTitle_name">Selected files</string>
-    <string name="file_name">File name</string>
     <string name="file_comment">File comment</string>
 </resources>

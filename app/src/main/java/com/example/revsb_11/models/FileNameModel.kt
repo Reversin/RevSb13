@@ -7,6 +7,7 @@ import com.example.revsb_11.contracts.SelectedFilesContract
 import com.example.revsb_11.data.SelectedFile
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.File
 
 
 class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContract.Model {
@@ -19,7 +20,15 @@ class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContrac
 
     override fun saveItem(selectedFile: SelectedFile) {
         val existingFileName = getItems().toMutableList()
-        existingFileName.removeAll { (it.filePath)?.equals(selectedFile.filePath) ?: false }
+
+        existingFileName.forEach { file ->
+            if ((file.filePath).equals(selectedFile.filePath)) {
+                existingFileName.remove(file)
+                existingFileName.add(0, file)
+                saveInModel(existingFileName)
+                return
+            }
+        }
         existingFileName.add(0, selectedFile)
         saveInModel(existingFileName)
     }
@@ -28,7 +37,8 @@ class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContrac
     override fun getItems(): List<SelectedFile> {
         val json = prefs.getString(PREF_KEY_NAME, null)
         val gson = Gson()
-        return gson.fromJson(json, object : TypeToken<List<SelectedFile>>() {}.type) ?: mutableListOf()
+        return gson.fromJson(json, object : TypeToken<List<SelectedFile>>() {}.type)
+            ?: mutableListOf()
     }
 
     override fun deleteItem(selectedFile: SelectedFile) {
@@ -37,12 +47,12 @@ class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContrac
         saveInModel(existingFileName)
     }
 
-override fun deleteChangedFileItem(uri: String, newFileName: String) {
+    override fun deleteChangedFileItem(uri: String, newFileComment: String) {
         val existingFileName = getItems().toMutableList()
-        val oldFileName = existingFileName.find { it.longTermPath ==  uri}
+        val oldFileName = existingFileName.find { it.longTermPath == uri }
         existingFileName.remove(oldFileName)
         if (oldFileName != null) {
-            oldFileName.filePath = newFileName
+            oldFileName.fileComments = newFileComment
             existingFileName.add(0, oldFileName)
         }
         saveInModel(existingFileName)

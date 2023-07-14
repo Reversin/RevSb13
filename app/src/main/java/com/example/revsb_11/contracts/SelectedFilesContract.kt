@@ -20,7 +20,7 @@ interface SelectedFilesContract {
         fun onScreenOpened()
         fun onItemClicked(selectedFile: SelectedFile)
         fun onSwipeDeleteItem(selectedFile: SelectedFile)
-        fun fileNameHasChanged(originalFile: String, newFileName: String)
+        fun fileCommentHasChanged(originalFile: String, newFileName: String)
     }
 
     interface Model {
@@ -28,7 +28,7 @@ interface SelectedFilesContract {
         fun saveItem(selectedFile: SelectedFile)
         fun getItems(): List<SelectedFile>
         fun deleteItem(selectedFile: SelectedFile)
-        fun deleteChangedFileItem(uri: String, newFileName: String)
+        fun deleteChangedFileItem(uri: String, newFileComment: String)
     }
 
 }

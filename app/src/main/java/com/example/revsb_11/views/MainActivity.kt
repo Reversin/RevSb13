@@ -46,8 +46,7 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.selectedFilesFragment,
-            R.id.addFileCommentsFragment
+            R.id.selectedFilesFragment, R.id.addFileCommentsFragment
         ).build()
         navController = navHostFragment.navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -94,7 +93,6 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

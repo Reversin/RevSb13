@@ -67,9 +67,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
             model = FileNameModel(prefs)
         } else {
             Toast.makeText(
-                requireContext().applicationContext,
-                "Вась, мы модель уронили",
-                Toast.LENGTH_SHORT
+                requireContext().applicationContext, "Вась, мы модель уронили", Toast.LENGTH_SHORT
             ).show()
             return
         }
@@ -78,23 +76,24 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
     override fun initAdapterRecycleView(itemsList: List<SelectedFile>) {
         recyclerView = view?.findViewById(R.id.recyclerViewFiles)
         adapter = ItemRecycleAdapter(onEditButtonClicked = { filename ->
-        selectedFilesPresenter.onItemClicked(filename)
+            selectedFilesPresenter.onItemClicked(filename)
         }, onSwipeToDelete = { filename ->
             selectedFilesPresenter.onSwipeDeleteItem(filename)
         })
-    adapter.setItems(itemsList)
+        adapter.setItems(itemsList)
         recyclerView?.let { adapter.attachSwipeToDelete(it) }
         recyclerView?.adapter = adapter
         recyclerView?.layoutManager = LinearLayoutManager(context)
     }
 
     override fun goToFragmentForChanges(selectedFile: SelectedFile) {
-        val action =
-            selectedFile.longTermPath?.let {
+        val action = selectedFile.longTermPath?.let {
+            selectedFile.fileComments?.let { it1 ->
                 SelectedFilesFragmentDirections.actionSelectedFilesFragmentToAddFileCommentsFragment(
-                    it
+                    it, it1
                 )
             }
+        }
         if (action != null) {
             findNavController().navigate(action)
         }
@@ -106,7 +105,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
             if (!argums.isEmpty) {
                 val arg1 = args.selectedFilesFragmentArgument
                 val arg2 = args.selectedFilesFragmentArgument2
-                selectedFilesPresenter.fileNameHasChanged(arg1, arg2)
+                selectedFilesPresenter.fileCommentHasChanged(arg1, arg2)
             }
         }
     }
@@ -121,15 +120,14 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
             selectedFilesPresenter.onFindFileButtonClicked()
         }
     }
+
     private fun setTitle() {
         requireActivity().title = getString(R.string.fTitle_name)
     }
 
-    override fun openFileSelector() =
-        getContent.launch(arrayOf(getString(typeDialog)))
+    override fun openFileSelector() = getContent.launch(arrayOf(getString(typeDialog)))
 
-    override fun setFileNameTitle(itemsList: List<SelectedFile>) =
-        adapter.setItems(itemsList)
+    override fun setFileNameTitle(itemsList: List<SelectedFile>) = adapter.setItems(itemsList)
 
 
     override fun onDestroyView() {
