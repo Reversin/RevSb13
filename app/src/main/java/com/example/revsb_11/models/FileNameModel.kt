@@ -7,7 +7,6 @@ import com.example.revsb_11.contracts.SelectedFilesContract
 import com.example.revsb_11.data.SelectedFile
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.File
 
 
 class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContract.Model {
@@ -18,9 +17,14 @@ class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContrac
         prefs.edit { putString(PREF_KEY_NAME, json) }
     }
 
-    override fun saveItem(selectedFile: SelectedFile) {
+    override fun saveItem(
+        filePath: String?,
+        fileSize: String?,
+        longTermPath: String,
+        fileComments: String
+    ) {
+        val selectedFile = SelectedFile(filePath, fileSize, longTermPath, fileComments)
         val existingFileName = getItems().toMutableList()
-
         existingFileName.forEach { file ->
             if ((file.filePath).equals(selectedFile.filePath)) {
                 existingFileName.remove(file)

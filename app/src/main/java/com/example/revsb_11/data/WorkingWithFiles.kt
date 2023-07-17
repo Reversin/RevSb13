@@ -2,11 +2,19 @@ package com.example.revsb_11.data
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
+import android.content.ContentResolver.MimeTypeInfo
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-
+import android.webkit.MimeTypeMap
+import androidx.core.content.ContextCompat
+import com.example.revsb_11.R
+import java.io.File
 
 
 class WorkingWithFiles {
@@ -51,15 +59,17 @@ class WorkingWithFiles {
 
     @SuppressLint("Range")
     fun getFileNameFromUri(contentResolver: ContentResolver, fileUri: Uri): FileName? {
-        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
+        val projection =
+            arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
         val cursor = contentResolver.query(fileUri, projection, null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
                 val fileName = it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
                 val format = it.getString(it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
-                return FileName(fileName,format)
+                return FileName(fileName, format)
             }
         }
         return null
     }
+
 }

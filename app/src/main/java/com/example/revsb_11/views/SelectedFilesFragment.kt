@@ -2,6 +2,7 @@ package com.example.revsb_11.views
 
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.example.revsb_11.R
 import com.example.revsb_11.adapters.ItemRecycleAdapter
 import com.example.revsb_11.contracts.SelectedFilesContract
 import com.example.revsb_11.data.SelectedFile
+import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.SelectedFilesFragmentBinding
 import com.example.revsb_11.models.FileNameModel
 import com.example.revsb_11.presenters.SelectedFilesPresenter
@@ -37,9 +39,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
 
     private var getContent = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
-    ) {
-        selectedFilesPresenter.fileHasBeenSelected(it, context?.contentResolver)
-    }
+    ) { handleFileUri(it) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -73,14 +73,14 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
         }
     }
 
-    override fun initAdapterRecycleView(itemsList: List<SelectedFile>) {
+    override fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>) {
         recyclerView = view?.findViewById(R.id.recyclerViewFiles)
         adapter = ItemRecycleAdapter(onEditButtonClicked = { filename ->
             selectedFilesPresenter.onItemClicked(filename)
         }, onSwipeToDelete = { filename ->
             selectedFilesPresenter.onSwipeDeleteItem(filename)
         })
-        adapter.setItems(itemsList)
+        adapter.setItems(selectedFilesList)
         recyclerView?.let { adapter.attachSwipeToDelete(it) }
         recyclerView?.adapter = adapter
         recyclerView?.layoutManager = LinearLayoutManager(context)
@@ -127,7 +127,22 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
 
     override fun openFileSelector() = getContent.launch(arrayOf(getString(typeDialog)))
 
-    override fun setFileNameTitle(itemsList: List<SelectedFile>) = adapter.setItems(itemsList)
+    override fun updateFileCommentsList(selectedFilesList: List<SelectedFile>) =
+        adapter.setItems(selectedFilesList)
+
+    private fun handleFileUri(uri: Uri?) {
+        uri?.let { selectedUri ->
+            val contentResolver = context?.contentResolver
+            val longFileUri = WorkingWithFiles().grantUriPermissions(contentResolver, selectedUri)
+            val filepath = selectedUri.path
+            val fileSize = filepath?.let {
+                WorkingWithFiles().filePathHandlingSize(
+                    contentResolver, longFileUri
+                )
+            }
+            selectedFilesPresenter.fileHasBeenSelected(filepath, fileSize, longFileUri.toString(), "")
+        }
+    }
 
 
     override fun onDestroyView() {

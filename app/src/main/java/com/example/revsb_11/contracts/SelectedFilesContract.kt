@@ -9,14 +9,14 @@ import com.example.revsb_11.data.SelectedFile
 interface SelectedFilesContract {
     interface View {
         fun openFileSelector()
-        fun setFileNameTitle(itemsList: List<SelectedFile>)
-        fun initAdapterRecycleView(itemsList: List<SelectedFile>)
+        fun updateFileCommentsList(selectedFilesList: List<SelectedFile>)
+        fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>)
         fun goToFragmentForChanges(selectedFile: SelectedFile)
     }
 
     interface Presenter {
         fun onFindFileButtonClicked()
-        fun fileHasBeenSelected(selectedFile: Uri?, contentResolver: ContentResolver?)
+        fun fileHasBeenSelected(filePath: String?, fileSize: String?, longTermPath: String, fileComments: String)
         fun onScreenOpened()
         fun onItemClicked(selectedFile: SelectedFile)
         fun onSwipeDeleteItem(selectedFile: SelectedFile)
@@ -25,7 +25,7 @@ interface SelectedFilesContract {
 
     interface Model {
         fun saveInModel(data: List<SelectedFile>)
-        fun saveItem(selectedFile: SelectedFile)
+        fun saveItem(filePath: String?, fileSize: String?, longTermPath: String, fileComments: String)
         fun getItems(): List<SelectedFile>
         fun deleteItem(selectedFile: SelectedFile)
         fun deleteChangedFileItem(uri: String, newFileComment: String)

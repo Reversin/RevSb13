@@ -16,28 +16,16 @@ class SelectedFilesPresenter(
     override fun onFindFileButtonClicked() =
         view.openFileSelector()
 
-    override fun fileHasBeenSelected(selectedFile: Uri?, contentResolver: ContentResolver?) {
-        selectedFile?.let { uri ->
-            val longFileUri = WorkingWithFiles().grantUriPermissions(contentResolver, uri)
-            val filepath = uri.path
-            val fileSize = filepath?.let {
-                WorkingWithFiles().filePathHandlingSize(
-                    contentResolver, longFileUri
-                )
-            }
-            model.saveItem(
-                SelectedFile(
-                    filepath,
-                    fileSize,
-                    longFileUri.toString(),
-                    ""
-                )
-            )
-        }
+    override fun fileHasBeenSelected(
+        filePath: String?,
+        fileSize: String?,
+        longTermPath: String,
+        fileComments: String
+    ) {
+        model.saveItem(filePath, fileSize, longTermPath, fileComments)
         val itemsList = model.getItems()
-        view.setFileNameTitle(itemsList)
+        view.updateFileCommentsList(itemsList)
     }
-
 
     override fun onScreenOpened() {
         val itemsList = model.getItems()
@@ -55,7 +43,7 @@ class SelectedFilesPresenter(
     override fun fileCommentHasChanged(originalFile: String, newFileName: String) {
         model.deleteChangedFileItem(originalFile, newFileName)
         val itemsList = model.getItems()
-        view.setFileNameTitle(itemsList)
+        view.updateFileCommentsList(itemsList)
     }
 }
 

@@ -1,7 +1,9 @@
 package com.example.revsb_11.presenters
 
 import android.content.ContentResolver
+import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.core.net.toUri
+import com.example.revsb_11.R
 import com.example.revsb_11.contracts.AddFileCommentsContract
 
 
@@ -14,6 +16,7 @@ class AddFileCommentsPresenter(
     private lateinit var originalFileComment: String
     private lateinit var newFileComment: String
     private lateinit var fileFormat: String
+    private val imageTypePrefix = "image/"
 
     override fun onScreenOpened(
         addFileCommentsArgument1: String,
@@ -23,23 +26,20 @@ class AddFileCommentsPresenter(
         originalFile = addFileCommentsArgument1
         originalFileComment = addFileCommentsArgument2
         val fileUri = addFileCommentsArgument1.toUri()
-//        fileUri.let { selectedUri ->
-//            val file =
-//                contentResolver?.let { WorkingWithFiles().getFileNameFromUri(it, selectedUri) }
-//            fileFormat = ".${file?.fileType?.substringAfter("/")}"
-//            val indexFormat = file?.fileName?.lastIndexOf(dot)
-//            val fileName = indexFormat?.let { file.fileName.substring(0, it) }
-//            if (fileName != null) {
-//                originalFileName = fileName
-//                view.setText(fileName, fileFormat)
-//            }
         val fileName = view.processingLinkToFile(fileUri)
-
         if (fileName != null) {
+            fileFormat = fileName.fileType
             view.setFileNameHint(fileName.fileName)
-        }
 
-        view.setImageInImageView(fileUri)
+            if (fileName.fileType.startsWith(imageTypePrefix)) {
+                val bitmapImage = view.getBitmapImageFromUri(fileUri)
+                view.setBitmapImageInImageView(bitmapImage)
+            } else {
+                // TODO: Для обработки файлов раного формата (Реализовать после MVVM)
+//                val fileIcon = view.getFileIcon(originalFile)
+//                view.setDrawableImageInImageView(fileIcon)
+            }
+        }
         view.setFileComments(originalFileComment)
     }
 
@@ -56,7 +56,6 @@ class AddFileCommentsPresenter(
         view.showConfirmationOfTheChanges()
     }
 
-    override fun onConsentSaveButtonClicked(changedFileName: String) {
-        view.backToThePreviousFragmentWithChanges(originalFile, changedFileName)
-    }
+    override fun onConsentSaveButtonClicked() =
+        view.backToThePreviousFragmentWithChanges(originalFile, newFileComment)
 }

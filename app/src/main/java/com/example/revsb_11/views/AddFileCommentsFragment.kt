@@ -3,6 +3,7 @@ package com.example.revsb_11.views
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -26,7 +27,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     private var _binding: AddFileCommentsFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var changeFileNamePresenter: AddFileCommentsContract.Presenter
+    private lateinit var addFileCommentsPresenter: AddFileCommentsContract.Presenter
     private val args: AddFileCommentsFragmentArgs by navArgs()
 
 
@@ -41,7 +42,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         super.onViewCreated(view, savedInstanceState)
 
         initPresenters()
-        changeFileNamePresenter.onScreenOpened(
+        addFileCommentsPresenter.onScreenOpened(
             args.addFileCommentsArgument,
             args.addFileCommentsArgument2
         )
@@ -53,12 +54,12 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     private fun initPresenters() {
         val contentResolver = context?.contentResolver
-        changeFileNamePresenter = AddFileCommentsPresenter(this, contentResolver)
+        addFileCommentsPresenter = AddFileCommentsPresenter(this, contentResolver)
     }
 
     private fun setClickListeners() {
         binding.savingTheChangedNameButton.setOnClickListener {
-            changeFileNamePresenter.onSaveButtonClicked()
+            addFileCommentsPresenter.onSaveButtonClicked()
         }
     }
 
@@ -85,7 +86,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                changeFileNamePresenter.onTextHasBeenChanged(binding.addFileCommentText.text.toString())
+                addFileCommentsPresenter.onTextHasBeenChanged(binding.addFileCommentText.text.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {/*Not used*/
@@ -105,9 +106,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         context?.let {
             AlertDialog.Builder(it).setTitle(R.string.change_file_name)
                 .setMessage(R.string.alert_message).setPositiveButton(R.string.yes) { dialog, _ ->
-                    changeFileNamePresenter.onConsentSaveButtonClicked(
-                        binding.addFileCommentText.text.toString()
-                    )
+                    addFileCommentsPresenter.onConsentSaveButtonClicked()
                     dialog.dismiss()
                 }.setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()
@@ -126,13 +125,22 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         binding.fileCommentsInputLayout.hint = fileName
     }
 
+//  TODO  override fun getFileIcon(filePath: String): Drawable? =
+//        context?.let { WorkingWithFiles().getFileIcon(it.packageManager, filePath) }
+
+    override fun getBitmapImageFromUri(fileUri: Uri): Bitmap? =
+        context?.contentResolver?.openInputStream(fileUri).use { inputStream ->
+            BitmapFactory.decodeStream(inputStream)
+        }
+
+
     override fun setFileComments(fileComments: String) {
         binding.addFileCommentText.setText(fileComments)
     }
-    override fun setImageInImageView(imageUri: Uri) {
-        val bitmap = context?.contentResolver?.openInputStream(imageUri).use { inputStream ->
-            BitmapFactory.decodeStream(inputStream)
-        }
+
+    override fun setDrawableImageInImageView(drawable: Drawable?) =
+        binding.imageView.setImageDrawable(drawable)
+
+    override fun setBitmapImageInImageView(bitmap: Bitmap?) =
         binding.imageView.setImageBitmap(bitmap)
-    }
 }

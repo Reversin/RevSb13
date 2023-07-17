@@ -38,11 +38,22 @@
                 android:textStyle="bold"
                 android:layout_weight="0.2"
                 tools:text="@tools:sample/lorem/random"/>
-            <TextView
-                android:id="@+id/fileCommentsTextView"
+            <ScrollView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.8"/>
+                android:layout_weight="0.8">
+                <TextView
+                    android:id="@+id/fileCommentsTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollHorizontally="true"
+                    android:maxLines="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    tools:text="@tools:sample/lorem/random"/>
+            </ScrollView>
+
 
         </LinearLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
