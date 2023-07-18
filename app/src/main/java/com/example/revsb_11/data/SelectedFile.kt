@@ -9,7 +9,7 @@ package com.example.revsb_11.data
 data class SelectedFile(
     var filePath: String?,
     val fileSize: String?,
-    val longTermPath: String?,
-    var fileComments: String?
+    val longTermPath: String,
+    var fileComments: String
 )
 

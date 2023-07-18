@@ -10,15 +10,14 @@ interface AddFileCommentsContract {
     interface View {
         fun setBitmapImageInImageView(bitmap: Bitmap?)
         fun setDrawableImageInImageView(drawable: Drawable?)
-        fun showConfirmationOfTheChanges()
-        fun backToThePreviousFragmentWithChanges(originalFile: String, fileName: String)
+        fun showConfirmationOfTheChangesDialog()
+        fun backToThePreviousFragmentWithChanges()
         fun disableSaveButton()
         fun enableSaveButton()
-        fun setFileNameHint(fileName: String)
-        fun setFileComments(fileComments: String)
+        fun setFileNameHint(fileName: String?)
+        fun setFileComment(fileComments: String)
         fun processingLinkToFile(fileUri: Uri): FileName?
         fun processingImageFile(fileUri: Uri): Bitmap
-//      TODO  fun getFileIcon(filePath: String): Drawable?
         fun getBitmapImageFromUri(fileUri: Uri): Bitmap?
     }
 

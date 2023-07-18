@@ -1,9 +1,7 @@
 package com.example.revsb_11.presenters
 
 import android.content.ContentResolver
-import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.core.net.toUri
-import com.example.revsb_11.R
 import com.example.revsb_11.contracts.AddFileCommentsContract
 
 
@@ -29,18 +27,18 @@ class AddFileCommentsPresenter(
         val fileName = view.processingLinkToFile(fileUri)
         if (fileName != null) {
             fileFormat = fileName.fileType
-            view.setFileNameHint(fileName.fileName)
+            //view.setFileNameHint(originalFile.originalFile)
 
             if (fileName.fileType.startsWith(imageTypePrefix)) {
                 val bitmapImage = view.getBitmapImageFromUri(fileUri)
                 view.setBitmapImageInImageView(bitmapImage)
             } else {
-                // TODO: Для обработки файлов раного формата (Реализовать после MVVM)
+                // TODO: Для обработки файлов разного формата (Реализовать после MVVM)
 //                val fileIcon = view.getFileIcon(originalFile)
 //                view.setDrawableImageInImageView(fileIcon)
             }
         }
-        view.setFileComments(originalFileComment)
+        //view.setFileComment(originalFileComment)
     }
 
     override fun onTextHasBeenChanged(editFileCommentText: String) {
@@ -53,9 +51,9 @@ class AddFileCommentsPresenter(
     }
 
     override fun onSaveButtonClicked() {
-        view.showConfirmationOfTheChanges()
+        view.showConfirmationOfTheChangesDialog()
     }
 
     override fun onConsentSaveButtonClicked() =
-        view.backToThePreviousFragmentWithChanges(originalFile, newFileComment)
+        view.backToThePreviousFragmentWithChanges()
 }

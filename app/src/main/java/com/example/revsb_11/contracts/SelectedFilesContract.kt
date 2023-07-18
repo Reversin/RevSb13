@@ -25,10 +25,10 @@ interface SelectedFilesContract {
 
     interface Model {
         fun saveInModel(data: List<SelectedFile>)
-        fun saveItem(filePath: String?, fileSize: String?, longTermPath: String, fileComments: String)
-        fun getItems(): List<SelectedFile>
-        fun deleteItem(selectedFile: SelectedFile)
-        fun deleteChangedFileItem(uri: String, newFileComment: String)
+        fun saveSelectedFile(filePath: String?, fileSize: String?, longTermPath: String, fileComments: String)
+        fun getSelectedFiles(): List<SelectedFile>
+        fun deleteSelectedFile(selectedFile: SelectedFile)
+        fun deleteChangedFile(uri: String, newFileComment: String)
     }
 
 }

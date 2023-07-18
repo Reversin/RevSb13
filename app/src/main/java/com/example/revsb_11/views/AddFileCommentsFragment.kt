@@ -12,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
@@ -21,6 +23,7 @@ import com.example.revsb_11.data.FileName
 import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.AddFileCommentsFragmentBinding
 import com.example.revsb_11.presenters.AddFileCommentsPresenter
+import com.example.revsb_11.viewmodels.AddFileCommentsViewModel
 
 
 class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
@@ -29,7 +32,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
     private val binding get() = _binding!!
     private lateinit var addFileCommentsPresenter: AddFileCommentsContract.Presenter
     private val args: AddFileCommentsFragmentArgs by navArgs()
-
+    private val viewModel: AddFileCommentsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -40,7 +43,10 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // TODO
+        changingValuesListeners()
+        onScreenOpened()
+        // TODO
         initPresenters()
         addFileCommentsPresenter.onScreenOpened(
             args.addFileCommentsArgument,
@@ -51,6 +57,35 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         setTitle()
     }
 
+    private fun changingValuesListeners() {
+        viewModel.originalFile.observe(viewLifecycleOwner) { filePath ->
+            val fileName = context?.let {
+                WorkingWithFiles().getFileNameFromUri(
+                    it.contentResolver,
+                    filePath.toUri()
+                )?.fileName
+            }
+            setFileNameHint(fileName)
+        }
+        viewModel.fileComment.observe(viewLifecycleOwner) { fileComment ->
+            setFileComment(fileComment)
+        }
+        viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isButtonEnabled ->
+            if (isButtonEnabled) enableSaveButton()
+            else disableSaveButton()
+        }
+        viewModel.showConfirmationDialog.observe(viewLifecycleOwner) {
+            showConfirmationOfTheChangesDialog()
+        }
+        viewModel.saveChangedComment.observe(viewLifecycleOwner){
+            backToThePreviousFragmentWithChanges()
+        }
+    }
+
+    private fun onScreenOpened() {
+        viewModel.processFirstArgument(args.addFileCommentsArgument)
+        viewModel.processSecondArgument(args.addFileCommentsArgument2)
+    }
 
     private fun initPresenters() {
         val contentResolver = context?.contentResolver
@@ -59,7 +94,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     private fun setClickListeners() {
         binding.savingTheChangedNameButton.setOnClickListener {
-            addFileCommentsPresenter.onSaveButtonClicked()
+            viewModel.onSaveButtonClicked()
         }
     }
 
@@ -86,7 +121,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                addFileCommentsPresenter.onTextHasBeenChanged(binding.addFileCommentText.text.toString())
+                viewModel.onTextHasBeenChanged(binding.addFileCommentText.text.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {/*Not used*/
@@ -94,19 +129,19 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         })
     }
 
-    override fun backToThePreviousFragmentWithChanges(originalFile: String, fileName: String) {
+    override fun backToThePreviousFragmentWithChanges() {
         val action =
             AddFileCommentsFragmentDirections.actionAddFileCommentsFragmentToSelectedFilesFragment(
-                originalFile, fileName
+                args.addFileCommentsArgument, binding.addFileCommentText.text.toString()
             )
         findNavController().navigate(action)
     }
 
-    override fun showConfirmationOfTheChanges() {
+    override fun showConfirmationOfTheChangesDialog() {
         context?.let {
             AlertDialog.Builder(it).setTitle(R.string.change_file_name)
                 .setMessage(R.string.alert_message).setPositiveButton(R.string.yes) { dialog, _ ->
-                    addFileCommentsPresenter.onConsentSaveButtonClicked()
+                    viewModel.onConsentSaveButtonClicked()
                     dialog.dismiss()
                 }.setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()
@@ -121,12 +156,9 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         context?.contentResolver?.openInputStream(fileUri)
             .use { inputStream -> BitmapFactory.decodeStream(inputStream) }
 
-    override fun setFileNameHint(fileName: String) {
+    override fun setFileNameHint(fileName: String?) {
         binding.fileCommentsInputLayout.hint = fileName
     }
-
-//  TODO  override fun getFileIcon(filePath: String): Drawable? =
-//        context?.let { WorkingWithFiles().getFileIcon(it.packageManager, filePath) }
 
     override fun getBitmapImageFromUri(fileUri: Uri): Bitmap? =
         context?.contentResolver?.openInputStream(fileUri).use { inputStream ->
@@ -134,7 +166,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         }
 
 
-    override fun setFileComments(fileComments: String) {
+    override fun setFileComment(fileComments: String) {
         binding.addFileCommentText.setText(fileComments)
     }
 

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -87,16 +88,11 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
     }
 
     override fun goToFragmentForChanges(selectedFile: SelectedFile) {
-        val action = selectedFile.longTermPath?.let {
-            selectedFile.fileComments?.let { it1 ->
-                SelectedFilesFragmentDirections.actionSelectedFilesFragmentToAddFileCommentsFragment(
-                    it, it1
-                )
-            }
-        }
-        if (action != null) {
-            findNavController().navigate(action)
-        }
+        val action =
+            SelectedFilesFragmentDirections.actionSelectedFilesFragmentToAddFileCommentsFragment(
+                selectedFile.longTermPath, selectedFile.fileComments
+            )
+        findNavController().navigate(action)
     }
 
     private fun navigationListener() {
@@ -140,7 +136,12 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
                     contentResolver, longFileUri
                 )
             }
-            selectedFilesPresenter.fileHasBeenSelected(filepath, fileSize, longFileUri.toString(), "")
+            selectedFilesPresenter.fileHasBeenSelected(
+                filepath,
+                fileSize,
+                longFileUri.toString(),
+                ""
+            )
         }
     }
 

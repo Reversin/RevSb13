@@ -1,10 +1,7 @@
 package com.example.revsb_11.presenters
 
-import android.content.ContentResolver
-import android.net.Uri
 import com.example.revsb_11.contracts.SelectedFilesContract
 import com.example.revsb_11.data.SelectedFile
-import com.example.revsb_11.data.WorkingWithFiles
 
 
 class SelectedFilesPresenter(
@@ -22,14 +19,14 @@ class SelectedFilesPresenter(
         longTermPath: String,
         fileComments: String
     ) {
-        model.saveItem(filePath, fileSize, longTermPath, fileComments)
-        val itemsList = model.getItems()
-        view.updateFileCommentsList(itemsList)
+        model.saveSelectedFile(filePath, fileSize, longTermPath, fileComments)
+        val selectedFilesList = model.getSelectedFiles()
+        view.updateFileCommentsList(selectedFilesList)
     }
 
     override fun onScreenOpened() {
-        val itemsList = model.getItems()
-        view.initAdapterRecycleView(itemsList)
+        val selectedFilesList = model.getSelectedFiles()
+        view.initAdapterRecycleView(selectedFilesList)
     }
 
     override fun onItemClicked(selectedFile: SelectedFile) {
@@ -37,13 +34,13 @@ class SelectedFilesPresenter(
     }
 
     override fun onSwipeDeleteItem(selectedFile: SelectedFile) {
-        model.deleteItem(selectedFile)
+        model.deleteSelectedFile(selectedFile)
     }
 
     override fun fileCommentHasChanged(originalFile: String, newFileName: String) {
-        model.deleteChangedFileItem(originalFile, newFileName)
-        val itemsList = model.getItems()
-        view.updateFileCommentsList(itemsList)
+        model.deleteChangedFile(originalFile, newFileName)
+        val selectedFilesList = model.getSelectedFiles()
+        view.updateFileCommentsList(selectedFilesList)
     }
 }
 

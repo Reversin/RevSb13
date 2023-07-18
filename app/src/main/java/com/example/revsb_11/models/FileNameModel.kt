@@ -17,14 +17,14 @@ class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContrac
         prefs.edit { putString(PREF_KEY_NAME, json) }
     }
 
-    override fun saveItem(
+    override fun saveSelectedFile(
         filePath: String?,
         fileSize: String?,
         longTermPath: String,
         fileComments: String
     ) {
         val selectedFile = SelectedFile(filePath, fileSize, longTermPath, fileComments)
-        val existingFileName = getItems().toMutableList()
+        val existingFileName = getSelectedFiles().toMutableList()
         existingFileName.forEach { file ->
             if ((file.filePath).equals(selectedFile.filePath)) {
                 existingFileName.remove(file)
@@ -38,21 +38,21 @@ class FileNameModel(private val prefs: SharedPreferences) : SelectedFilesContrac
     }
 
 
-    override fun getItems(): List<SelectedFile> {
+    override fun getSelectedFiles(): List<SelectedFile> {
         val json = prefs.getString(PREF_KEY_NAME, null)
         val gson = Gson()
         return gson.fromJson(json, object : TypeToken<List<SelectedFile>>() {}.type)
             ?: mutableListOf()
     }
 
-    override fun deleteItem(selectedFile: SelectedFile) {
-        val existingFileName = getItems().toMutableList()
+    override fun deleteSelectedFile(selectedFile: SelectedFile) {
+        val existingFileName = getSelectedFiles().toMutableList()
         existingFileName.remove(selectedFile)
         saveInModel(existingFileName)
     }
 
-    override fun deleteChangedFileItem(uri: String, newFileComment: String) {
-        val existingFileName = getItems().toMutableList()
+    override fun deleteChangedFile(uri: String, newFileComment: String) {
+        val existingFileName = getSelectedFiles().toMutableList()
         val oldFileName = existingFileName.find { it.longTermPath == uri }
         existingFileName.remove(oldFileName)
         if (oldFileName != null) {
