@@ -19,10 +19,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
 import com.example.revsb_11.contracts.AddFileCommentsContract
-import com.example.revsb_11.data.FileName
 import com.example.revsb_11.data.WorkingWithFiles
 import com.example.revsb_11.databinding.AddFileCommentsFragmentBinding
-import com.example.revsb_11.presenters.AddFileCommentsPresenter
 import com.example.revsb_11.viewmodels.AddFileCommentsViewModel
 
 
@@ -30,7 +28,6 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     private var _binding: AddFileCommentsFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var addFileCommentsPresenter: AddFileCommentsContract.Presenter
     private val args: AddFileCommentsFragmentArgs by navArgs()
     private val viewModel: AddFileCommentsViewModel by viewModels()
 
@@ -43,15 +40,8 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO
         changingValuesListeners()
         onScreenOpened()
-        // TODO
-        initPresenters()
-        addFileCommentsPresenter.onScreenOpened(
-            args.addFileCommentsArgument,
-            args.addFileCommentsArgument2
-        )
         setClickListeners()
         editTextListener()
         setTitle()
@@ -63,12 +53,17 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
                 WorkingWithFiles().getFileNameFromUri(
                     it.contentResolver,
                     filePath.toUri()
-                )?.fileName
+                )
             }
             setFileNameHint(fileName)
+            viewModel.saveFileImage(getBitmapImageFromUri(filePath.toUri()))
+
         }
         viewModel.fileComment.observe(viewLifecycleOwner) { fileComment ->
             setFileComment(fileComment)
+        }
+        viewModel.fileImage.observe(viewLifecycleOwner) { fileImage ->
+            setBitmapImageInImageView(fileImage)
         }
         viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isButtonEnabled ->
             if (isButtonEnabled) enableSaveButton()
@@ -77,7 +72,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         viewModel.showConfirmationDialog.observe(viewLifecycleOwner) {
             showConfirmationOfTheChangesDialog()
         }
-        viewModel.saveChangedComment.observe(viewLifecycleOwner){
+        viewModel.saveChangedComment.observe(viewLifecycleOwner) {
             backToThePreviousFragmentWithChanges()
         }
     }
@@ -85,11 +80,6 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
     private fun onScreenOpened() {
         viewModel.processFirstArgument(args.addFileCommentsArgument)
         viewModel.processSecondArgument(args.addFileCommentsArgument2)
-    }
-
-    private fun initPresenters() {
-        val contentResolver = context?.contentResolver
-        addFileCommentsPresenter = AddFileCommentsPresenter(this, contentResolver)
     }
 
     private fun setClickListeners() {
@@ -149,7 +139,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         }
     }
 
-    override fun processingLinkToFile(fileUri: Uri): FileName? =
+    override fun processingLinkToFile(fileUri: Uri): String? =
         context?.let { WorkingWithFiles().getFileNameFromUri(it.contentResolver, fileUri) }
 
     override fun processingImageFile(fileUri: Uri): Bitmap =
@@ -160,7 +150,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
         binding.fileCommentsInputLayout.hint = fileName
     }
 
-    override fun getBitmapImageFromUri(fileUri: Uri): Bitmap? =
+    override fun getBitmapImageFromUri(fileUri: Uri): Bitmap =
         context?.contentResolver?.openInputStream(fileUri).use { inputStream ->
             BitmapFactory.decodeStream(inputStream)
         }

@@ -1,20 +1,19 @@
-package com.example.revsb_11.adapters
-
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.revsb_11.adapters.SelectedFilesDiffCallback
 import com.example.revsb_11.data.SelectedFile
 import com.example.revsb_11.databinding.ItemLayoutBinding
 
 class ItemRecycleAdapter(
     private val onEditButtonClicked: (SelectedFile) -> Unit,
     private val onSwipeToDelete: (SelectedFile) -> Unit
-) : RecyclerView.Adapter<ItemRecycleAdapter.ItemViewHolder>() {
-    private var selectedFiles: List<SelectedFile> = emptyList()
+) : ListAdapter<SelectedFile, ItemRecycleAdapter.ItemViewHolder>(SelectedFilesDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypr: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,7 +21,7 @@ class ItemRecycleAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) =
-        holder.bind(selectedFiles[position])
+        holder.bind(getItem(position))
 
     fun attachSwipeToDelete(recyclerView: RecyclerView) {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
@@ -45,21 +44,12 @@ class ItemRecycleAdapter(
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    override fun getItemCount(): Int =
-        selectedFiles.size
-
     @SuppressLint("NotifyDataSetChanged")
-    fun setItems(items: List<SelectedFile>) {
-        this.selectedFiles = items
-        notifyDataSetChanged()
-    }
-
     fun removeItem(position: Int) {
-        val updatedList = selectedFiles.toMutableList()
-        onSwipeToDelete(selectedFiles[position])
+        val updatedList = currentList.toMutableList()
+        onSwipeToDelete(currentList[position])
         updatedList.removeAt(position)
-        selectedFiles = updatedList
-        notifyItemRemoved(position)
+        submitList(updatedList)
     }
 
 
@@ -71,14 +61,13 @@ class ItemRecycleAdapter(
 
         private val fileTextView: TextView = binding.fileTextView
         private val fileSizeTextView: TextView = binding.fileSizeTextView
-        private val fileCommentsTextView:TextView = binding.fileCommentsTextView
+        private val fileCommentsTextView: TextView = binding.fileCommentsTextView
         private val editButton: ImageButton = binding.editFileButton
 
         fun bind(selectedFile: SelectedFile) {
             fileTextView.text = selectedFile.filePath
             fileSizeTextView.text = selectedFile.fileSize
             fileCommentsTextView.text = selectedFile.fileComments
-
             editButton.setOnClickListener {
                 onEditButtonClicked(selectedFile)
             }

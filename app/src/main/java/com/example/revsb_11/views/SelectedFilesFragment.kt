@@ -1,6 +1,7 @@
 package com.example.revsb_11.views
 
 
+import ItemRecycleAdapter
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -9,14 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.R
-import com.example.revsb_11.adapters.ItemRecycleAdapter
 import com.example.revsb_11.contracts.SelectedFilesContract
 import com.example.revsb_11.data.SelectedFile
 import com.example.revsb_11.data.WorkingWithFiles
@@ -81,7 +80,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
         }, onSwipeToDelete = { filename ->
             selectedFilesPresenter.onSwipeDeleteItem(filename)
         })
-        adapter.setItems(selectedFilesList)
+        adapter.submitList(selectedFilesList)
         recyclerView?.let { adapter.attachSwipeToDelete(it) }
         recyclerView?.adapter = adapter
         recyclerView?.layoutManager = LinearLayoutManager(context)
@@ -124,7 +123,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
     override fun openFileSelector() = getContent.launch(arrayOf(getString(typeDialog)))
 
     override fun updateFileCommentsList(selectedFilesList: List<SelectedFile>) =
-        adapter.setItems(selectedFilesList)
+        adapter.submitList(selectedFilesList)
 
     private fun handleFileUri(uri: Uri?) {
         uri?.let { selectedUri ->

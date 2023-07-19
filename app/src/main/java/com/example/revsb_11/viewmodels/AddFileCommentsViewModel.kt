@@ -1,13 +1,14 @@
 package com.example.revsb_11.viewmodels
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.NavHostFragment.Companion
-import com.example.revsb_11.views.AddFileCommentsFragmentDirections
+import com.example.revsb_11.contracts.AddFileCommentsContract
 
-class AddFileCommentsViewModel : ViewModel() {
+class AddFileCommentsViewModel : ViewModel(), AddFileCommentsContract.ViewModel {
     private val _originalFile = MutableLiveData<String>()
+    private val _fileImage = MutableLiveData<Bitmap>()
     private val _fileComment = MutableLiveData<String>()
     private val _changedComment = MutableLiveData<String>()
     private val _isButtonEnabled = MutableLiveData<Boolean>()
@@ -16,6 +17,8 @@ class AddFileCommentsViewModel : ViewModel() {
 
     val originalFile: LiveData<String>
         get() = _originalFile
+    val fileImage: LiveData<Bitmap>
+        get() = _fileImage
     val fileComment: LiveData<String>
         get() = _fileComment
     val isButtonEnabled: LiveData<Boolean>
@@ -26,15 +29,19 @@ class AddFileCommentsViewModel : ViewModel() {
         get() = _saveChangedComment
 
 
-    fun processFirstArgument(fileName: String) {
+    override fun processFirstArgument(fileName: String) {
         _originalFile.value = fileName
     }
 
-    fun processSecondArgument(fileComment: String) {
+    override fun processSecondArgument(fileComment: String) {
         _fileComment.value = fileComment
     }
 
-    fun onTextHasBeenChanged(changedComment: String) {
+    override fun saveFileImage(fileImage: Bitmap) {
+        _fileImage.value = fileImage
+    }
+
+    override fun onTextHasBeenChanged(changedComment: String) {
         if (changedComment != _fileComment.value) {
             _isButtonEnabled.value = true
             _changedComment.value = changedComment
@@ -43,11 +50,13 @@ class AddFileCommentsViewModel : ViewModel() {
         }
     }
 
-    fun onSaveButtonClicked() {
+    override fun onSaveButtonClicked() {
         _showConfirmationDialog.value = true
     }
 
-    fun onConsentSaveButtonClicked() {
+    override fun onConsentSaveButtonClicked() {
         _saveChangedComment.value = true
     }
+
+
 }

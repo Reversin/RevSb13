@@ -3,7 +3,6 @@ package com.example.revsb_11.contracts
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import com.example.revsb_11.data.FileName
 
 interface AddFileCommentsContract {
 
@@ -16,15 +15,17 @@ interface AddFileCommentsContract {
         fun enableSaveButton()
         fun setFileNameHint(fileName: String?)
         fun setFileComment(fileComments: String)
-        fun processingLinkToFile(fileUri: Uri): FileName?
+        fun processingLinkToFile(fileUri: Uri): String?
         fun processingImageFile(fileUri: Uri): Bitmap
         fun getBitmapImageFromUri(fileUri: Uri): Bitmap?
     }
 
-    interface Presenter {
-        fun onScreenOpened(addFileCommentsArgument1: String, addFileCommentsArgument2: String)
+    interface ViewModel {
+        fun processFirstArgument(fileName: String)
+        fun processSecondArgument(fileComment: String)
+        fun saveFileImage(fileImage: Bitmap)
+        fun onTextHasBeenChanged(changedComment: String)
         fun onSaveButtonClicked()
         fun onConsentSaveButtonClicked()
-        fun onTextHasBeenChanged(editFileCommentText: String)
     }
 }
