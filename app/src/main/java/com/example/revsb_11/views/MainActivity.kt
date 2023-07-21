@@ -3,6 +3,8 @@ package com.example.revsb_11.views
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -11,21 +13,21 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.example.revsb_11.contracts.FoundationContract
-import com.example.revsb_11.presenters.FoundationPresenter
 import com.example.revsb_11.R
 import com.example.revsb_11.databinding.ActivityMainBinding
+import com.example.revsb_11.viewmodels.FoundationViewModel
 
 
-class MainActivity : AppCompatActivity(), FoundationContract.View {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var presenter: FoundationContract.Presenter
     private lateinit var menu: Menu
-    private val en = R.string.en
-    private val ru = R.string.ru
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var alertDialog: AlertDialog
+    private val en = R.string.en
+    private val ru = R.string.ru
+    private val viewModel: FoundationViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,13 +35,8 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        initPresenter()
         initNavListener()
-
-    }
-
-    private fun initPresenter() {
-        presenter = FoundationPresenter(this)
+        changingValuesListeners()
     }
 
     private fun initNavListener() {
@@ -50,17 +47,49 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         ).build()
         navController = navHostFragment.navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            // Проверка текущего фрагмента и добавление кнопки в Toolbar при необходимости
             if (destination.id == R.id.addFileCommentsFragment) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                // Другие операции, связанные с кнопкой Toolbar
             } else {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                // Другие операции, связанные с кнопкой Toolbar
             }
         }
+    }
+
+    private fun changingValuesListeners() {
+        viewModel.confirmationBeforeReturning.observe(this) { confirmationBeforeReturning ->
+            if (confirmationBeforeReturning) {
+                backToThePreviousFragment()
+            }
+            dismissAlertDialog()
+        }
+        viewModel.localizationIndex.observe(this) { localizationIndex ->
+            changeLocalization(localizationIndex)
+        }
+        viewModel.onNavigateUpArrowClicked.observe(this) {
+            showConfirmationOfTheChangesDialog()
+        }
+    }
+
+    private fun dismissAlertDialog() =
+        alertDialog.dismiss()
+
+    private fun backToThePreviousFragment() =
+        navController.navigateUp()
+
+
+    private fun showConfirmationOfTheChangesDialog() {
+        alertDialog = AlertDialog.Builder(this).setTitle(R.string.change_file_name)
+            .setMessage(R.string.exit_without_saving).setPositiveButton(R.string.yes) { dialog, _ ->
+                viewModel.onBackToPreviousFragmentClicked(true)
+                dialog.dismiss()
+            }.setNegativeButton(R.string.no) { dialog, _ ->
+                viewModel.onBackToPreviousFragmentClicked(false)
+                dialog.dismiss()
+            }.setCancelable(false).create()
+        alertDialog.show()
 
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         this.menu = menu
@@ -70,13 +99,18 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
 
     override fun onOptionsItemSelected(filename: MenuItem): Boolean {
         return when (filename.itemId) {
+            android.R.id.home -> {
+                viewModel.onNavigateUpArrowClicked()
+                true
+            }
+
             R.id.engLang -> {
-                presenter.onOptionLangSelected(en)
+                viewModel.onOptionLangSelected(en)
                 true
             }
 
             R.id.rusLang -> {
-                presenter.onOptionLangSelected(ru)
+                viewModel.onOptionLangSelected(ru)
                 true
             }
 
@@ -87,7 +121,7 @@ class MainActivity : AppCompatActivity(), FoundationContract.View {
         }
     }
 
-    override fun setLang(langKey: Int) {
+    fun changeLocalization(langKey: Int) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(getString(langKey)))
     }
 

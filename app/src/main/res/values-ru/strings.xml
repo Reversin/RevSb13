@@ -6,11 +6,10 @@
     <string name="find_file_name">Поиск файла</string>
     <string name="todo">TODO</string>
     <string name="fTitle_name">Выбранные файлы</string>
-    <string name="sTitle_name">Комментирование файла</string>
+    <string name="commentTitle_name">Комментирование файла</string>
     <string name="rus">РУС</string>
     <string name="eng">АНГЛ</string>
     <string name="click_to_find_file">Выбор файла</string>
-    <string name="second_fragment_label">изменить файл</string>
     <string name="delete_all">Удалить всё</string>
     <string name="save">Сохранить</string>
     <string name="change_file_name">Изменение комментария файла</string>
@@ -18,4 +17,5 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="file_comment">Комментарий к файлу</string>
+    <string name="exit_without_saving">"Вернуться без сохранения изменений? "</string>
 </resources>

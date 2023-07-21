@@ -41,6 +41,7 @@ class AddFileCommentsViewModel : ViewModel(), AddFileCommentsContract.ViewModel 
         _fileImage.value = fileImage
     }
 
+
     override fun onTextHasBeenChanged(changedComment: String) {
         if (changedComment != _fileComment.value) {
             _isButtonEnabled.value = true

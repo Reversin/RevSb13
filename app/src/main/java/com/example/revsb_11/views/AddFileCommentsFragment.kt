@@ -89,7 +89,7 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
     }
 
     private fun setTitle() {
-        requireActivity().title = activity?.getString(R.string.sTitle_name)
+        requireActivity().title = activity?.getString(R.string.commentTitle_name)
     }
 
     override fun disableSaveButton() {
@@ -103,7 +103,6 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
     }
 
     private fun editTextListener() {
-
         binding.addFileCommentText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
                 s: CharSequence?, start: Int, count: Int, after: Int
@@ -141,10 +140,6 @@ class AddFileCommentsFragment : Fragment(), AddFileCommentsContract.View {
 
     override fun processingLinkToFile(fileUri: Uri): String? =
         context?.let { WorkingWithFiles().getFileNameFromUri(it.contentResolver, fileUri) }
-
-    override fun processingImageFile(fileUri: Uri): Bitmap =
-        context?.contentResolver?.openInputStream(fileUri)
-            .use { inputStream -> BitmapFactory.decodeStream(inputStream) }
 
     override fun setFileNameHint(fileName: String?) {
         binding.fileCommentsInputLayout.hint = fileName

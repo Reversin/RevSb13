@@ -44,8 +44,7 @@ class ItemRecycleAdapter(
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun removeItem(position: Int) {
+    private fun removeItem(position: Int) {
         val updatedList = currentList.toMutableList()
         onSwipeToDelete(currentList[position])
         updatedList.removeAt(position)

@@ -16,7 +16,6 @@ interface AddFileCommentsContract {
         fun setFileNameHint(fileName: String?)
         fun setFileComment(fileComments: String)
         fun processingLinkToFile(fileUri: Uri): String?
-        fun processingImageFile(fileUri: Uri): Bitmap
         fun getBitmapImageFromUri(fileUri: Uri): Bitmap?
     }
 

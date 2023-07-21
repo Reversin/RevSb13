@@ -4,11 +4,10 @@
     <string name="first_fragment_label">Find file name</string>
     <string name="find_file_name">Find file</string>
     <string name="todo">TODO</string>
-    <string name="sTitle_name">Commenting out a file</string>
+    <string name="commentTitle_name">Commenting out a file</string>
     <string name="rus">RUS</string>
     <string name="eng">ENG</string>
-    <string name="click_to_find_file">File selection</string>
-    <string name="second_fragment_label">Сhange file</string>
+    <string name="click_to_find_file">Select a file</string>
     <string name="delete_all">Delete all</string>
     <string name="save">Save</string>
     <string name="change_file_name">File comment change</string>
@@ -18,4 +17,5 @@
     <string name="ok" translatable="false">OK</string>
     <string name="fTitle_name">Selected files</string>
     <string name="file_comment">File comment</string>
+    <string name="exit_without_saving">Return without saving changes?</string>
 </resources>

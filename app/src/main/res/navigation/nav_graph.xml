@@ -33,7 +33,7 @@
     <fragment
         android:id="@+id/addFileCommentsFragment"
         android:name="com.example.revsb_11.views.AddFileCommentsFragment"
-        android:label="@string/second_fragment_label"
+        android:label="@string/commentTitle_name"
         tools:layout="@layout/add_file_comments_fragment">
         <argument
             android:name="addFileCommentsArgument"
@@ -56,8 +56,7 @@
             android:id="@+id/action_to_selectedFilesFragment"
             app:destination="@id/selectedFilesFragment"
             app:popUpTo="@id/addFileCommentsFragment"
-            app:popUpToInclusive="true"
-            />
+            app:popUpToInclusive="true" />
 
     </fragment>
 </navigation>
