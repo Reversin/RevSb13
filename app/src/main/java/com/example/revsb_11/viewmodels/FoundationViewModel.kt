@@ -3,18 +3,17 @@ package com.example.revsb_11.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import javax.crypto.KeyAgreement
 
 class FoundationViewModel: ViewModel() {
     private val _confirmationBeforeReturning = MutableLiveData<Boolean>()
     private val _onNavigateUpArrowClicked = MutableLiveData<Boolean>()
     private val _localizationIndex = MutableLiveData<Int>()
 
-    val onNavigateUpArrowClicked: LiveData<Boolean>
+    val onNavigateUpArrowClickedLiveData: LiveData<Boolean>
             get() = _onNavigateUpArrowClicked
-    val confirmationBeforeReturning: LiveData<Boolean>
+    val confirmationBeforeReturningLiveData: LiveData<Boolean>
         get() = _confirmationBeforeReturning
-    val localizationIndex: LiveData<Int>
+    val localizationIndexLiveData: LiveData<Int>
         get() = _localizationIndex
 
 

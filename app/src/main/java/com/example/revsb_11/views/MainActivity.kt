@@ -56,25 +56,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changingValuesListeners() {
-        viewModel.confirmationBeforeReturning.observe(this) { confirmationBeforeReturning ->
+        viewModel.confirmationBeforeReturningLiveData.observe(this) { confirmationBeforeReturning ->
             if (confirmationBeforeReturning) {
                 backToThePreviousFragment()
             }
             dismissAlertDialog()
         }
-        viewModel.localizationIndex.observe(this) { localizationIndex ->
+        viewModel.localizationIndexLiveData.observe(this) { localizationIndex ->
             changeLocalization(localizationIndex)
         }
-        viewModel.onNavigateUpArrowClicked.observe(this) {
+        viewModel.onNavigateUpArrowClickedLiveData.observe(this) {
             showConfirmationOfTheChangesDialog()
         }
     }
 
-    private fun dismissAlertDialog() =
-        alertDialog.dismiss()
+    private fun dismissAlertDialog() = alertDialog.dismiss()
 
-    private fun backToThePreviousFragment() =
-        navController.navigateUp()
+    private fun backToThePreviousFragment() = navController.navigateUp()
 
 
     private fun showConfirmationOfTheChangesDialog() {
@@ -121,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun changeLocalization(langKey: Int) {
+    private fun changeLocalization(langKey: Int) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(getString(langKey)))
     }
 

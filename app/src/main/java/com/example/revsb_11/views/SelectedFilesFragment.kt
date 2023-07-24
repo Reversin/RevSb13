@@ -127,12 +127,12 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
 
     private fun handleFileUri(uri: Uri?) {
         uri?.let { selectedUri ->
-            val contentResolver = context?.contentResolver
-            val longFileUri = WorkingWithFiles().grantUriPermissions(contentResolver, selectedUri)
+            val workingWithFiles = WorkingWithFiles(requireActivity().contentResolver)
+            val longFileUri = workingWithFiles.grantUriPermissions(selectedUri)
             val filepath = selectedUri.path
             val fileSize = filepath?.let {
-                WorkingWithFiles().filePathHandlingSize(
-                    contentResolver, longFileUri
+                workingWithFiles.filePathHandlingSize(
+                    longFileUri
                 )
             }
             selectedFilesPresenter.fileHasBeenSelected(
