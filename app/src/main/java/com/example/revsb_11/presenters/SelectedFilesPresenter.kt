@@ -1,7 +1,7 @@
 package com.example.revsb_11.presenters
 
 import com.example.revsb_11.contracts.SelectedFilesContract
-import com.example.revsb_11.data.SelectedFile
+import com.example.revsb_11.dataclasses.SelectedFile
 
 
 class SelectedFilesPresenter(

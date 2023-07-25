@@ -36,7 +36,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         initNavListener()
+        initAlertDialog()
         changingValuesListeners()
+
     }
 
     private fun initNavListener() {
@@ -54,6 +56,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun initAlertDialog(){
+        alertDialog = AlertDialog.Builder(this).setTitle(R.string.change_file_name)
+            .setMessage(R.string.exit_without_saving).setPositiveButton(R.string.yes) { _, _ ->
+                viewModel.onBackToPreviousFragmentClicked(true)
+            }.setNegativeButton(R.string.no) { _, _ ->
+                viewModel.onBackToPreviousFragmentClicked(false)
+            }.setCancelable(false).create()
+    }
 
     private fun changingValuesListeners() {
         viewModel.confirmationBeforeReturningLiveData.observe(this) { confirmationBeforeReturning ->
@@ -66,7 +76,9 @@ class MainActivity : AppCompatActivity() {
             changeLocalization(localizationIndex)
         }
         viewModel.onNavigateUpArrowClickedLiveData.observe(this) {
-            showConfirmationOfTheChangesDialog()
+            if (it) {
+                showConfirmationOfTheChangesDialog()
+            }
         }
     }
 
@@ -75,18 +87,7 @@ class MainActivity : AppCompatActivity() {
     private fun backToThePreviousFragment() = navController.navigateUp()
 
 
-    private fun showConfirmationOfTheChangesDialog() {
-        alertDialog = AlertDialog.Builder(this).setTitle(R.string.change_file_name)
-            .setMessage(R.string.exit_without_saving).setPositiveButton(R.string.yes) { dialog, _ ->
-                viewModel.onBackToPreviousFragmentClicked(true)
-                dialog.dismiss()
-            }.setNegativeButton(R.string.no) { dialog, _ ->
-                viewModel.onBackToPreviousFragmentClicked(false)
-                dialog.dismiss()
-            }.setCancelable(false).create()
-        alertDialog.show()
-
-    }
+    private fun showConfirmationOfTheChangesDialog() = alertDialog.show()
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

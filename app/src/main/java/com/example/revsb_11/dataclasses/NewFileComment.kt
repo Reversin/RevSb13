@@ -1,4 +1,4 @@
-package com.example.revsb_11.data
+package com.example.revsb_11.dataclasses
 
 /**
  * @param originalFileUri Путь до комментируемого файла

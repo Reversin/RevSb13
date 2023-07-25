@@ -4,7 +4,7 @@ package com.example.revsb_11.models
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.revsb_11.contracts.SelectedFilesContract
-import com.example.revsb_11.data.SelectedFile
+import com.example.revsb_11.dataclasses.SelectedFile
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

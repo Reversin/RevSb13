@@ -1,4 +1,4 @@
-package com.example.revsb_11.data
+package com.example.revsb_11.dataclasses
 
 /**
  * @param filePath Путь до файла зависящий от метода его поиска в файловой системе

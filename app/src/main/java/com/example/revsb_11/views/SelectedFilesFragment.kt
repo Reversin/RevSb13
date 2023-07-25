@@ -1,7 +1,7 @@
 package com.example.revsb_11.views
 
 
-import ItemRecycleAdapter
+import SelectedFilesAdapter
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.R
 import com.example.revsb_11.contracts.SelectedFilesContract
-import com.example.revsb_11.data.SelectedFile
-import com.example.revsb_11.data.WorkingWithFiles
+import com.example.revsb_11.dataclasses.SelectedFile
+import com.example.revsb_11.extensions.WorkingWithFiles
 import com.example.revsb_11.databinding.SelectedFilesFragmentBinding
 import com.example.revsb_11.models.FileNameModel
 import com.example.revsb_11.presenters.SelectedFilesPresenter
@@ -31,7 +31,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
     private lateinit var selectedFilesPresenter: SelectedFilesContract.Presenter
     private lateinit var model: SelectedFilesContract.Model
     private var recyclerView: RecyclerView? = null
-    private lateinit var adapter: ItemRecycleAdapter
+    private lateinit var adapter: SelectedFilesAdapter
     private val typeDialog = R.string.typeDialog
     private val nameSP = R.string.nameSP
     private val args: SelectedFilesFragmentArgs by navArgs()
@@ -75,7 +75,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
 
     override fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>) {
         recyclerView = view?.findViewById(R.id.recyclerViewFiles)
-        adapter = ItemRecycleAdapter(onEditButtonClicked = { filename ->
+        adapter = SelectedFilesAdapter(onEditButtonClicked = { filename ->
             selectedFilesPresenter.onItemClicked(filename)
         }, onSwipeToDelete = { filename ->
             selectedFilesPresenter.onSwipeDeleteItem(filename)
@@ -98,8 +98,8 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
         val argums = arguments
         if (argums != null) {
             if (!argums.isEmpty) {
-                val arg1 = args.selectedFilesFragmentArgument
-                val arg2 = args.selectedFilesFragmentArgument2
+                val arg1 = args.originalFileUri
+                val arg2 = args.newFileComments
                 selectedFilesPresenter.fileCommentHasChanged(arg1, arg2)
             }
         }

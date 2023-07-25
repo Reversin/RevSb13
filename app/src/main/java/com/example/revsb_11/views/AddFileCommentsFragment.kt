@@ -2,26 +2,21 @@ package com.example.revsb_11.views
 
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
-import com.example.revsb_11.data.NewFileComment
-import com.example.revsb_11.data.WorkingWithFiles
+import com.example.revsb_11.dataclasses.NewFileComment
+import com.example.revsb_11.extensions.WorkingWithFiles
 import com.example.revsb_11.databinding.AddFileCommentsFragmentBinding
+import com.example.revsb_11.extensions.onTextChanged
 import com.example.revsb_11.viewmodels.AddFileCommentsViewModel
 import com.example.revsb_11.viewmodelsfactories.AddFileCommentsViewModelFactory
 
@@ -43,7 +38,7 @@ class AddFileCommentsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onScreenOpened()
-        checkChangingValuesListeners()
+        observeScreenState()
         setClickListeners()
         editTextListener()
         setTitle()
@@ -55,27 +50,33 @@ class AddFileCommentsFragment : Fragment() {
             this,
             AddFileCommentsViewModelFactory(workingWithFiles)
         )[AddFileCommentsViewModel::class.java]
-        viewModel.initViewModel(args.addFileCommentsArgument, args.addFileCommentsArgument2)
+        viewModel.initViewModel(args.originalFileUri, args.fileComments)
     }
 
-    private fun checkChangingValuesListeners() {
-        viewModel.fileNameLiveData.observe(viewLifecycleOwner) { fileName ->
+    private fun observeScreenState() {
+        viewModel.screenState.fileNameLiveData.observe(viewLifecycleOwner) { fileName ->
             setFileNameTextView(fileName)
         }
-        viewModel.fileCommentLiveData.observe(viewLifecycleOwner) { fileComment ->
-            setFileComment(fileComment)
-        }
-        viewModel.fileImageLiveData.observe(viewLifecycleOwner) { fileImage ->
+        viewModel.screenState.fileImageLiveData.observe(viewLifecycleOwner) { fileImage ->
             setBitmapImageInImageView(fileImage)
         }
-        viewModel.isSavingChangesButtonLiveData.observe(viewLifecycleOwner) { isButtonEnabled ->
-            if (isButtonEnabled) enableSaveButton()
-            else disableSaveButton()
+        viewModel.screenState.fileCommentLiveData.observe(viewLifecycleOwner) { fileComment ->
+            setFileComment(fileComment)
         }
-        viewModel.showConfirmationDialogLiveData.observe(viewLifecycleOwner) {
+        viewModel.screenState.fileImageLiveData.observe(viewLifecycleOwner) { fileImage ->
+            setBitmapImageInImageView(fileImage)
+        }
+        viewModel.screenState._isSavingChangesButtonEnabledLiveData.observe(viewLifecycleOwner) { isButtonEnabled ->
+            if (isButtonEnabled) {
+                enableSaveButton()
+            } else {
+                disableSaveButton()
+            }
+        }
+        viewModel.screenState.showConfirmationDialogLiveData.observe(viewLifecycleOwner) {
             showConfirmationOfTheChangesDialog()
         }
-        viewModel.returnToPreviousScreenLiveData.observe(viewLifecycleOwner) { returnToPreviousScreen ->
+        viewModel.screenState.returnToPreviousScreenLiveData.observe(viewLifecycleOwner) { returnToPreviousScreen ->
             backToThePreviousFragmentWithChanges(returnToPreviousScreen)
         }
     }
@@ -101,19 +102,9 @@ class AddFileCommentsFragment : Fragment() {
     }
 
     private fun editTextListener() {
-        binding.addFileCommentText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?, start: Int, count: Int, after: Int
-            ) {/*Not used*/
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.onTextHasBeenChanged(binding.addFileCommentText.text.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {/*Not used*/
-            }
-        })
+        binding.addFileCommentText.onTextChanged { newText ->
+            viewModel.onTextHasBeenChanged(newText)
+        }
     }
 
     private fun backToThePreviousFragmentWithChanges(newFile: NewFileComment) {
@@ -125,8 +116,8 @@ class AddFileCommentsFragment : Fragment() {
     }
 
     private fun showConfirmationOfTheChangesDialog() {
-        context?.let {
-            AlertDialog.Builder(it).setTitle(R.string.change_file_name)
+        context?.let { context ->
+            AlertDialog.Builder(context).setTitle(R.string.change_file_name)
                 .setMessage(R.string.alert_message).setPositiveButton(R.string.yes) { dialog, _ ->
                     viewModel.onConsentSaveButtonClicked()
                     dialog.dismiss()

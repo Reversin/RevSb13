@@ -1,4 +1,4 @@
-package com.example.revsb_11.data
+package com.example.revsb_11.extensions
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver

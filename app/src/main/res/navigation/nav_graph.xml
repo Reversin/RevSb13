@@ -11,20 +11,20 @@
         android:label="@string/first_fragment_label"
         tools:layout="@layout/selected_files_fragment">
         <argument
-            android:name="selectedFilesFragmentArgument"
+            android:name="originalFileUri"
             app:argType="string" />
         <argument
-            android:name="selectedFilesFragmentArgument2"
+            android:name="newFileComments"
             app:argType="string" />
 
         <action
             android:id="@+id/action_SelectedFilesFragment_to_AddFileCommentsFragment"
             app:destination="@id/addFileCommentsFragment">
             <argument
-                android:name="addFileCommentsArgument"
+                android:name="originalFileUri"
                 app:argType="string" />
             <argument
-                android:name="addFileCommentsArgument2"
+                android:name="fileComments"
                 app:argType="string" />
 
         </action>
@@ -36,20 +36,20 @@
         android:label="@string/commentTitle_name"
         tools:layout="@layout/add_file_comments_fragment">
         <argument
-            android:name="addFileCommentsArgument"
+            android:name="originalFileUri"
             app:argType="string" />
         <argument
-            android:name="addFileCommentsArgument2"
+            android:name="fileComments"
             app:argType="string" />
 
         <action
             android:id="@+id/action_AddFileCommentsFragment_to_SelectedFilesFragment"
             app:destination="@id/selectedFilesFragment">
             <argument
-                android:name="selectedFilesFragmentArgument"
+                android:name="originalFileUri"
                 app:argType="string" />
             <argument
-                android:name="selectedFilesFragmentArgument2"
+                android:name="newFileComments"
                 app:argType="string" />
         </action>
         <action
