@@ -7,5 +7,5 @@
     <string name="contextBreak" translatable="false">Вась, мы модель уронили</string>
     <string name="bundleKey" translatable="false">535</string>
     <string name="dot" translatable="false">.</string>
-    <string name="file_image" translatable="false">file image</string>
+    <string name="file_image" translatable="false">image/</string>
 </resources>

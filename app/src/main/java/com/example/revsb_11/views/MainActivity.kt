@@ -3,7 +3,6 @@ package com.example.revsb_11.views
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -16,6 +15,7 @@ import androidx.navigation.ui.navigateUp
 import com.example.revsb_11.R
 import com.example.revsb_11.databinding.ActivityMainBinding
 import com.example.revsb_11.viewmodels.FoundationViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var alertDialog: AlertDialog
     private val en = R.string.en
     private val ru = R.string.ru
-    private val viewModel: FoundationViewModel by viewModels()
+    private val viewModel: FoundationViewModel by viewModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,35 +56,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun initAlertDialog(){
+
+    private fun initAlertDialog() {
         alertDialog = AlertDialog.Builder(this).setTitle(R.string.change_file_name)
             .setMessage(R.string.exit_without_saving).setPositiveButton(R.string.yes) { _, _ ->
-                viewModel.onBackToPreviousFragmentClicked(true)
+                viewModel.onBackToPreviousFragmentClicked()
             }.setNegativeButton(R.string.no) { _, _ ->
-                viewModel.onBackToPreviousFragmentClicked(false)
+
             }.setCancelable(false).create()
     }
 
     private fun changingValuesListeners() {
-        viewModel.confirmationBeforeReturningLiveData.observe(this) { confirmationBeforeReturning ->
-            if (confirmationBeforeReturning) {
+        viewModel.confirmationBeforeReturningLiveData.observe(this) { event ->
+            event.getContentIfNotHandled()?.let {
                 backToThePreviousFragment()
             }
-            dismissAlertDialog()
         }
         viewModel.localizationIndexLiveData.observe(this) { localizationIndex ->
             changeLocalization(localizationIndex)
         }
-        viewModel.onNavigateUpArrowClickedLiveData.observe(this) {
-            if (it) {
+        viewModel.onNavigateUpArrowClickedLiveData.observe(this) { event ->
+            event.getContentIfNotHandled()?.let {
                 showConfirmationOfTheChangesDialog()
             }
         }
     }
 
-    private fun dismissAlertDialog() = alertDialog.dismiss()
-
-    private fun backToThePreviousFragment() = navController.navigateUp()
+    private fun backToThePreviousFragment() {
+        navController.popBackStack(R.id.selectedFilesFragment, false)
+        navController.navigate(R.id.selectedFilesFragment)
+    }
 
 
     private fun showConfirmationOfTheChangesDialog() = alertDialog.show()

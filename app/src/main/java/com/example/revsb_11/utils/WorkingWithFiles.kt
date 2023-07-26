@@ -1,4 +1,4 @@
-package com.example.revsb_11.extensions
+package com.example.revsb_11.utils
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import androidx.core.net.toUri
 
 
 class WorkingWithFiles(val contentResolver: ContentResolver?) {
@@ -50,10 +51,10 @@ class WorkingWithFiles(val contentResolver: ContentResolver?) {
     }
 
     @SuppressLint("Range")
-    fun getFileNameFromUri(fileUri: Uri): String? {
+    fun getFileNameFromUri(fileUri: String): String? {
         val projection =
             arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
-        val cursor = contentResolver?.query(fileUri, projection, null, null, null)
+        val cursor = contentResolver?.query(fileUri.toUri(), projection, null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
                 return it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
@@ -61,8 +62,21 @@ class WorkingWithFiles(val contentResolver: ContentResolver?) {
         }
         return null
     }
-    fun getBitmapImageFromUri(fileUri: Uri): Bitmap =
-        contentResolver?.openInputStream(fileUri).use { inputStream ->
+    @SuppressLint("Range")
+    fun getFileFormatFromUri(fileUri: String): String? {
+        val projection =
+            arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE)
+        val cursor = contentResolver?.query(fileUri.toUri(), projection, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                return it.getString(it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+            }
+        }
+        return null
+    }
+    fun getBitmapImageFromUri(fileUri: String): Bitmap =
+        contentResolver?.openInputStream(fileUri.toUri()).use { inputStream ->
             BitmapFactory.decodeStream(inputStream)
         }
+
 }

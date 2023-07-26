@@ -2,13 +2,10 @@ package com.example.revsb_11.views
 
 
 import SelectedFilesAdapter
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,30 +13,29 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.R
-import com.example.revsb_11.contracts.SelectedFilesContract
 import com.example.revsb_11.dataclasses.SelectedFile
-import com.example.revsb_11.extensions.WorkingWithFiles
 import com.example.revsb_11.databinding.SelectedFilesFragmentBinding
-import com.example.revsb_11.models.FileNameModel
-import com.example.revsb_11.presenters.SelectedFilesPresenter
+import com.example.revsb_11.viewmodels.SelectedFilesViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
-class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
+class SelectedFilesFragment : Fragment() {
 
     private var _binding: SelectedFilesFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var selectedFilesPresenter: SelectedFilesContract.Presenter
-    private lateinit var model: SelectedFilesContract.Model
     private var recyclerView: RecyclerView? = null
     private lateinit var adapter: SelectedFilesAdapter
     private val typeDialog = R.string.typeDialog
-    private val nameSP = R.string.nameSP
     private val args: SelectedFilesFragmentArgs by navArgs()
+    private val viewModel: SelectedFilesViewModel by viewModel()
 
 
     private var getContent = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
-    ) { handleFileUri(it) }
+    ) { uri ->
+        if (uri != null) {
+            viewModel.fileHasBeenSelected(uri)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -51,34 +47,43 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initModel()
-        initPresenters()
-        selectedFilesPresenter.onScreenOpened()
+        initSelectedFilesList()
+        viewModel.onScreenOpened()
         navigationListener()
         setClickListeners()
         setTitle()
+        observeScreenState()
 
     }
 
-    private fun initModel() {
-        val context = this.context
-        if (context != null) {
-            val prefs = context.getSharedPreferences(getString(nameSP), Context.MODE_PRIVATE)
-            model = FileNameModel(prefs)
-        } else {
-            Toast.makeText(
-                requireContext().applicationContext, "Вась, мы модель уронили", Toast.LENGTH_SHORT
-            ).show()
-            return
+    private fun observeScreenState() {
+        viewModel.savedSelectedFilesListLiveData.observe(viewLifecycleOwner) { savedSelectedFilesList ->
+            initAdapterRecycleView(savedSelectedFilesList)
         }
+        viewModel.selectedFilesListLiveData.observe(viewLifecycleOwner) { selectedFilesList ->
+            updateFileCommentsList(selectedFilesList)
+        }
+        viewModel.onFindFileButtonClickedLiveData.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let {
+                openFileSelector()
+            }
+        }
+        viewModel.selectedFileLiveData.observe(viewLifecycleOwner) { selectedFile ->
+            goToFragmentForChanges(selectedFile)
+        }
+
     }
 
-    override fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>) {
+    private fun initSelectedFilesList() {
+        viewModel.getSelectedFilesList()
+    }
+
+    private fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>) {
         recyclerView = view?.findViewById(R.id.recyclerViewFiles)
         adapter = SelectedFilesAdapter(onEditButtonClicked = { filename ->
-            selectedFilesPresenter.onItemClicked(filename)
-        }, onSwipeToDelete = { filename ->
-            selectedFilesPresenter.onSwipeDeleteItem(filename)
+            viewModel.onSelectedFileClicked(filename)
+        }, onSwipeToDelete = { selectedFile ->
+            viewModel.onSwipeDeleteItem(selectedFile)
         })
         adapter.submitList(selectedFilesList)
         recyclerView?.let { adapter.attachSwipeToDelete(it) }
@@ -86,7 +91,7 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
         recyclerView?.layoutManager = LinearLayoutManager(context)
     }
 
-    override fun goToFragmentForChanges(selectedFile: SelectedFile) {
+    private fun goToFragmentForChanges(selectedFile: SelectedFile) {
         val action =
             SelectedFilesFragmentDirections.actionSelectedFilesFragmentToAddFileCommentsFragment(
                 selectedFile.longTermPath, selectedFile.fileComments
@@ -95,24 +100,20 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
     }
 
     private fun navigationListener() {
-        val argums = arguments
-        if (argums != null) {
-            if (!argums.isEmpty) {
+        val arguments = arguments
+        if (arguments != null) {
+            if (!arguments.isEmpty) {
                 val arg1 = args.originalFileUri
                 val arg2 = args.newFileComments
-                selectedFilesPresenter.fileCommentHasChanged(arg1, arg2)
+                arguments.clear()
+                viewModel.fileCommentHasChanged(arg1, arg2)
             }
         }
     }
 
-
-    private fun initPresenters() {
-        selectedFilesPresenter = SelectedFilesPresenter(this, model)
-    }
-
     private fun setClickListeners() {
         binding.fileButton1.setOnClickListener {
-            selectedFilesPresenter.onFindFileButtonClicked()
+            viewModel.onFindFileButtonClicked()
         }
     }
 
@@ -120,29 +121,10 @@ class SelectedFilesFragment : Fragment(), SelectedFilesContract.View {
         requireActivity().title = getString(R.string.fTitle_name)
     }
 
-    override fun openFileSelector() = getContent.launch(arrayOf(getString(typeDialog)))
+    private fun openFileSelector() = getContent.launch(arrayOf(getString(typeDialog)))
 
-    override fun updateFileCommentsList(selectedFilesList: List<SelectedFile>) =
+    private fun updateFileCommentsList(selectedFilesList: List<SelectedFile>) =
         adapter.submitList(selectedFilesList)
-
-    private fun handleFileUri(uri: Uri?) {
-        uri?.let { selectedUri ->
-            val workingWithFiles = WorkingWithFiles(requireActivity().contentResolver)
-            val longFileUri = workingWithFiles.grantUriPermissions(selectedUri)
-            val filepath = selectedUri.path
-            val fileSize = filepath?.let {
-                workingWithFiles.filePathHandlingSize(
-                    longFileUri
-                )
-            }
-            selectedFilesPresenter.fileHasBeenSelected(
-                filepath,
-                fileSize,
-                longFileUri.toString(),
-                ""
-            )
-        }
-    }
 
 
     override fun onDestroyView() {

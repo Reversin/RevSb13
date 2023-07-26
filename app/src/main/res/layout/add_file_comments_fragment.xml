@@ -37,7 +37,7 @@
             android:contentDescription="@string/file_image"
             app:layout_constraintBottom_toTopOf="@+id/parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@tools:sample/backgrounds/scenic"/>
 
 
         <com.google.android.material.textfield.TextInputLayout

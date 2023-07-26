@@ -2,23 +2,20 @@ package com.example.revsb_11.views
 
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
 import com.example.revsb_11.dataclasses.NewFileComment
-import com.example.revsb_11.extensions.WorkingWithFiles
 import com.example.revsb_11.databinding.AddFileCommentsFragmentBinding
 import com.example.revsb_11.extensions.onTextChanged
 import com.example.revsb_11.viewmodels.AddFileCommentsViewModel
-import com.example.revsb_11.viewmodelsfactories.AddFileCommentsViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class AddFileCommentsFragment : Fragment() {
@@ -26,7 +23,7 @@ class AddFileCommentsFragment : Fragment() {
     private var _binding: AddFileCommentsFragmentBinding? = null
     private val binding get() = _binding!!
     private val args: AddFileCommentsFragmentArgs by navArgs()
-    private lateinit var viewModel: AddFileCommentsViewModel
+    private val viewModel: AddFileCommentsViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,11 +42,6 @@ class AddFileCommentsFragment : Fragment() {
     }
 
     private fun onScreenOpened() {
-        val workingWithFiles = WorkingWithFiles(requireActivity().contentResolver)
-        viewModel = ViewModelProvider(
-            this,
-            AddFileCommentsViewModelFactory(workingWithFiles)
-        )[AddFileCommentsViewModel::class.java]
         viewModel.initViewModel(args.originalFileUri, args.fileComments)
     }
 
@@ -59,6 +51,9 @@ class AddFileCommentsFragment : Fragment() {
         }
         viewModel.screenState.fileImageLiveData.observe(viewLifecycleOwner) { fileImage ->
             setBitmapImageInImageView(fileImage)
+        }
+        viewModel.screenState.fileIconResourcesLiveData.observe(viewLifecycleOwner) { fileIconResources ->
+            setDefaultFileIconInImageView(fileIconResources)
         }
         viewModel.screenState.fileCommentLiveData.observe(viewLifecycleOwner) { fileComment ->
             setFileComment(fileComment)
@@ -135,9 +130,13 @@ class AddFileCommentsFragment : Fragment() {
         binding.addFileCommentText.setText(fileComments)
     }
 
-    fun setDrawableImageInImageView(drawable: Drawable?) =
-        binding.imageView.setImageDrawable(drawable)
+    fun setDefaultFileIconInImageView(iconResourceId: Int) =
+        binding.imageView.setImageResource(iconResourceId)
 
     private fun setBitmapImageInImageView(bitmap: Bitmap?) =
         binding.imageView.setImageBitmap(bitmap)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

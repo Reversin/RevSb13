@@ -1,19 +1,28 @@
 package com.example.revsb_11.viewmodels
 
-import androidx.core.net.toUri
+
 import androidx.lifecycle.ViewModel
 import com.example.revsb_11.dataclasses.NewFileComment
 import com.example.revsb_11.dataclasses.ScreenState
-import com.example.revsb_11.extensions.WorkingWithFiles
+import com.example.revsb_11.extensions.FileIconMapper
+import com.example.revsb_11.utils.WorkingWithFiles
 
 class AddFileCommentsViewModel(private val workingWithFiles: WorkingWithFiles) : ViewModel() {
     val screenState = ScreenState()
+    private val fileImageType = "image/"
+
 
     fun initViewModel(originalFileUri: String, fileComment: String) {
         screenState._originalFileUri.value = originalFileUri
-        screenState._fileName.value = workingWithFiles.getFileNameFromUri(originalFileUri.toUri())
-        screenState._fileImage.value =
-            workingWithFiles.getBitmapImageFromUri(originalFileUri.toUri())
+        workingWithFiles.getFileFormatFromUri(originalFileUri)
+        val fileType = workingWithFiles.getFileFormatFromUri(originalFileUri)
+        if (fileType?.startsWith(fileImageType) == true) {
+            screenState._fileImage.value =
+                workingWithFiles.getBitmapImageFromUri(originalFileUri)
+        } else {
+            screenState._fileIconResources.value = FileIconMapper().getIconResourceId(fileType)
+        }
+        screenState._fileName.value = workingWithFiles.getFileNameFromUri(originalFileUri)
         screenState._fileComment.value = fileComment
     }
 
