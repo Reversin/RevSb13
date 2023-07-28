@@ -5,11 +5,11 @@ import com.example.revsb_11.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class RevSb : Application() {
+class RevSbApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {
-            androidContext(this@RevSb)
+            androidContext(this@RevSbApplication)
             modules(appModule)
         }
     }

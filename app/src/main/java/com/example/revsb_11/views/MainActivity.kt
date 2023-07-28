@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -15,6 +16,7 @@ import androidx.navigation.ui.navigateUp
 import com.example.revsb_11.R
 import com.example.revsb_11.databinding.ActivityMainBinding
 import com.example.revsb_11.viewmodels.FoundationViewModel
+import com.example.revsb_11.viewmodels.SharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -25,20 +27,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var alertDialog: AlertDialog
+    private lateinit var sharedViewModel: SharedViewModel
+    private var flagShowConfirmation = false
     private val en = R.string.en
     private val ru = R.string.ru
     private val viewModel: FoundationViewModel by viewModel()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        initSharedViewModel()
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         initNavListener()
         initAlertDialog()
         changingValuesListeners()
+    }
 
+    private fun initSharedViewModel() {
+        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
     }
 
     private fun initNavListener() {
@@ -76,8 +83,19 @@ class MainActivity : AppCompatActivity() {
             changeLocalization(localizationIndex)
         }
         viewModel.onNavigateUpArrowClickedLiveData.observe(this) { event ->
-            event.getContentIfNotHandled()?.let {
-                showConfirmationOfTheChangesDialog()
+            if (flagShowConfirmation) {
+                event.getContentIfNotHandled()?.let {
+                    showConfirmationOfTheChangesDialog()
+                }
+            } else {
+                backToThePreviousFragment()
+            }
+        }
+        sharedViewModel.editTextChangedLiveData.observe(this) { editTextChanged ->
+            if (editTextChanged) {
+                flagShowConfirmation = editTextChanged
+            } else {
+                flagShowConfirmation = editTextChanged
             }
         }
     }

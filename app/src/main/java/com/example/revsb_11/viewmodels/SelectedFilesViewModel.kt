@@ -5,13 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.revsb_11.dataclasses.SelectedFile
-import com.example.revsb_11.utils.WorkingWithFiles
+import com.example.revsb_11.utils.ExtractFileDetails
 import com.example.revsb_11.models.SelectedFilesModel
 import com.example.revsb_11.utils.Event
 
 class SelectedFilesViewModel(
     private val model: SelectedFilesModel,
-    private val workingWithFiles: WorkingWithFiles
+    private val extractFileDetails: ExtractFileDetails
 ) : ViewModel() {
 
     private val _savedSelectedFilesList = MutableLiveData<List<SelectedFile>>()
@@ -34,7 +34,7 @@ class SelectedFilesViewModel(
         _savedSelectedFilesList.value = model.getSelectedFiles()
     }
 
-    fun getSelectedFilesList() {
+    fun updateSelectedFilesList() {
         _selectedFilesList.value = model.getSelectedFiles()
     }
 
@@ -44,10 +44,10 @@ class SelectedFilesViewModel(
 
     fun fileHasBeenSelected(uri: Uri) {
         uri.let { selectedUri ->
-            val longTermPath = workingWithFiles.grantUriPermissions(selectedUri)
+            val longTermPath = extractFileDetails.grantUriPermissions(selectedUri)
             val filePath = selectedUri.path
             val fileSize = filePath?.let {
-                workingWithFiles.filePathHandlingSize(
+                extractFileDetails.getFileSize(
                     longTermPath
                 )
             }
@@ -65,7 +65,7 @@ class SelectedFilesViewModel(
         model.deleteSelectedFile(selectedFile)
     }
 
-    fun fileCommentHasChanged(originalFile: String, newFileName: String) {
+    fun setFileCommentHasChanged(originalFile: String, newFileName: String) {
         model.deleteChangedFile(originalFile, newFileName)
         _selectedFilesList.value = model.getSelectedFiles()
     }

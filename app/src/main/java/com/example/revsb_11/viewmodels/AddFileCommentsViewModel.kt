@@ -4,25 +4,25 @@ package com.example.revsb_11.viewmodels
 import androidx.lifecycle.ViewModel
 import com.example.revsb_11.dataclasses.NewFileComment
 import com.example.revsb_11.dataclasses.ScreenState
-import com.example.revsb_11.extensions.FileIconMapper
-import com.example.revsb_11.utils.WorkingWithFiles
+import com.example.revsb_11.mappers.FileIconMapper
+import com.example.revsb_11.utils.ExtractFileDetails
 
-class AddFileCommentsViewModel(private val workingWithFiles: WorkingWithFiles) : ViewModel() {
+class AddFileCommentsViewModel(private val extractFileDetails: ExtractFileDetails) : ViewModel() {
     val screenState = ScreenState()
     private val fileImageType = "image/"
 
 
     fun initViewModel(originalFileUri: String, fileComment: String) {
         screenState._originalFileUri.value = originalFileUri
-        workingWithFiles.getFileFormatFromUri(originalFileUri)
-        val fileType = workingWithFiles.getFileFormatFromUri(originalFileUri)
+        extractFileDetails.getFileFormatFromUri(originalFileUri)
+        val fileType = extractFileDetails.getFileFormatFromUri(originalFileUri)
         if (fileType?.startsWith(fileImageType) == true) {
             screenState._fileImage.value =
-                workingWithFiles.getBitmapImageFromUri(originalFileUri)
+                extractFileDetails.getBitmapImageFromUri(originalFileUri)
         } else {
             screenState._fileIconResources.value = FileIconMapper().getIconResourceId(fileType)
         }
-        screenState._fileName.value = workingWithFiles.getFileNameFromUri(originalFileUri)
+        screenState._fileName.value = extractFileDetails.getFileNameFromUri(originalFileUri)
         screenState._fileComment.value = fileComment
     }
 
@@ -40,12 +40,13 @@ class AddFileCommentsViewModel(private val workingWithFiles: WorkingWithFiles) :
     }
 
     fun onConsentSaveButtonClicked() {
-        screenState._returnToPreviousScreen.value = screenState._originalFileUri.value?.let {
-            screenState._changedComment.value?.let { it1 ->
-                NewFileComment(
-                    it, it1
-                )
+        screenState._returnToPreviousScreen.value =
+            screenState._originalFileUri.value?.let { originalFileUri ->
+                screenState._changedComment.value?.let { changedComment ->
+                    NewFileComment(
+                        originalFileUri, changedComment
+                    )
+                }
             }
-        }
     }
 }

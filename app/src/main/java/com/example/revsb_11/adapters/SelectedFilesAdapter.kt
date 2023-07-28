@@ -13,7 +13,7 @@ class SelectedFilesAdapter(
     private val onSwipeToDelete: (SelectedFile) -> Unit
 ) : ListAdapter<SelectedFile, SelectedFilesAdapter.ItemViewHolder>(SelectedFilesDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewTypr: Int): ItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding, onEditButtonClicked)
     }

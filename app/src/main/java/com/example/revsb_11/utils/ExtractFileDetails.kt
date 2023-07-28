@@ -11,8 +11,8 @@ import android.provider.OpenableColumns
 import androidx.core.net.toUri
 
 
-class WorkingWithFiles(val contentResolver: ContentResolver?) {
-    fun filePathHandlingSize(uri: Uri): String {
+class ExtractFileDetails(private val contentResolver: ContentResolver?) {
+    fun getFileSize(uri: Uri): String {
         var fileSize: String? = null
         val cursor = contentResolver
             ?.query(uri, null, null, null, null)

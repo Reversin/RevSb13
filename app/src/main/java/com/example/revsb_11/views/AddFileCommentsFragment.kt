@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.fragment.findNavController
 import com.example.revsb_11.R
@@ -15,6 +16,7 @@ import com.example.revsb_11.dataclasses.NewFileComment
 import com.example.revsb_11.databinding.AddFileCommentsFragmentBinding
 import com.example.revsb_11.extensions.onTextChanged
 import com.example.revsb_11.viewmodels.AddFileCommentsViewModel
+import com.example.revsb_11.viewmodels.SharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -24,6 +26,7 @@ class AddFileCommentsFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: AddFileCommentsFragmentArgs by navArgs()
     private val viewModel: AddFileCommentsViewModel by viewModel()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -87,11 +90,13 @@ class AddFileCommentsFragment : Fragment() {
     }
 
     private fun disableSaveButton() {
+        sharedViewModel.onEditTextChanged(false)
         binding.savingTheChangedNameButton.isEnabled = false
         binding.savingTheChangedNameButton.alpha = 0.5F
     }
 
     private fun enableSaveButton() {
+        sharedViewModel.onEditTextChanged(true)
         binding.savingTheChangedNameButton.isEnabled = true
         binding.savingTheChangedNameButton.alpha = 1.0F
     }

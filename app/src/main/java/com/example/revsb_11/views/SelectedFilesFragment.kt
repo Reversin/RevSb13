@@ -24,7 +24,6 @@ class SelectedFilesFragment : Fragment() {
     private val binding get() = _binding!!
     private var recyclerView: RecyclerView? = null
     private lateinit var adapter: SelectedFilesAdapter
-    private val typeDialog = R.string.typeDialog
     private val args: SelectedFilesFragmentArgs by navArgs()
     private val viewModel: SelectedFilesViewModel by viewModel()
 
@@ -49,11 +48,10 @@ class SelectedFilesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initSelectedFilesList()
         viewModel.onScreenOpened()
-        navigationListener()
+        setNavigationListener()
         setClickListeners()
         setTitle()
         observeScreenState()
-
     }
 
     private fun observeScreenState() {
@@ -71,11 +69,10 @@ class SelectedFilesFragment : Fragment() {
         viewModel.selectedFileLiveData.observe(viewLifecycleOwner) { selectedFile ->
             goToFragmentForChanges(selectedFile)
         }
-
     }
 
     private fun initSelectedFilesList() {
-        viewModel.getSelectedFilesList()
+        viewModel.updateSelectedFilesList()
     }
 
     private fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>) {
@@ -99,14 +96,14 @@ class SelectedFilesFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun navigationListener() {
+    private fun setNavigationListener() {
         val arguments = arguments
         if (arguments != null) {
             if (!arguments.isEmpty) {
                 val arg1 = args.originalFileUri
                 val arg2 = args.newFileComments
                 arguments.clear()
-                viewModel.fileCommentHasChanged(arg1, arg2)
+                viewModel.setFileCommentHasChanged(arg1, arg2)
             }
         }
     }
@@ -121,7 +118,8 @@ class SelectedFilesFragment : Fragment() {
         requireActivity().title = getString(R.string.fTitle_name)
     }
 
-    private fun openFileSelector() = getContent.launch(arrayOf(getString(typeDialog)))
+    private fun openFileSelector() =
+        getContent.launch(arrayOf(getString(R.string.typeDialog)))
 
     private fun updateFileCommentsList(selectedFilesList: List<SelectedFile>) =
         adapter.submitList(selectedFilesList)
