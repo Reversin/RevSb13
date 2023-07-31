@@ -46,6 +46,8 @@
                     android:id="@+id/fileCommentsTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
                     android:scrollHorizontally="true"
                     android:maxLines="1"
                     android:focusable="true"

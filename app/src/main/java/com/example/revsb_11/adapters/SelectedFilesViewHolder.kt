@@ -1,5 +1,8 @@
 package com.example.revsb_11.adapters
 
+import android.content.Intent
+import android.net.Uri
+import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +26,17 @@ open class SelectedFilesViewHolder(
         fileCommentsTextView.text = selectedFile.fileComments
         editButton.setOnClickListener {
             onEditButtonClicked(selectedFile)
+        }
+        itemView.setOnClickListener {
+            val uri = Uri.parse(selectedFile.longTermPath)
+            val extension = MimeTypeMap.getFileExtensionFromUrl(selectedFile.longTermPath)
+            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            val intent = Intent().apply {
+                action = Intent.ACTION_VIEW
+                setDataAndType(uri, mimeType)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            it.context.startActivity(intent)
         }
     }
 }
