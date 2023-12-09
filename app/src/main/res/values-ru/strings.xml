@@ -18,4 +18,5 @@
     <string name="no">Нет</string>
     <string name="file_comment">Комментарий к файлу</string>
     <string name="exit_without_saving">"Вернуться без сохранения изменений? "</string>
+    <string name="content_description_placeholder">Заглушка</string>
 </resources>

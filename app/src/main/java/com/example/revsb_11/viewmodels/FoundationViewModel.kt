@@ -31,5 +31,4 @@ class FoundationViewModel : ViewModel() {
     fun onOptionLangSelected(langKey: Int) {
         _localizationIndex.value = langKey
     }
-
 }

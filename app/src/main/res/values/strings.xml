@@ -18,4 +18,5 @@
     <string name="fTitle_name">Selected files</string>
     <string name="file_comment">File comment</string>
     <string name="exit_without_saving">Return without saving changes?</string>
+    <string name="content_description_placeholder">Placeholder</string>
 </resources>

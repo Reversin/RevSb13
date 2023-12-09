@@ -31,7 +31,10 @@ class SelectedFilesViewModel(
         get() = _selectedFile
 
     fun onScreenOpened() {
+        val selectedFilesList = model.getSelectedFiles()
         _savedSelectedFilesList.value = model.getSelectedFiles()
+
+
     }
 
     fun updateSelectedFilesList() {

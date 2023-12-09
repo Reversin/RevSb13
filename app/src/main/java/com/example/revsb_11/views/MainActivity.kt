@@ -92,10 +92,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         sharedViewModel.editTextChangedLiveData.observe(this) { editTextChanged ->
-            if (editTextChanged) {
-                flagShowConfirmation = editTextChanged
+            flagShowConfirmation = if (editTextChanged) {
+                editTextChanged
             } else {
-                flagShowConfirmation = editTextChanged
+                editTextChanged
             }
         }
     }
@@ -147,4 +147,5 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
 }

@@ -30,4 +30,6 @@ data class ScreenState(
         get() = _showConfirmationDialog
     val returnToPreviousScreenLiveData: LiveData<NewFileComment>
         get() = _returnToPreviousScreen
+
+    val selectedFiles = emptyList<SelectedFile>()
 }
