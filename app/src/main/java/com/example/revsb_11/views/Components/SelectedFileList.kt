@@ -11,12 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.revsb_11.dataclasses.SelectedFile
-import com.example.revsb_11.dataclasses.SelectedFilesUIState
 
 @Composable
 fun SelectedFileList(
     modifier: Modifier,
-    uiState: SelectedFilesUIState,
+    files: List<SelectedFile>,
     onSelectedFileClicked: (SelectedFile) -> Unit,
     onEditButtonClicked: (SelectedFile) -> Unit,
 ) {
@@ -28,7 +27,7 @@ fun SelectedFileList(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            items(uiState.files) { file ->
+            items(files) { file ->
                 SelectableFileCard(
                     modifier = Modifier.fillMaxWidth(),
                     selectedFile = file,
@@ -45,21 +44,19 @@ fun SelectedFileList(
 fun PreviewColumnElement() {
     SelectedFileList(
         modifier = Modifier,
-        uiState = SelectedFilesUIState(
-            files = listOf(
-                SelectedFile(
-                    filePath = "Yes",
-                    fileSize = "Yes",
-                    longTermPath = "Yes",
-                    fileComments = "Yes"
-                ),
-                SelectedFile(
-                    filePath = "No",
-                    fileSize = "No",
-                    longTermPath = "No",
-                    fileComments = "No",
-                )
+        files = listOf(
+            SelectedFile(
+                filePath = "Yes",
+                fileSize = "Yes",
+                longTermPath = "Yes",
+                fileComments = "Yes"
             ),
+            SelectedFile(
+                filePath = "No",
+                fileSize = "No",
+                longTermPath = "No",
+                fileComments = "No",
+            )
         ),
         onSelectedFileClicked = {},
         onEditButtonClicked = {},

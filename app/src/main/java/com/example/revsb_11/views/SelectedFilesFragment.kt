@@ -7,11 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.revsb_11.R
 import com.example.revsb_11.dataclasses.SelectedFile
 import com.example.revsb_11.databinding.SelectedFilesFragmentBinding
@@ -22,7 +21,7 @@ class SelectedFilesFragment : Fragment() {
 
     private var _binding: SelectedFilesFragmentBinding? = null
     private val binding get() = _binding!!
-    private var recyclerView: RecyclerView? = null
+    private var recyclerView: ComposeView? = null
     private lateinit var adapter: SelectedFilesAdapter
     private val args: SelectedFilesFragmentArgs by navArgs()
     private val viewModel: SelectedFilesViewModel by viewModel()
@@ -76,16 +75,28 @@ class SelectedFilesFragment : Fragment() {
     }
 
     private fun initAdapterRecycleView(selectedFilesList: List<SelectedFile>) {
-        recyclerView = view?.findViewById(R.id.recyclerViewFiles)
-        adapter = SelectedFilesAdapter(onEditButtonClicked = { filename ->
-            viewModel.onSelectedFileClicked(filename)
-        }, onSwipeToDelete = { selectedFile ->
-            viewModel.onSwipeDeleteItem(selectedFile)
-        })
-        adapter.submitList(selectedFilesList)
-        recyclerView?.let { adapter.attachSwipeToDelete(it) }
-        recyclerView?.adapter = adapter
-        recyclerView?.layoutManager = LinearLayoutManager(context)
+//        recyclerView = view?.findViewById(R.id.recyclerViewFiles)
+//        recyclerView?.setContent {
+//            SelectedFileList(modifier = Modifier, uiState = SelectedFilesUIState(
+//                files = listOf(
+//                    SelectedFile(
+//                        filePath = "Yes",
+//                        fileSize = "Yes",
+//                        longTermPath = "Yes",
+//                        fileComments = "Yes"
+//                    ),
+//                    SelectedFile(
+//                        filePath = "No",
+//                        fileSize = "No",
+//                        longTermPath = "No",
+//                        fileComments = "No",
+//                    )
+//                ),
+//            ),
+//                onSelectedFileClicked = {},
+//                onEditButtonClicked = {selectedFile -> viewModel.onSelectedFileClicked(selectedFile)})
+//
+//        }
     }
 
     private fun goToFragmentForChanges(selectedFile: SelectedFile) {

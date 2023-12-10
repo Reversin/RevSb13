@@ -14,9 +14,11 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,8 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.revsb_11.R
 import com.example.revsb_11.dataclasses.SelectedFile
-import com.example.revsb_11.ui.theme.AppColors
-import com.example.revsb_11.ui.theme.AppTheme
 
 @Composable
 fun SelectableFileCard(
@@ -46,7 +46,7 @@ fun SelectableFileCard(
             modifier = modifier
                 .fillMaxWidth()
                 .widthIn(min = 35.dp)
-                .background(AppTheme.colors.secondaryElement),
+                .background(MaterialTheme.colorScheme.secondary),
         ) {
             SelectedFileCardContent(
                 modifier = modifier.weight(10f),
@@ -63,7 +63,7 @@ fun SelectableFileCard(
                 Icon(
                     painter = painterResource(id = R.drawable.pencil),
                     contentDescription = "stringResource(id = R.string.content_description_placeholder)",
-                    tint = AppTheme.colors.background
+                    tint = MaterialTheme.colorScheme.surface
                 )
             }
         }
@@ -75,7 +75,7 @@ fun SelectedFileCardContent(
     modifier: Modifier,
     selectedFile: SelectedFile,
     onClick: (SelectedFile) -> Unit,
-    textColor: AppColors = AppTheme.colors
+    textColor: Color = MaterialTheme.colorScheme.surface
 ) {
 
     Box(
@@ -94,7 +94,7 @@ fun SelectedFileCardContent(
                     fontWeight = FontWeight.Bold
                 ),
                 maxLines = 1,
-                color = textColor.background,
+                color = textColor,
             )
 
             Row (
@@ -109,7 +109,7 @@ fun SelectedFileCardContent(
                             fontWeight = FontWeight.Bold
                         ),
                         maxLines = 1,
-                        color = textColor.background,
+                        color = textColor,
                     )
                 }
 
@@ -121,7 +121,7 @@ fun SelectedFileCardContent(
                         fontWeight = FontWeight.Bold
                     ),
                     maxLines = 1,
-                    color = textColor.background,
+                    color = textColor
                 )
             }
         }

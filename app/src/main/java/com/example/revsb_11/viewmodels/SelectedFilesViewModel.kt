@@ -26,15 +26,15 @@ class SelectedFilesViewModel(
     val onFindFileButtonClickedLiveData: LiveData<Event<Unit>>
         get() = _onFindFileButtonClicked
 
+    private var _test = MutableLiveData<String?>()
+    var test: MutableLiveData<String?> = _test
+
     private val _selectedFile = MutableLiveData<SelectedFile>()
     val selectedFileLiveData: LiveData<SelectedFile>
         get() = _selectedFile
 
     fun onScreenOpened() {
-        val selectedFilesList = model.getSelectedFiles()
         _savedSelectedFilesList.value = model.getSelectedFiles()
-
-
     }
 
     fun updateSelectedFilesList() {
@@ -57,7 +57,7 @@ class SelectedFilesViewModel(
             model.saveSelectedFile(filePath, fileSize, longTermPath.toString(), "")
         }
 
-        _selectedFilesList.value = model.getSelectedFiles()
+        _savedSelectedFilesList.value = model.getSelectedFiles()
     }
 
     fun onSelectedFileClicked(selectedFile: SelectedFile) {
