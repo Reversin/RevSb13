@@ -57,6 +57,7 @@ dependencies {
     implementation 'io.insert-koin:koin-android:3.5.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.compose.runtime:runtime-livedata:1.5.4'
+    implementation("io.github.mataku:middle-ellipsis-text:0.0.5")
 
     implementation 'androidx.activity:activity-compose:1.8.1'
     implementation 'io.coil-kt:coil-compose:2.5.0'

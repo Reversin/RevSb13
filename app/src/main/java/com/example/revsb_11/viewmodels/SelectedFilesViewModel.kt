@@ -48,13 +48,14 @@ class SelectedFilesViewModel(
     fun fileHasBeenSelected(uri: Uri) {
         uri.let { selectedUri ->
             val longTermPath = extractFileDetails.grantUriPermissions(selectedUri)
+            val filePathWithName = "${selectedUri.path}"
             val filePath = selectedUri.path
-            val fileSize = filePath?.let {
+            val fileSize = filePath.let {
                 extractFileDetails.getFileSize(
                     longTermPath
                 )
             }
-            model.saveSelectedFile(filePath, fileSize, longTermPath.toString(), "")
+            model.saveSelectedFile(filePath, filePathWithName,  fileSize, longTermPath.toString(), "")
         }
 
         _savedSelectedFilesList.value = model.getSelectedFiles()
@@ -66,6 +67,7 @@ class SelectedFilesViewModel(
 
     fun onSwipeDeleteItem(selectedFile: SelectedFile) {
         model.deleteSelectedFile(selectedFile)
+        _savedSelectedFilesList.value = model.getSelectedFiles()
     }
 
     fun setFileCommentHasChanged(originalFile: String, newFileName: String) {

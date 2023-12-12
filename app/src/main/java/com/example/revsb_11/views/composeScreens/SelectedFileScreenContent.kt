@@ -36,7 +36,8 @@ internal fun SelectedFilesScreenContent(
         }
     }
 
-    val findFileButtonClickEvent = viewModel?.onFindFileButtonClickedLiveData?.observeAsState()?.value
+    val findFileButtonClickEvent =
+        viewModel?.onFindFileButtonClickedLiveData?.observeAsState()?.value
     findFileButtonClickEvent?.getContentIfNotHandled()?.let {
         getContent.launch(arrayOf("*/*"))
     }
@@ -46,11 +47,10 @@ internal fun SelectedFilesScreenContent(
 
     Box(modifier = modifier.fillMaxSize()) {
 
-        Column (
+        Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(top = 1.dp)
-                .padding(horizontal = 9.dp),
+                .padding(top = 1.dp),
             verticalArrangement = Arrangement.Absolute.spacedBy(24.dp),
             horizontalAlignment = Alignment.Start
         ) {
@@ -59,8 +59,12 @@ internal fun SelectedFilesScreenContent(
                 SelectedFileList(
                     modifier = Modifier.fillMaxSize(),
                     files = savedFilesList,
-                    onSelectedFileClicked = {} ) {
-                }
+                    onSelectedFileClicked = {},
+                    onEditButtonClicked = {},
+                    onSwipeToDelete = { selectedFile ->
+                        viewModel.onSwipeDeleteItem(selectedFile)
+                    },
+                )
             }
 
             if (buttonClicked == "555") {

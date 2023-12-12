@@ -18,11 +18,12 @@ class SelectedFilesModel(private val prefs: SharedPreferences) {
 
     fun saveSelectedFile(
         filePath: String?,
+        filePathWithName: String?,
         fileSize: String?,
         longTermPath: String,
         fileComments: String
     ) {
-        val selectedFile = SelectedFile(filePath, fileSize, longTermPath, fileComments)
+        val selectedFile = SelectedFile(filePath, filePathWithName, fileSize, longTermPath, fileComments)
         val existingFileName = getSelectedFiles().toMutableList()
         existingFileName.forEach { file ->
             if ((file.filePath).equals(selectedFile.filePath)) {

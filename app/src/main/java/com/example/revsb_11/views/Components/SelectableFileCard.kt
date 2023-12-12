@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.revsb_11.R
 import com.example.revsb_11.dataclasses.SelectedFile
+import io.github.mataku.middleellipsistext.MiddleEllipsisText
 
 @Composable
 fun SelectableFileCard(
@@ -38,7 +39,8 @@ fun SelectableFileCard(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
-            .widthIn(min = 35.dp),
+            .widthIn(min = 35.dp)
+            .padding(horizontal = 9.dp),
         shape = RoundedCornerShape(32.dp),
         elevation = 0.dp,
     ) {
@@ -87,15 +89,15 @@ fun SelectedFileCardContent(
             modifier = modifier.padding(horizontal = 15.dp, vertical = 5.dp),
         ) {
 
-            Text(
-                modifier = Modifier,
-                text = selectedFile.longTermPath,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1,
-                color = textColor,
-            )
+            selectedFile.filePathWithName?.let {
+                MiddleEllipsisText(
+                    text = it,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = textColor,
+                )
+            }
 
             Row (
                 modifier = modifier
@@ -103,7 +105,7 @@ fun SelectedFileCardContent(
                 selectedFile.fileSize?.let { fileSize ->
                     Text(
                         modifier = Modifier
-                            .weight(1f),
+                            .weight(2f),
                         text = fileSize,
                         style = TextStyle(
                             fontWeight = FontWeight.Bold
@@ -135,6 +137,7 @@ private fun SelectableFileCardPreview() {
         modifier = Modifier,
         selectedFile = SelectedFile(
             filePath = "Yes",
+            filePathWithName = "YesdsadascsbuscucubcbocbDOUBOCBSOCBSIUCBIubiuBIuiubsvvosdovubsdouvovbsdvidbsviusbavbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             fileSize = "Yes",
             longTermPath = "YesdsadascsbuscucubcbocbDOUBOCBSOCBSIUCBIubiuBIuiubsvvosdovubsdouvovbsdvidbsviusbavbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             fileComments = "Yes"
