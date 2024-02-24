@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/selectedFilesFragment"
-        android:name="com.example.revsb_11.views.SelectedFilesFragment"
+        android:name="com.revsb_11.views.SelectedFilesFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/selected_files_fragment">
         <argument
@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/addFileCommentsFragment"
-        android:name="com.example.revsb_11.views.AddFileCommentsFragment"
+        android:name="com.revsb_11.views.AddFileCommentsFragment"
         android:label="@string/commentTitle_name"
         tools:layout="@layout/add_file_comments_fragment">
         <argument

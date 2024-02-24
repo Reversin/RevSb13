@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.theme"
+    namespace = "com.theme"
     compileSdk = 34
 
     defaultConfig {

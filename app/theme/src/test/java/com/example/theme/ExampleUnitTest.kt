@@ -1,4 +1,4 @@
-package com.example.theme
+package com.theme
 
 import org.junit.Test
 

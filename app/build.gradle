@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.revsb_11'
+    namespace 'com.revsb_11'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.revsb_11"
+        applicationId "com.revsb_11"
         minSdk 30
         targetSdk 34
         versionCode 1
