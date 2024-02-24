@@ -3,6 +3,7 @@ package com.revsb_11.di
 import android.content.ContentResolver
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import com.revsb_11.models.SelectedFilesModel
 import com.revsb_11.utils.ExtractFileDetails
 import com.revsb_11.viewmodels.AddFileCommentsViewModel
@@ -25,9 +26,14 @@ val appModule = module {
         PreferenceManager.getDefaultSharedPreferences(appContext)
     }
 
+    single<Gson> {
+        Gson()
+    }
+
     single {
         val sharedPrefs = get<SharedPreferences>()
-        SelectedFilesModel(sharedPrefs)
+        val gson = get<Gson>()
+        SelectedFilesModel(sharedPrefs, gson)
     }
 
     viewModel {

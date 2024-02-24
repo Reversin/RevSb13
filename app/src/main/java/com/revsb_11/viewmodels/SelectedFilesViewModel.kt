@@ -1,12 +1,12 @@
 package com.revsb_11.viewmodels
 
 import android.net.Uri
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.revsb_11.models.dataclasses.SelectedFile
 import com.revsb_11.utils.ExtractFileDetails
 import com.revsb_11.models.SelectedFilesModel
+import com.revsb_11.models.dataclasses.SelectedFilesUIState
 import com.revsb_11.utils.Event
 
 class SelectedFilesViewModel(
@@ -14,65 +14,53 @@ class SelectedFilesViewModel(
     private val extractFileDetails: ExtractFileDetails
 ) : ViewModel() {
 
-    private val _savedSelectedFilesList = MutableLiveData<List<SelectedFile>>()
-    val savedSelectedFilesListLiveData: LiveData<List<SelectedFile>>
-        get() = _savedSelectedFilesList
-
-    private val _selectedFilesList = MutableLiveData<List<SelectedFile>>()
-    val selectedFilesListLiveData: LiveData<List<SelectedFile>>
-        get() = _selectedFilesList
-
-    private val _onFindFileButtonClicked = MutableLiveData<Event<Unit>>()
-    val onFindFileButtonClickedLiveData: LiveData<Event<Unit>>
-        get() = _onFindFileButtonClicked
-
-    private var _test = MutableLiveData<String?>()
-    var test: MutableLiveData<String?> = _test
-
-    private val _selectedFile = MutableLiveData<SelectedFile>()
-    val selectedFileLiveData: LiveData<SelectedFile>
-        get() = _selectedFile
+    private val _selectedFilesUIState = MutableLiveData<SelectedFilesUIState?>()
+    val selectedFilesUIStateLiveData: MutableLiveData<SelectedFilesUIState?>
+        get() = _selectedFilesUIState
 
     fun onScreenOpened() {
-        _savedSelectedFilesList.value = model.getSelectedFiles()
-    }
-
-    fun updateSelectedFilesList() {
-        _selectedFilesList.value = model.getSelectedFiles()
+        _selectedFilesUIState.value = SelectedFilesUIState(
+            savedSelectedFilesList = model.getSelectedFiles(),
+            onFindFileButtonClicked = null,
+            selectedFile = null
+        )
     }
 
     fun onFindFileButtonClicked() {
-        _onFindFileButtonClicked.value = Event(Unit)
+        val newState = _selectedFilesUIState.value?.copy(onFindFileButtonClicked = Event(Unit))
+        _selectedFilesUIState.value = newState
     }
 
     fun fileHasBeenSelected(uri: Uri) {
         uri.let { selectedUri ->
             val longTermPath = extractFileDetails.grantUriPermissions(selectedUri)
-            val filePathWithName = "${selectedUri.path}"
             val filePath = selectedUri.path
             val fileSize = filePath.let {
                 extractFileDetails.getFileSize(
                     longTermPath
                 )
             }
-            model.saveSelectedFile(filePath, filePathWithName,  fileSize, longTermPath.toString(), "")
+            model.saveSelectedFile(
+                filePath,
+                fileSize,
+                longTermPath.toString(),
+                ""
+            )
         }
 
-        _savedSelectedFilesList.value = model.getSelectedFiles()
+        _selectedFilesUIState.value =
+            _selectedFilesUIState.value?.copy(savedSelectedFilesList = model.getSelectedFiles())
     }
 
     fun onSelectedFileClicked(selectedFile: SelectedFile) {
-        _selectedFile.value = selectedFile
+        _selectedFilesUIState.value = _selectedFilesUIState.value?.copy(selectedFile = selectedFile)
     }
 
     fun onSwipeDeleteItem(selectedFile: SelectedFile) {
         model.deleteSelectedFile(selectedFile)
-        _savedSelectedFilesList.value = model.getSelectedFiles()
+        _selectedFilesUIState.value =
+            _selectedFilesUIState.value?.copy(savedSelectedFilesList = model.getSelectedFiles())
     }
 
-    fun setFileCommentHasChanged(originalFile: String, newFileName: String) {
-        model.deleteChangedFile(originalFile, newFileName)
-        _selectedFilesList.value = model.getSelectedFiles()
-    }
 }
 

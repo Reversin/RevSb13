@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 import com.revsb_11.viewmodels.SelectedFilesViewModel
 
 @Composable
-internal fun AddFileCommentsScreen(
+fun AddFileCommentsScreen(
     viewModel: SelectedFilesViewModel,
     navController: NavController
 ) {

@@ -51,6 +51,6 @@ private val LightColorScheme = lightColorScheme(
     primary = LightAccent,
 )
 
-internal fun currentAppColors(darkTheme: Boolean = true) : ColorScheme =
+fun currentAppColors(darkTheme: Boolean = true) : ColorScheme =
     if (darkTheme) { DarkColorScheme } else { LightColorScheme
 }

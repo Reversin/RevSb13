@@ -8,9 +8,10 @@ package com.revsb_11.models.dataclasses
  */
 data class SelectedFile(
     var filePath: String?,
-    var filePathWithName: String? = "",
     val fileSize: String?,
     val longTermPath: String,
     var fileComments: String
-)
+) {
+    constructor() : this("",  "", "", "")
+}
 
