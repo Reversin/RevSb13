@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -19,11 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.revsb_11.ui.theme.White100
 import com.revsb_11.viewmodels.SelectedFilesViewModel
-import com.revsb_11.views.Components.SelectedFileList
+import com.revsb_11.views.components.SelectedFileList
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SelectedFilesScreenContent(
+fun SelectedFilesScreenContent(
     modifier: Modifier,
     viewModel: SelectedFilesViewModel? = null,
 ) {
@@ -36,14 +34,12 @@ internal fun SelectedFilesScreenContent(
         }
     }
 
-    val findFileButtonClickEvent =
-        viewModel?.onFindFileButtonClickedLiveData?.observeAsState()?.value
-    findFileButtonClickEvent?.getContentIfNotHandled()?.let {
+    val screenState =
+        viewModel?.selectedFilesUIStateLiveData?.observeAsState()?.value
+
+    screenState?.onFindFileButtonClicked?.getContentIfNotHandled()?.let {
         getContent.launch(arrayOf("*/*"))
     }
-
-    val savedFilesList = viewModel?.savedSelectedFilesListLiveData?.observeAsState()?.value
-    val buttonClicked = viewModel?.test?.observeAsState("")?.value
 
     Box(modifier = modifier.fillMaxSize()) {
 
@@ -55,10 +51,10 @@ internal fun SelectedFilesScreenContent(
             horizontalAlignment = Alignment.Start
         ) {
 
-            if (savedFilesList != null) {
+            if (screenState?.savedSelectedFilesList != null) {
                 SelectedFileList(
                     modifier = Modifier.fillMaxSize(),
-                    files = savedFilesList,
+                    files = screenState.savedSelectedFilesList,
                     onSelectedFileClicked = {},
                     onEditButtonClicked = {},
                     onSwipeToDelete = { selectedFile ->
@@ -66,11 +62,6 @@ internal fun SelectedFilesScreenContent(
                     },
                 )
             }
-
-            if (buttonClicked == "555") {
-                getContent.launch(arrayOf("*/*"))
-            }
-
         }
         Button(
             modifier = Modifier

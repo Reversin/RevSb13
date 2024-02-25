@@ -34,10 +34,10 @@ class ExtractFileDetails(private val contentResolver: ContentResolver?) {
         var unitIndex = 0
 
         for (i in 0 until units.size - 1) {
-            if (fileSize < 1024) {
+            if (fileSize < MIN_FILE_SIZE) {
                 break
             }
-            fileSize /= 1024
+            fileSize /= MIN_FILE_SIZE
             unitIndex++
         }
         return "%.2f %s".format(fileSize, units[unitIndex])
@@ -78,5 +78,9 @@ class ExtractFileDetails(private val contentResolver: ContentResolver?) {
         contentResolver?.openInputStream(fileUri.toUri()).use { inputStream ->
             BitmapFactory.decodeStream(inputStream)
         }
+
+    companion object {
+        const val MIN_FILE_SIZE = 1024
+    }
 
 }

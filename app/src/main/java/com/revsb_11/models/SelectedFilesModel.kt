@@ -8,9 +8,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-class SelectedFilesModel(private val prefs: SharedPreferences) {
+class SelectedFilesModel(private val prefs: SharedPreferences, private val gson: Gson) {
 
-    private val gson = Gson()
     private fun saveInModel(data: List<SelectedFile>) {
         val json = gson.toJson(data)
         prefs.edit { putString(PREF_KEY_NAME, json) }
@@ -18,12 +17,11 @@ class SelectedFilesModel(private val prefs: SharedPreferences) {
 
     fun saveSelectedFile(
         filePath: String?,
-        filePathWithName: String?,
         fileSize: String?,
         longTermPath: String,
         fileComments: String
     ) {
-        val selectedFile = SelectedFile(filePath, filePathWithName, fileSize, longTermPath, fileComments)
+        val selectedFile = SelectedFile(filePath, fileSize, longTermPath, fileComments)
         val existingFileName = getSelectedFiles().toMutableList()
         existingFileName.forEach { file ->
             if ((file.filePath).equals(selectedFile.filePath)) {

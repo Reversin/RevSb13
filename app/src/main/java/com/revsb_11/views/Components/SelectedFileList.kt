@@ -1,8 +1,9 @@
-package com.revsb_11.views.Components
+package com.revsb_11.views.components
 
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.revsb_11.models.dataclasses.SelectedFile
 import androidx.compose.ui.draw.scale
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,54 +51,56 @@ fun SelectedFileList(
                     it.longTermPath
                 }) {fileItem ->
 
-                var dismissState = rememberDismissState(initialValue = DismissValue.Default)
-                val contextForToast = LocalContext.current.applicationContext
+                val dismissState = rememberSwipeToDismissBoxState()
 
-                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                if (dismissState.currentValue == EndToStart) {
                     // swiping from left to right
-                    Toast.makeText(contextForToast, "Delete", Toast.LENGTH_SHORT).show()
                     onSwipeToDelete(fileItem)
                 }
 
-                SwipeToDismiss(
+                SwipeToDismissBox(
                     state = dismissState,
                     modifier = Modifier.padding(vertical = 4.dp),
-                    directions = setOf(DismissDirection.EndToStart),
-                    background = {
-                        val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+                    backgroundContent = {
+                        val direction = dismissState.dismissDirection ?: return@SwipeToDismissBox
                         val color by animateColorAsState(
                             when (dismissState.targetValue) {
-                                DismissValue.Default -> Color.LightGray
-                                DismissValue.DismissedToEnd -> Color.Green
-                                DismissValue.DismissedToStart -> Color.Red
-                            }
+                                Settled -> Color.LightGray
+                                StartToEnd -> Color.Red
+                                EndToStart -> Color.Red
+                            }, label = ""
                         )
                         val alignment = when (direction) {
-                            DismissDirection.StartToEnd -> Alignment.CenterStart
-                            DismissDirection.EndToStart -> Alignment.CenterEnd
+                            StartToEnd -> Alignment.CenterStart
+                            EndToStart -> Alignment.CenterEnd
+                            Settled -> Alignment.Center
                         }
                         val icon = when (direction) {
-                            DismissDirection.StartToEnd -> Icons.Default.Done
-                            DismissDirection.EndToStart -> Icons.Default.Delete
+                            StartToEnd -> Icons.Default.Delete
+                            EndToStart -> Icons.Default.Delete
+                            Settled -> null
                         }
                         val scale by animateFloatAsState(
-                            if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
+                            if (dismissState.targetValue == Settled) 0.75f else 1f, label = ""
                         )
 
                         Box(
                             Modifier
                                 .fillMaxSize()
+                                .background(color)
                                 .padding(horizontal = 20.dp),
                             contentAlignment = alignment
                         ) {
-                            Icon(
-                                icon,
-                                contentDescription = "Localized description",
-                                modifier = Modifier.scale(scale)
-                            )
+                            if (icon != null) {
+                                Icon(
+                                    icon,
+                                    contentDescription = "Localized description",
+                                    modifier = Modifier.scale(scale)
+                                )
+                            }
                         }
                     },
-                    dismissContent = {
+                    content = {
                         SelectableFileCard(
                             modifier = Modifier,
                             selectedFile = fileItem,
