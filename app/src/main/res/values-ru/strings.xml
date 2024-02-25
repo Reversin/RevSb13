@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RevSb_1.1</string>
+    <string name="app_name">RevSb</string>
     <string name="action_language">Локализация</string>
     <string name="first_fragment_label">Поиск имени файла</string>
     <string name="find_file_name">Поиск файла</string>

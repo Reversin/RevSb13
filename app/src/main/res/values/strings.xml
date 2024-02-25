@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RevSb_1.1</string>
+    <string name="app_name">RevSb</string>
     <string name="action_language">Language</string>
     <string name="first_fragment_label">Find file name</string>
     <string name="find_file_name">Find file</string>

@@ -1,6 +1,5 @@
 package com.revsb_11.views.composeScreens
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -15,9 +14,14 @@ fun SelectedFilesScreen(
     navController: NavController
 ) {
 
+    val context = LocalContext.current
+
     LaunchedEffect(viewModel) {
         viewModel.onScreenOpened()
     }
+
+
+
 
     SelectedFilesScreenContent(
         modifier = Modifier.screenPaddings(),
