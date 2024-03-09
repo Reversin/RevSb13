@@ -1,21 +1,9 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.RevSb_11" parent="Theme.AppCompat.NoActionBar">
-
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/black</item>
-        <item name="colorSecondaryVariant">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/black</item>
-        <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/black</item>
     </style>
 
     <style name="Theme.RevSb_11.NoActionBar">
-        <item name="android:itemBackground">@color/third</item>
-        <item name="android:actionMenuTextColor">@color/third</item>
-        <item name="windowActionBar">true</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.RevSb_11.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

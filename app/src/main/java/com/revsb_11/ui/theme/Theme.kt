@@ -1,5 +1,6 @@
 package com.revsb_11.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -8,49 +9,30 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-
-private val DarkColorScheme = darkColorScheme(
-    surface = DarkMain,
-    secondary = DarkSecondary,
-    primary = DarkAccent,
-
-//    onSurface = Color.Red,
-//    onPrimaryContainer = Color.Red,
-//    background = Color.Red,
-//    onBackground = Color.Red,
-//
-//    onPrimary = Color.Red,
-//    primaryContainer = Color.Red,
-//    onSecondary = Color.Red,
-//    secondaryContainer = Color.Red,
-//    onSecondaryContainer = Color.Red,
-//    tertiary = Color.Red,
-//    onTertiary = Color.Red,
-//    tertiaryContainer = Color.Red,
-//    onTertiaryContainer = Color.Red,
-//    error = Color.Red,
-//    errorContainer = Color.Red,
-//    onError = Color.Red,
-//    onErrorContainer = Color.Red,
-//    surfaceVariant = Color.Red,
-//    onSurfaceVariant = Color.Red,
-//    outline = Color.Red,
-//    inverseOnSurface = Color.Red,
-//    inverseSurface = Color.Red,
-//    inversePrimary = Color.Red,
-//    surfaceTint = Color.Red,
-//    outlineVariant = Color.Red,
-//    scrim = Color.Red,
-)
+import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    surface = LightMain,
+    primary = LightPrimary,
+    onPrimary = LightOnPrimary,
     secondary = LightSecondary,
-    primary = LightAccent,
+    onSecondary = LightOnSecondary,
+    background = LightBackground,
+    onBackground = LightOnBackground,
 )
 
+private val DarkColorScheme = darkColorScheme(
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+    background = DarkBackground,
+    onBackground = DarkOnBackground,
+)
 
 @Composable
 fun Rev_composeTheme(
@@ -68,14 +50,19 @@ fun Rev_composeTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+
+
     val view = LocalView.current
-//    if (!view.isInEditMode) {
-//        SideEffect {
-//            val window = (view.context as Activity).window
-//            window.statusBarColor = colorScheme.primary.toArgb()
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-//        }
-//    }
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            window.navigationBarColor = colorScheme.primary.toArgb()
+
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+        }
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,

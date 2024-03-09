@@ -72,7 +72,7 @@ class DriveRepository(private val context: Context) {
         return@withContext result
     }
 
-    suspend fun getImages(): List<String> = withContext(Dispatchers.IO) {
+    suspend fun getImages(): List<File> = withContext(Dispatchers.IO) {
         val credential = GoogleAccountCredential.usingOAuth2(
             context, listOf(DriveScopes.DRIVE)
         )
@@ -85,20 +85,20 @@ class DriveRepository(private val context: Context) {
             .setApplicationName("RevSb")
             .build()
 
-        val result: MutableSet<String> = LinkedHashSet()
+        val result: MutableSet<File> = LinkedHashSet()
         do {
             val fileList: FileList = driveService.files().list()
                 .setQ("mimeType contains 'image/'")  // Запрос только изображений
                 .setSpaces("drive")
-                .setFields("nextPageToken, files(id, name)")
-                .setPageSize(35)  // Ограничение на количество возвращаемых файлов
+                .setFields("nextPageToken, files(id, name, thumbnailLink, webViewLink, mimeType, size)")
+                .setPageSize(10)  // Ограничение на количество возвращаемых файлов
                 .setPageToken(_pageToken)  // Используйте сохраненный pageToken
                 .execute()
             for (file in fileList.files) {
-                result.add(file.name)
+                result.add(file)
             }
             _pageToken = fileList.nextPageToken  // Сохраните новый pageToken
-        } while (_pageToken != null && result.size < 35)
+        } while (_pageToken != null && result.size < 10)
 
         return@withContext result.toList()
     }

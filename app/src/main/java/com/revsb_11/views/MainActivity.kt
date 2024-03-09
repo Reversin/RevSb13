@@ -7,8 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -50,6 +55,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val selectedFilesViewModel: SelectedFilesViewModel by viewModel()
             val addFileCommentsViewModel: AddFileCommentsViewModel by viewModel()
+
 
             Rev_composeTheme(
                 dynamicColor = false

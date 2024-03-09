@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.api.services.drive.model.File
 import com.revsb_11.models.dataclasses.SelectedFile
 import com.revsb_11.utils.ExtractFileDetails
 import com.revsb_11.models.SelectedFilesModel
@@ -37,8 +38,8 @@ class SelectedFilesViewModel(
     private val _endOfList = MutableLiveData<Boolean>()
     val endOfList: LiveData<Boolean> get() = _endOfList
 
-    private val _images = MutableLiveData<List<String>>()
-    val images: LiveData<List<String>> get() = _images
+    private val _images = MutableLiveData<List<File>>()
+    val images: LiveData<List<File>> get() = _images
 
     fun onScreenOpened() {
         _selectedFilesUIState.value = SelectedFilesUIState(
@@ -47,7 +48,6 @@ class SelectedFilesViewModel(
             selectedFile = null
         )
         driveRepository.restoreGoogleAccount()
-
     }
 
     fun onFindFileButtonClicked() {
@@ -88,12 +88,17 @@ class SelectedFilesViewModel(
 
     fun loadImages() {
         viewModelScope.launch {
-            _isLoading.value = true
+
+            if (_images.value.isNullOrEmpty()) {
+                _isLoading.value = true
+            }
             _loadError.value = ""
+
             try {
                 val newImages = driveRepository.getImages()  // Загрузка изображений
                 _images.value = _images.value.orEmpty() + newImages
-                _endOfList.value = newImages.isEmpty()  // Установите в true, если достигнут конец списка
+                _endOfList.value =
+                    newImages.isEmpty()  // Установите в true, если достигнут конец списка
             } catch (e: Exception) {
                 _loadError.value = e.message ?: "Unknown error"
             } finally {
@@ -101,7 +106,6 @@ class SelectedFilesViewModel(
             }
         }
     }
-
 
 
     fun createFolder() {
