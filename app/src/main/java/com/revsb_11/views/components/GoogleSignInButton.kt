@@ -38,7 +38,7 @@ fun GoogleSignInButton(viewModel: SelectedFilesViewModel?, context: Context, mod
         onClick = {
             val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
-                .requestScopes(Scope(DriveScopes.DRIVE))  // Запрос на полный доступ к Google Drive
+                .requestScopes(Scope(DriveScopes.DRIVE))
                 .build()
 
             val signInClient = GoogleSignIn.getClient(context, signInOptions)

@@ -21,6 +21,7 @@ import com.revsb_11.viewmodels.SelectedFilesViewModel
 import androidx.compose.material3.MaterialTheme.colorScheme
 import com.revsb_11.views.components.DriveImageListScreen
 import com.revsb_11.views.components.GoogleSignInButton
+import com.revsb_11.views.components.SelectedFileList
 
 @Composable
 fun SelectedFilesScreenContent(
@@ -47,6 +48,8 @@ fun SelectedFilesScreenContent(
     screenState?.onFindFileButtonClicked?.getContentIfNotHandled()?.let {
         getContent.launch(arrayOf("*/*"))
     }
+
+    val usingLocalStorage = false
 //    SignInWithGoogle(modifier)
 //    val context = LocalContext.current
 //    Toast.makeText(context, "${getDriveService()!=null}", Toast.LENGTH_SHORT).show()
@@ -63,24 +66,26 @@ fun SelectedFilesScreenContent(
             ) {
             }
 
-            if (viewModel != null) {
-                DriveImageListScreen(
-                    modifier = modifier,
-                    viewModel = viewModel,
-                )
+            if (usingLocalStorage) {
+                if (screenState?.savedSelectedFilesList != null) {
+                    SelectedFileList(
+                        modifier = Modifier.fillMaxSize(),
+                        files = screenState.savedSelectedFilesList,
+                        onSelectedFileClicked = {},
+                        onEditButtonClicked = {},
+                        onSwipeToDelete = { selectedFile ->
+                            viewModel.onSwipeDeleteItem(selectedFile)
+                        },
+                    )
+                }
+            } else {
+                if (viewModel != null) {
+                    DriveImageListScreen(
+                        modifier = modifier,
+                        viewModel = viewModel,
+                    )
+                }
             }
-
-//            if (screenState?.savedSelectedFilesList != null) {
-//                SelectedFileList(
-//                    modifier = Modifier.fillMaxSize(),
-//                    files = driveFolders, //screenState.savedSelectedFilesList,
-//                    onSelectedFileClicked = {},
-//                    onEditButtonClicked = {},
-//                    onSwipeToDelete = { selectedFile ->
-//                        viewModel.onSwipeDeleteItem(selectedFile)
-//                    },
-//                )
-//            }
         }
 //        Button(
 //            modifier = Modifier
@@ -93,7 +98,7 @@ fun SelectedFilesScreenContent(
 //
 //            Text(
 //                text = "Find file",
-//                color = White100
+//                color = Color.White
 //            )
 //        }
 
