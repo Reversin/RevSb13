@@ -1,5 +1,6 @@
 package com.revsb_11.views
 
+import Rev_composeTheme
 import android.os.Bundle
 import android.view.Menu
 import androidx.activity.ComponentActivity
@@ -7,25 +8,17 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.ui.AppBarConfiguration
 import com.revsb_11.R
 import com.revsb_11.databinding.ActivityMainBinding
-import com.revsb_11.ui.theme.Rev_composeTheme
 import com.revsb_11.viewmodels.AddFileCommentsViewModel
 import com.revsb_11.viewmodels.FoundationViewModel
 import com.revsb_11.viewmodels.SelectedFilesViewModel
@@ -56,7 +49,6 @@ class MainActivity : ComponentActivity() {
             val selectedFilesViewModel: SelectedFilesViewModel by viewModel()
             val addFileCommentsViewModel: AddFileCommentsViewModel by viewModel()
 
-
             Rev_composeTheme(
                 dynamicColor = false
             ) {
@@ -68,11 +60,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(
                             route = "selected_files_screen",
-                            arguments = listOf(
-                                navArgument("testArg1") {
-                                    type = NavType.StringType
-                                }
-                            )
                         ) {
                             SelectedFilesScreen(
                                 viewModel = selectedFilesViewModel,
@@ -83,14 +70,12 @@ class MainActivity : ComponentActivity() {
                             route = "add_comments_screen"
                         ) {
                             AddFileCommentsScreen(
-                                viewModel = selectedFilesViewModel,
+                                viewModel = addFileCommentsViewModel,
                                 navController = navController
                             )
                         }
                     }
                 }
-
-
             }
         }
 //        binding = ActivityMainBinding.inflate(layoutInflater)

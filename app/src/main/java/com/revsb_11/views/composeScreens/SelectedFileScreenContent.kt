@@ -1,5 +1,6 @@
 package com.revsb_11.views.composeScreens
 
+import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -7,22 +8,28 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.revsb_11.viewmodels.SelectedFilesViewModel
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.ui.res.stringResource
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.revsb_11.R
 import com.revsb_11.views.components.DriveImageListScreen
-import com.revsb_11.views.components.GoogleSignInButton
 import com.revsb_11.views.components.SelectedFileList
+import com.revsb_11.views.composeScreens.effects.SelectedFilesScreenEffect
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectedFilesScreenContent(
     modifier: Modifier,
@@ -37,8 +44,26 @@ fun SelectedFilesScreenContent(
         }
     }
 
-    val context = LocalContext.current
-
+    val signInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                viewModel?.setGoogleAccount(account)
+                if (viewModel != null) {
+                    if (viewModel.isDriveAccessGranted()) {
+                        // Доступ к Google Drive получен, можно выполнять следующие действия
+                    } else {
+                        // Обработка ошибки доступа
+                    }
+                }
+            } catch (e: ApiException) {
+                // Обработка ошибки входа
+            }
+        }
+    }
 
     val screenState =
         viewModel?.selectedFilesUIStateLiveData?.observeAsState()?.value
@@ -48,6 +73,9 @@ fun SelectedFilesScreenContent(
     screenState?.onFindFileButtonClicked?.getContentIfNotHandled()?.let {
         getContent.launch(arrayOf("*/*"))
     }
+
+    val alertMessage =
+        viewModel?.alertMessage?.observeAsState()?.value
 
     val usingLocalStorage = false
 //    SignInWithGoogle(modifier)
@@ -61,10 +89,8 @@ fun SelectedFilesScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TopAppBar(
-                backgroundColor = colorScheme.primary,
-                contentColor = colorScheme.onPrimary
-            ) {
-            }
+                title = { Text(stringResource(R.string.fTitle_name)) },
+            )
 
             if (usingLocalStorage) {
                 if (screenState?.savedSelectedFilesList != null) {
@@ -104,43 +130,73 @@ fun SelectedFilesScreenContent(
 
         //TODO:
 
-        LoadFoldersButton(
+        Button(modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 134.dp)
+            .padding(horizontal = 16.dp)
+            .align(Alignment.BottomCenter),
+            onClick = {
+                viewModel?.triggerEffect(SelectedFilesScreenEffect.NavigateToAddCommentScreen)
+            }) {
+            Text("Перейти к экрану 2")
+        }
+
+        Button(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 75.dp)
                 .padding(horizontal = 16.dp)
                 .align(Alignment.BottomCenter),
-            viewModel = viewModel
-        )
+            onClick = {
+                viewModel?.loadImages()
+            },
+        ) {
+            Text(
+                text = "Folders",
+                color = colorScheme.onPrimary,
+            )
+        }
 
-        GoogleSignInButton(
-            viewModel = viewModel,
-            context = context,
+        Button(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 16.dp)
                 .padding(horizontal = 16.dp)
-                .align(Alignment.BottomCenter)
-        )
+                .align(Alignment.BottomCenter),
+            onClick = {
+                val googleSignInClient = viewModel?.onSignInButtonClicked()
+                if (googleSignInClient != null) {
+                    signInLauncher.launch(googleSignInClient.signInIntent)
+                }
+            }) {
+            Text(
+                text = "Войти в Google",
+                color = colorScheme.onPrimary
+            )
+        }
+
+
+
+        alertMessage?.let {
+            AlertDialog(
+                onDismissRequest = {
+                    // Сбросьте сообщение об ошибке при закрытии диалога
+                    viewModel.updateAlertMessage(null)
+                },
+                title = { Text(text = "Alert") },
+                text = { Text(text = stringResource(it)) },
+                confirmButton = {
+                    Button(onClick = {
+                        // Сбросьте сообщение об ошибке при подтверждении диалога
+                        viewModel.updateAlertMessage(null)
+                    }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
     }
 }
-
-@Composable
-fun LoadFoldersButton(modifier: Modifier, viewModel: SelectedFilesViewModel?) {
-    Button(
-        modifier = modifier,
-        onClick = {
-            viewModel?.loadImages()
-        },
-    ) {
-
-        Text(
-            text = "Folders",
-            color = colorScheme.onPrimary,
-        )
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable

@@ -51,7 +51,8 @@ val appModule = module {
     viewModel {
         val contentResolver = androidApplication().contentResolver
         val fileExtractor = get<ExtractFileDetails> { parametersOf(contentResolver) }
-        AddFileCommentsViewModel(fileExtractor)
+        val sharedPrefs = get<SharedPreferences>()
+        AddFileCommentsViewModel(fileExtractor, sharedPrefs)
     }
 
     viewModel { FoundationViewModel() }

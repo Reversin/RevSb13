@@ -6,13 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.api.services.drive.model.File
+import com.revsb_11.R
 import com.revsb_11.models.dataclasses.SelectedFile
 import com.revsb_11.utils.ExtractFileDetails
 import com.revsb_11.models.SelectedFilesModel
 import com.revsb_11.models.dataclasses.SelectedFilesUIState
 import com.revsb_11.repository.DriveRepository
 import com.revsb_11.utils.Event
+import com.revsb_11.views.composeScreens.effects.SelectedFilesScreenEffect
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SelectedFilesViewModel(
@@ -41,6 +46,13 @@ class SelectedFilesViewModel(
     private val _images = MutableLiveData<List<File>>()
     val images: LiveData<List<File>> get() = _images
 
+    private val _alertMessage = MutableLiveData<Int?>()
+    val alertMessage: LiveData<Int?> get() = _alertMessage
+
+    private val _effect = MutableStateFlow<SelectedFilesScreenEffect?>(null)
+    val effect = _effect.asStateFlow()
+
+
     fun onScreenOpened() {
         _selectedFilesUIState.value = SelectedFilesUIState(
             savedSelectedFilesList = model.getSelectedFiles(),
@@ -53,6 +65,14 @@ class SelectedFilesViewModel(
     fun onFindFileButtonClicked() {
         val newState = _selectedFilesUIState.value?.copy(onFindFileButtonClicked = Event(Unit))
         _selectedFilesUIState.value = newState
+    }
+
+    fun onSignInButtonClicked(): GoogleSignInClient {
+        return driveRepository.authenticateUser()
+    }
+
+    fun isDriveAccessGranted(): Boolean {
+        return driveRepository.isDriveAccessGranted()
     }
 
     fun fileHasBeenSelected(uri: Uri) {
@@ -95,10 +115,14 @@ class SelectedFilesViewModel(
             _loadError.value = ""
 
             try {
-                val newImages = driveRepository.getImages()  // Загрузка изображений
-                _images.value = _images.value.orEmpty() + newImages
-                _endOfList.value =
-                    newImages.isEmpty()  // Установите в true, если достигнут конец списка
+                if (driveRepository.isDriveAccessGranted()) {
+                    val newImages = driveRepository.getImages()  // Загрузка изображений
+                    _images.value = _images.value.orEmpty() + newImages
+                    _endOfList.value =
+                        newImages.isEmpty()  // Установите в true, если достигнут конец списка
+                } else {
+                    updateAlertMessage(R.string.sha_error)
+                }
             } catch (e: Exception) {
                 _loadError.value = e.message ?: "Unknown error"
             } finally {
@@ -107,6 +131,9 @@ class SelectedFilesViewModel(
         }
     }
 
+    fun updateAlertMessage(resId: Int?) {
+        _alertMessage.value = resId
+    }
 
     fun createFolder() {
         viewModelScope.launch {
@@ -123,5 +150,14 @@ class SelectedFilesViewModel(
         _selectedFilesUIState.value =
             _selectedFilesUIState.value?.copy(savedSelectedFilesList = model.getSelectedFiles())
     }
+
+    fun triggerEffect(newEffect: SelectedFilesScreenEffect) {
+        _effect.value = newEffect
+    }
+
+    fun resetEffect() {
+        _effect.value = null
+    }
 }
+
 

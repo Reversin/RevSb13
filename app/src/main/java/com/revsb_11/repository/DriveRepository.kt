@@ -3,6 +3,9 @@ package com.revsb_11.repository
 import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -18,13 +21,28 @@ class DriveRepository(private val context: Context) {
     private var googleAccount: GoogleSignInAccount? = null
     private var _pageToken: String? = null
 
+    private val googleSignInClient: GoogleSignInClient by lazy {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestScopes(Scope(DriveScopes.DRIVE))
+            .build()
+        GoogleSignIn.getClient(context, gso)
+    }
+
+    fun authenticateUser(): GoogleSignInClient {
+        return googleSignInClient
+    }
+
+    fun isDriveAccessGranted(): Boolean {
+        return googleAccount?.grantedScopes?.contains(Scope(DriveScopes.DRIVE)) == true
+    }
+
     fun setGoogleAccount(googleAccount: GoogleSignInAccount?) {
         this.googleAccount = googleAccount
     }
 
     fun restoreGoogleAccount() =
         setGoogleAccount(GoogleSignIn.getLastSignedInAccount(context))
-
 
     private fun getDriveService(): Drive {
         val credential = GoogleAccountCredential.usingOAuth2(
@@ -128,3 +146,9 @@ class DriveRepository(private val context: Context) {
     }
 
 }
+
+/*
+Ошибка SHA-1 возможна из за того что изменился серт SHA-1. Сделай так:
+    Gradle(тот что справа) -> Execute Gradle Task -> введи gradle signingReport
+    Скопируй SHA-1 и введи его в Android client 1 и API key 1 здесь: https://console.cloud.google.com/apis/credentials?authuser=1&project=revsb-415413
+ Держись. До сюда дожили и дальше справимся*/

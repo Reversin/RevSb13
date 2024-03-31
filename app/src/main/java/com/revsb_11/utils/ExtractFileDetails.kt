@@ -81,6 +81,8 @@ class ExtractFileDetails(private val contentResolver: ContentResolver?) {
 
     companion object {
         const val MIN_FILE_SIZE = 1024
+        const val TRANSFER_FILE_URI = "transfer_file_uri"
+        const val TRANSFER_FILE_COMMENT = "transfer_file_comment"
     }
 
 }
