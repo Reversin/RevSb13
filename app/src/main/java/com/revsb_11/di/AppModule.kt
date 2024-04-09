@@ -50,9 +50,10 @@ val appModule = module {
 
     viewModel {
         val contentResolver = androidApplication().contentResolver
+        val selectedFilesModel = get<SelectedFilesModel>()
         val fileExtractor = get<ExtractFileDetails> { parametersOf(contentResolver) }
-        val sharedPrefs = get<SharedPreferences>()
-        AddFileCommentsViewModel(fileExtractor, sharedPrefs)
+        val driveRepository = get<DriveRepository> { parametersOf(contentResolver) }
+        AddFileCommentsViewModel(fileExtractor, driveRepository, selectedFilesModel)
     }
 
     viewModel { FoundationViewModel() }

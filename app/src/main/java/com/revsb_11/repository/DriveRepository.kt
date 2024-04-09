@@ -1,6 +1,8 @@
 package com.revsb_11.repository
 
 import android.content.Context
+import android.text.format.Formatter.formatFileSize
+import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -13,6 +15,7 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
 import com.google.api.services.drive.model.FileList
+import com.revsb_11.models.dataclasses.SelectedFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,7 +24,7 @@ class DriveRepository(private val context: Context) {
     private var googleAccount: GoogleSignInAccount? = null
     private var _pageToken: String? = null
 
-    private val googleSignInClient: GoogleSignInClient by lazy {
+private val googleSignInClient: GoogleSignInClient by lazy {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestScopes(Scope(DriveScopes.DRIVE))
@@ -90,7 +93,7 @@ class DriveRepository(private val context: Context) {
         return@withContext result
     }
 
-    suspend fun getImages(): List<File> = withContext(Dispatchers.IO) {
+    suspend fun getImages(): List<SelectedFile> = withContext(Dispatchers.IO) {
         val credential = GoogleAccountCredential.usingOAuth2(
             context, listOf(DriveScopes.DRIVE)
         )
@@ -103,7 +106,7 @@ class DriveRepository(private val context: Context) {
             .setApplicationName("RevSb")
             .build()
 
-        val result: MutableSet<File> = LinkedHashSet()
+        val result: MutableSet<SelectedFile> = LinkedHashSet()
         do {
             val fileList: FileList = driveService.files().list()
                 .setQ("mimeType contains 'image/'")  // Запрос только изображений
@@ -113,7 +116,7 @@ class DriveRepository(private val context: Context) {
                 .setPageToken(_pageToken)  // Используйте сохраненный pageToken
                 .execute()
             for (file in fileList.files) {
-                result.add(file)
+                result.add(convertGoogleDriveFileToFile(file))
             }
             _pageToken = fileList.nextPageToken  // Сохраните новый pageToken
         } while (_pageToken != null && result.size < 10)
@@ -144,6 +147,31 @@ class DriveRepository(private val context: Context) {
 
         return@withContext folder.id
     }
+
+    private fun convertGoogleDriveFileToFile(googleDriveFile: File): SelectedFile {
+        return SelectedFile(
+            fileName = googleDriveFile.name,
+            fileSize = formatFileSize(context, googleDriveFile.getSize()),
+            fileId = googleDriveFile.id,
+            fileMimeType = googleDriveFile.mimeType,
+            fileThumbnail = googleDriveFile.thumbnailLink,
+            fileViewLink = googleDriveFile.webViewLink,
+        )
+    }
+
+    suspend fun getFileById(fileId: String): SelectedFile? = withContext(Dispatchers.IO) {
+        val driveService = getDriveService()
+        try {
+            val file = driveService.files().get(fileId)
+                .setFields("id, name, thumbnailLink, webViewLink, mimeType, size")
+                .execute()
+            return@withContext convertGoogleDriveFileToFile(file)
+        } catch (e: Exception) {
+            Log.e("DriveRepository", "Error getting file: $e")
+            return@withContext null
+        }
+    }
+
 
 }
 

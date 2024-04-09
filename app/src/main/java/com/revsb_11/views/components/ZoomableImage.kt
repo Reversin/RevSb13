@@ -1,39 +1,37 @@
 package com.revsb_11.views.components
 
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 
 @Composable
 fun ZoomableImage(modifier: Modifier = Modifier, imageRequest: ImageRequest) {
-    var scale by remember { mutableStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
+    val painter = rememberAsyncImagePainter(model = imageRequest)
 
-    Box(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    scale *= zoom
-                    offset += pan
-                }
-            }
-            .graphicsLayer(
-                scaleX = maxOf(1f, scale),
-                scaleY = maxOf(1f, scale),
-                translationX = offset.x,
-                translationY = offset.y
-            ).fillMaxSize(),
-    ) {
-        AsyncImage(
-            model = imageRequest,
-            contentDescription = null
+    Box(modifier = modifier.fillMaxSize()) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit
         )
+
+        if (painter.state is AsyncImagePainter.State.Loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(40.dp).align(Alignment.Center)
+            )
+        }
     }
 }

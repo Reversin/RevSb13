@@ -9,6 +9,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,35 +28,40 @@ fun AddFileCommentsScreenContent(
     modifier: Modifier,
     viewModel: AddFileCommentsViewModel? = null,
 ) {
-    val imageRequest = ImageRequest.Builder(LocalContext.current)
-        .data("https://yastatic.net/naydex/yandex-search/S1Jj2k647/fbc47efhi2/WsE6_-KKzARakOCQMaT8ehtWEM8Megfs-Vq59D5ZxQ4bXarzLh9Ob-2mH1GwglqQiU4BmvLy9h4MgMAd8iliiB7YEcHRuKA2cbGHrhmE4X4NHBvSVicV1tI")
-        .crossfade(true)
-        .build()
+    if (viewModel != null) {
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TopAppBar(
-                title = { Text("Заголовок") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        viewModel?.triggerEffect(AddCommentScreenEffect.BackToPreviousScreen)
-                    }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_back), // Замените на ваш ресурс иконки
-                            contentDescription = "Назад"
-                        )
+        val file = viewModel.fileLiveData.observeAsState().value
+
+        val imageRequest = ImageRequest.Builder(LocalContext.current)
+            .data(file?.fileThumbnail) //TODO: разораться и заменить на ViewLink
+            .crossfade(true)
+            .build()
+
+        Box(modifier = modifier.fillMaxSize()) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TopAppBar(
+                    title = { Text("Заголовок") },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            viewModel.triggerEffect(AddCommentScreenEffect.BackToPreviousScreen)
+                        }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_back), // Замените на ваш ресурс иконки
+                                contentDescription = "Назад"
+                            )
+                        }
                     }
-                }
-            )
+                )
 
-            ZoomableImage(
-                modifier = modifier.fillMaxSize(),
-                imageRequest = imageRequest,
-            )
+                ZoomableImage(
+                    modifier = modifier.fillMaxSize(),
+                    imageRequest = imageRequest,
+                )
+            }
         }
     }
 }

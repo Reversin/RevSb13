@@ -16,8 +16,8 @@ class SelectedFilesModel(private val prefs: SharedPreferences, private val gson:
     }
 
     fun saveSelectedFile(
-        filePath: String?,
-        fileSize: String?,
+        filePath: String,
+        fileSize: String,
         longTermPath: String,
         fileComments: String
     ) {
@@ -60,8 +60,16 @@ class SelectedFilesModel(private val prefs: SharedPreferences, private val gson:
         saveInModel(existingFileName)
     }
 
+    fun saveForTransferSelectedFile(selectedFile: SelectedFile) {
+        prefs.edit { putString(TRANSFER_FILE, selectedFile.fileId) }
+    }
+
+    fun getTransferSelectedFile() =
+        prefs.getString(TRANSFER_FILE, "")
+
 
     companion object {
         private const val PREF_KEY_NAME = "1"
+        private const val TRANSFER_FILE = "transfer_file"
     }
 }

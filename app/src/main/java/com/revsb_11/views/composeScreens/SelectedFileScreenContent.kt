@@ -21,12 +21,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.revsb_11.viewmodels.SelectedFilesViewModel
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.revsb_11.R
 import com.revsb_11.views.components.DriveImageListScreen
-import com.revsb_11.views.components.SelectedFileList
 import com.revsb_11.views.composeScreens.effects.SelectedFilesScreenEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,165 +35,174 @@ fun SelectedFilesScreenContent(
     modifier: Modifier,
     viewModel: SelectedFilesViewModel? = null,
 ) {
+    if (viewModel != null) {
 
-    val getContent = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri ->
-        if (uri != null) {
-            viewModel?.fileHasBeenSelected(uri)
+        val getContent = rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocument()
+        ) { uri ->
+            if (uri != null) {
+                viewModel.fileHasBeenSelected(uri)
+            }
         }
-    }
 
-    val signInLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                viewModel?.setGoogleAccount(account)
-                if (viewModel != null) {
+        val signInLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    viewModel.setGoogleAccount(account)
                     if (viewModel.isDriveAccessGranted()) {
-                        // Доступ к Google Drive получен, можно выполнять следующие действия
+                        viewModel.loadImages()
                     } else {
                         // Обработка ошибки доступа
                     }
+                } catch (e: ApiException) {
+                    // Обработка ошибки входа
                 }
-            } catch (e: ApiException) {
-                // Обработка ошибки входа
             }
         }
-    }
 
-    val screenState =
-        viewModel?.selectedFilesUIStateLiveData?.observeAsState()?.value
+        val files = viewModel.images.observeAsState(emptyList()).value
 
-    val driveFolders = viewModel?.driveFoldersLiveData?.observeAsState(emptyList())
+        val screenState =
+            viewModel.selectedFilesUIStateLiveData.observeAsState().value
 
-    screenState?.onFindFileButtonClicked?.getContentIfNotHandled()?.let {
-        getContent.launch(arrayOf("*/*"))
-    }
+        val driveFolders = viewModel.driveFoldersLiveData.observeAsState(emptyList())
 
-    val alertMessage =
-        viewModel?.alertMessage?.observeAsState()?.value
+        screenState?.onFindFileButtonClicked?.getContentIfNotHandled()?.let {
+            getContent.launch(arrayOf("*/*"))
+        }
 
-    val usingLocalStorage = false
-//    SignInWithGoogle(modifier)
-//    val context = LocalContext.current
-//    Toast.makeText(context, "${getDriveService()!=null}", Toast.LENGTH_SHORT).show()
+        val alertMessage =
+            viewModel.alertMessage.observeAsState().value
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TopAppBar(
-                title = { Text(stringResource(R.string.fTitle_name)) },
-            )
+        val loadError = viewModel.loadError.observeAsState("").value
+        val isLoading = viewModel.isLoading.observeAsState(false).value
+        val isEndOfList = viewModel.endOfList.observeAsState(false).value
 
-            if (usingLocalStorage) {
-                if (screenState?.savedSelectedFilesList != null) {
-                    SelectedFileList(
-                        modifier = Modifier.fillMaxSize(),
-                        files = screenState.savedSelectedFilesList,
-                        onSelectedFileClicked = {},
-                        onEditButtonClicked = {},
-                        onSwipeToDelete = { selectedFile ->
-                            viewModel.onSwipeDeleteItem(selectedFile)
-                        },
-                    )
-                }
-            } else {
-                if (viewModel != null) {
+        val usingLocalStorage = false
+        //    SignInWithGoogle(modifier)
+        //    val context = LocalContext.current
+        //    Toast.makeText(context, "${getDriveService()!=null}", Toast.LENGTH_SHORT).show()
+
+        Box(modifier = modifier.fillMaxSize()) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.fTitle_name)) },
+                )
+
+                if (usingLocalStorage) {
+                    if (screenState?.savedSelectedFilesList != null) {
+                        //                    SelectedFileList(
+                        //                        modifier = Modifier.fillMaxSize(),
+                        //                        files = screenState.savedSelectedFilesList,
+                        //                        onSelectedFileClicked = {},
+                        //                        onEditButtonClicked = {},
+                        //                        onSwipeToDelete = { selectedFile ->
+                        //                            viewModel.onSwipeDeleteItem(selectedFile)
+                        //                        },
+                        //                    )
+                    }
+                } else {
                     DriveImageListScreen(
                         modifier = modifier,
-                        viewModel = viewModel,
+                        files = files,
+                        onEditIconClicked = { selectedFile ->
+                            viewModel.onEditFileCommentClick(selectedFile)
+                        },
+                        loadError = loadError,
+                        isLoading = isLoading,
+                        isEndOfList = isEndOfList,
+                        loadImages = { viewModel.loadImages() },
                     )
                 }
             }
-        }
-//        Button(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 8.dp, bottom = 16.dp)
-//                .padding(horizontal = 16.dp)
-//                .align(Alignment.BottomCenter),
-//            onClick = { viewModel?.onFindFileButtonClicked() },
-//        ) {
-//
-//            Text(
-//                text = "Find file",
-//                color = Color.White
-//            )
-//        }
+            //        Button(
+            //            modifier = Modifier
+            //                .fillMaxWidth()
+            //                .padding(top = 8.dp, bottom = 16.dp)
+            //                .padding(horizontal = 16.dp)
+            //                .align(Alignment.BottomCenter),
+            //            onClick = { viewModel?.onFindFileButtonClicked() },
+            //        ) {
+            //
+            //            Text(
+            //                text = "Find file",
+            //                color = Color.White
+            //            )
+            //        }
 
-        //TODO:
+            //TODO:
 
-        Button(modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 134.dp)
-            .padding(horizontal = 16.dp)
-            .align(Alignment.BottomCenter),
-            onClick = {
-                viewModel?.triggerEffect(SelectedFilesScreenEffect.NavigateToAddCommentScreen)
-            }) {
-            Text("Перейти к экрану 2")
-        }
-
-        Button(
-            modifier = modifier
+            Button(modifier = modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 75.dp)
+                .padding(top = 8.dp, bottom = 134.dp)
                 .padding(horizontal = 16.dp)
                 .align(Alignment.BottomCenter),
-            onClick = {
-                viewModel?.loadImages()
-            },
-        ) {
-            Text(
-                text = "Folders",
-                color = colorScheme.onPrimary,
-            )
-        }
+                onClick = {
+                    viewModel.triggerEffect(SelectedFilesScreenEffect.NavigateToAddCommentScreen)
+                }) {
+                Text("Перейти к экрану 2")
+            }
 
-        Button(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 16.dp)
-                .padding(horizontal = 16.dp)
-                .align(Alignment.BottomCenter),
-            onClick = {
-                val googleSignInClient = viewModel?.onSignInButtonClicked()
-                if (googleSignInClient != null) {
-                    signInLauncher.launch(googleSignInClient.signInIntent)
-                }
-            }) {
-            Text(
-                text = "Войти в Google",
-                color = colorScheme.onPrimary
-            )
-        }
-
-
-
-        alertMessage?.let {
-            AlertDialog(
-                onDismissRequest = {
-                    // Сбросьте сообщение об ошибке при закрытии диалога
-                    viewModel.updateAlertMessage(null)
+            Button(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 75.dp)
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.BottomCenter),
+                onClick = {
+                    viewModel.loadImages()
                 },
-                title = { Text(text = "Alert") },
-                text = { Text(text = stringResource(it)) },
-                confirmButton = {
-                    Button(onClick = {
-                        // Сбросьте сообщение об ошибке при подтверждении диалога
+            ) {
+                Text(
+                    text = "Folders",
+                    color = colorScheme.onPrimary,
+                )
+            }
+
+            Button(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp)
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.BottomCenter),
+                onClick = {
+                    val googleSignInClient = viewModel.onSignInButtonClicked()
+                    signInLauncher.launch(googleSignInClient.signInIntent)
+                }) {
+                Text(
+                    text = "Войти в Google",
+                    color = colorScheme.onPrimary
+                )
+            }
+
+
+
+            alertMessage?.let {
+                AlertDialog(
+                    onDismissRequest = {
+                        // Сбросьте сообщение об ошибке при закрытии диалога
                         viewModel.updateAlertMessage(null)
-                    }) {
-                        Text("OK")
+                    },
+                    title = { Text(text = "Alert") },
+                    text = { Text(text = stringResource(it)) },
+                    confirmButton = {
+                        Button(onClick = {
+                            // Сбросьте сообщение об ошибке при подтверждении диалога
+                            viewModel.updateAlertMessage(null)
+                        }) {
+                            Text("OK")
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

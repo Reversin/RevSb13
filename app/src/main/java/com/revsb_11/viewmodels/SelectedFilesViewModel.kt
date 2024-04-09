@@ -41,10 +41,11 @@ class SelectedFilesViewModel(
     val isLoading: LiveData<Boolean> get() = _isLoading
 
     private val _endOfList = MutableLiveData<Boolean>()
-    val endOfList: LiveData<Boolean> get() = _endOfList
+    val endOfList: LiveData<Boolean>
+        get() = _endOfList
 
-    private val _images = MutableLiveData<List<File>>()
-    val images: LiveData<List<File>> get() = _images
+    private val _images = MutableLiveData<List<SelectedFile>>()
+    val images: LiveData<List<SelectedFile>> get() = _images
 
     private val _alertMessage = MutableLiveData<Int?>()
     val alertMessage: LiveData<Int?> get() = _alertMessage
@@ -84,12 +85,14 @@ class SelectedFilesViewModel(
                     longTermPath
                 )
             }
-            model.saveSelectedFile(
-                filePath,
-                fileSize,
-                longTermPath.toString(),
-                ""
-            )
+            if (filePath != null) {
+                model.saveSelectedFile(
+                    filePath,
+                    fileSize,
+                    longTermPath.toString(),
+                    ""
+                )
+            }
         }
 
         _selectedFilesUIState.value =
@@ -146,9 +149,14 @@ class SelectedFilesViewModel(
     }
 
     fun onSwipeDeleteItem(selectedFile: SelectedFile) {
-        model.deleteSelectedFile(selectedFile)
+        //model.deleteSelectedFile(selectedFile)
         _selectedFilesUIState.value =
             _selectedFilesUIState.value?.copy(savedSelectedFilesList = model.getSelectedFiles())
+    }
+
+    fun onEditFileCommentClick(selectedFile: SelectedFile) {
+        model.saveForTransferSelectedFile(selectedFile)
+        triggerEffect(SelectedFilesScreenEffect.NavigateToAddCommentScreen)
     }
 
     fun triggerEffect(newEffect: SelectedFilesScreenEffect) {
