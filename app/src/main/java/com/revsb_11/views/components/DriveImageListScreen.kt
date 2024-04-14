@@ -45,7 +45,10 @@ fun DriveImageListScreen(
                 }
             }
 
-            SelectableFileCard(modifier = modifier, file = file , onEditIconClicked = { onEditIconClicked(file) })
+            SelectableFileCard(
+                modifier = modifier,
+                file = file,
+                onEditIconClicked = { onEditIconClicked(file) })
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {

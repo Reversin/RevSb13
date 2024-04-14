@@ -10,7 +10,8 @@ import com.google.gson.reflect.TypeToken
 
 class SelectedFilesModel(private val prefs: SharedPreferences, private val gson: Gson) {
 
-    private fun saveInModel(data: List<SelectedFile>) {
+
+    private fun saveListInModel(data: List<SelectedFile>) {
         val json = gson.toJson(data)
         prefs.edit { putString(PREF_KEY_NAME, json) }
     }
@@ -27,12 +28,12 @@ class SelectedFilesModel(private val prefs: SharedPreferences, private val gson:
             if ((file.filePath).equals(selectedFile.filePath)) {
                 existingFileName.remove(file)
                 existingFileName.add(0, file)
-                saveInModel(existingFileName)
+                saveListInModel(existingFileName)
                 return
             }
         }
         existingFileName.add(0, selectedFile)
-        saveInModel(existingFileName)
+        saveListInModel(existingFileName)
     }
 
 
@@ -46,7 +47,7 @@ class SelectedFilesModel(private val prefs: SharedPreferences, private val gson:
     fun deleteSelectedFile(selectedFile: SelectedFile) {
         val existingFileName = getSelectedFiles().toMutableList()
         existingFileName.remove(selectedFile)
-        saveInModel(existingFileName)
+        saveListInModel(existingFileName)
     }
 
     fun deleteChangedFile(uri: String, newFileComment: String) {
@@ -57,15 +58,18 @@ class SelectedFilesModel(private val prefs: SharedPreferences, private val gson:
             oldFileName.fileComments = newFileComment
             existingFileName.add(0, oldFileName)
         }
-        saveInModel(existingFileName)
+        saveListInModel(existingFileName)
     }
 
-    fun saveForTransferSelectedFile(selectedFile: SelectedFile) {
-        prefs.edit { putString(TRANSFER_FILE, selectedFile.fileId) }
+    fun saveTransferSelectedFile(selectedFile: SelectedFile) {
+        val json = gson.toJson(selectedFile)
+        prefs.edit { putString(TRANSFER_FILE, json) }
     }
 
-    fun getTransferSelectedFile() =
-        prefs.getString(TRANSFER_FILE, "")
+    fun getTransferSelectedFile(): SelectedFile? {
+        val json = prefs.getString(TRANSFER_FILE, null)
+        return if (json != null) gson.fromJson(json, SelectedFile::class.java) else null // Десериализация JSON обратно в объект SelectedFile
+    }
 
 
     companion object {

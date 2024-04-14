@@ -1,8 +1,9 @@
 package com.revsb_11.repository
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.text.format.Formatter.formatFileSize
-import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -10,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
@@ -18,13 +20,19 @@ import com.google.api.services.drive.model.FileList
 import com.revsb_11.models.dataclasses.SelectedFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
+import java.net.SocketTimeoutException
 
 class DriveRepository(private val context: Context) {
 
     private var googleAccount: GoogleSignInAccount? = null
+    private lateinit var credential: GoogleAccountCredential
+    private lateinit var driveService: Drive
+
     private var _pageToken: String? = null
 
-private val googleSignInClient: GoogleSignInClient by lazy {
+
+    val googleSignInClient: GoogleSignInClient by lazy {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestScopes(Scope(DriveScopes.DRIVE))
@@ -40,19 +48,24 @@ private val googleSignInClient: GoogleSignInClient by lazy {
         return googleAccount?.grantedScopes?.contains(Scope(DriveScopes.DRIVE)) == true
     }
 
-    fun setGoogleAccount(googleAccount: GoogleSignInAccount?) {
+    private fun setGoogleAccount(googleAccount: GoogleSignInAccount?) {
         this.googleAccount = googleAccount
     }
 
-    fun restoreGoogleAccount() =
-        setGoogleAccount(GoogleSignIn.getLastSignedInAccount(context))
+    fun initDriveRepository(googleAccount: GoogleSignInAccount?) {
+        setGoogleAccount(googleAccount)
+        initDriveService()
+    }
 
-    private fun getDriveService(): Drive {
-        val credential = GoogleAccountCredential.usingOAuth2(
+    fun restoreGoogleAccount() =
+        initDriveRepository(GoogleSignIn.getLastSignedInAccount(context))
+
+    private fun initDriveService() {
+        this.credential = GoogleAccountCredential.usingOAuth2(
             context, listOf(DriveScopes.DRIVE_FILE)
         )
         credential.selectedAccount = googleAccount?.account
-        return Drive.Builder(
+        this.driveService = Drive.Builder(
             AndroidHttp.newCompatibleTransport(),
             JacksonFactory.getDefaultInstance(),
             credential
@@ -67,13 +80,6 @@ private val googleSignInClient: GoogleSignInClient by lazy {
             context, listOf(DriveScopes.DRIVE)
         )
         credential.selectedAccount = googleAccount?.account
-        val driveService = Drive.Builder(
-            AndroidHttp.newCompatibleTransport(),
-            JacksonFactory.getDefaultInstance(),
-            credential
-        )
-            .setApplicationName("RevSb")
-            .build()
 
         val result: MutableList<String> = ArrayList()
         var pageToken: String? = null
@@ -111,7 +117,7 @@ private val googleSignInClient: GoogleSignInClient by lazy {
             val fileList: FileList = driveService.files().list()
                 .setQ("mimeType contains 'image/'")  // Запрос только изображений
                 .setSpaces("drive")
-                .setFields("nextPageToken, files(id, name, thumbnailLink, webViewLink, mimeType, size)")
+                .setFields("nextPageToken, files(id, name, thumbnailLink, webContentLink, mimeType, size)")
                 .setPageSize(10)  // Ограничение на количество возвращаемых файлов
                 .setPageToken(_pageToken)  // Используйте сохраненный pageToken
                 .execute()
@@ -123,7 +129,6 @@ private val googleSignInClient: GoogleSignInClient by lazy {
 
         return@withContext result.toList()
     }
-
 
 
     suspend fun createFolder(): String? = withContext(Dispatchers.IO) {
@@ -155,24 +160,26 @@ private val googleSignInClient: GoogleSignInClient by lazy {
             fileId = googleDriveFile.id,
             fileMimeType = googleDriveFile.mimeType,
             fileThumbnail = googleDriveFile.thumbnailLink,
-            fileViewLink = googleDriveFile.webViewLink,
+            fileContentLink = googleDriveFile.webContentLink,
         )
     }
 
-    suspend fun getFileById(fileId: String): SelectedFile? = withContext(Dispatchers.IO) {
-        val driveService = getDriveService()
+    suspend fun loadImage(fileId: String): Bitmap = withContext(Dispatchers.IO) {
         try {
-            val file = driveService.files().get(fileId)
-                .setFields("id, name, thumbnailLink, webViewLink, mimeType, size")
-                .execute()
-            return@withContext convertGoogleDriveFileToFile(file)
-        } catch (e: Exception) {
-            Log.e("DriveRepository", "Error getting file: $e")
-            return@withContext null
+            val outputStream = ByteArrayOutputStream()
+            driveService.files().get(fileId).executeMediaAndDownloadTo(outputStream)
+            val byteArray = outputStream.toByteArray()
+            val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+
+            return@withContext bitmap
+        } catch (e: GoogleJsonResponseException) {
+            System.err.println("Unable to move file: " + e.details)
+            throw e
+        }  catch (e: SocketTimeoutException) {
+            System.err.println("Socket Timeout: The connection has timed out. Please try again.")
+            throw e
         }
     }
-
-
 }
 
 /*

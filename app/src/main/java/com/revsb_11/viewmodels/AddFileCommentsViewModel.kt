@@ -1,29 +1,27 @@
 package com.revsb_11.viewmodels
 
 
-import android.content.SharedPreferences
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revsb_11.models.dataclasses.NewFileComment
 import com.revsb_11.models.dataclasses.ScreenState
-import com.revsb_11.mappers.FileIconMapper
 import com.revsb_11.models.SelectedFilesModel
+import com.revsb_11.models.dataclasses.AddFileCommentsUIState
 import com.revsb_11.models.dataclasses.SelectedFile
 import com.revsb_11.repository.DriveRepository
 import com.revsb_11.utils.ExtractFileDetails
-import com.revsb_11.utils.ExtractFileDetails.Companion.TRANSFER_FILE_COMMENT
-import com.revsb_11.utils.ExtractFileDetails.Companion.TRANSFER_FILE_URI
 import com.revsb_11.views.composeScreens.effects.AddCommentScreenEffect
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddFileCommentsViewModel(
-    private val extractFileDetails: ExtractFileDetails,
-    private val driveRepository: DriveRepository,
-    private val model: SelectedFilesModel,
+    val extractFileDetails: ExtractFileDetails,
+    val driveRepository: DriveRepository,
+    val model: SelectedFilesModel,
 ) : ViewModel() {
 
     val screenState = ScreenState()
@@ -36,12 +34,30 @@ class AddFileCommentsViewModel(
     val fileLiveData: LiveData<SelectedFile>
         get() = _file
 
-    fun onScreenOpened() {
-        viewModelScope.launch {
-            val originalFileId = model.getTransferSelectedFile()
+    private val _addFileCommentsUIState = MutableLiveData<AddFileCommentsUIState?>()
+    val addFileCommentsUIStateLiveData: MutableLiveData<AddFileCommentsUIState?>
+        get() = _addFileCommentsUIState
 
-            if (originalFileId != null) {
-                _file.value = driveRepository.getFileById(originalFileId)
+    private val _bitmap = MutableLiveData<Bitmap?>(null)
+    val bitmapLiveData: MutableLiveData<Bitmap?>
+        get() = _bitmap
+
+    private val _errorTimeoutEvent = MutableLiveData<Boolean>()
+    val errorTimeoutEventLiveData: LiveData<Boolean> = _errorTimeoutEvent
+
+    private val _showConfirmBackDialog = MutableLiveData<Boolean>(false)
+    val showConfirmBackDialogLiveData: LiveData<Boolean> = _showConfirmBackDialog
+
+
+    fun onScreenOpened() {
+        driveRepository.restoreGoogleAccount()
+
+        val originalFile = model.getTransferSelectedFile()
+
+        if (originalFile != null) {
+            _addFileCommentsUIState.value =
+                AddFileCommentsUIState(selectedFile = originalFile)
+            loadImage()
 //                screenState._originalFileUri.value = originalFileUri
 //                extractFileDetails.getFileFormatFromUri(originalFileUri)
 //                val fileType = extractFileDetails.getFileFormatFromUri(originalFileUri)
@@ -53,26 +69,19 @@ class AddFileCommentsViewModel(
 //                }
 //                screenState._fileName.value = extractFileDetails.getFileNameFromUri(originalFileUri)
 //                screenState._fileComment.value = fileComment
-            }
-        }
-    }
-
-
-    suspend fun getFileById(fileId: String) {
-        val file = driveRepository.getFileById(fileId)
-        if (file != null) {
-            // Обработка полученного файла
-        } else {
-            // Обработка ошибки
         }
     }
 
     fun onTextHasBeenChanged(changedComment: String) {
-        if (changedComment != screenState.fileCommentLiveData.value) {
-            screenState._isSavingChangesButtonEnabled.value = true
-            screenState._changedComment.value = changedComment
+        if (changedComment != _addFileCommentsUIState.value?.selectedFile?.fileComments) {
+            _addFileCommentsUIState.value =
+                _addFileCommentsUIState.value?.copy(
+                    isSavingChangesButtonEnabled = true,
+                    changedComment = changedComment
+                )
         } else {
-            screenState._isSavingChangesButtonEnabled.value = false
+            _addFileCommentsUIState.value =
+                _addFileCommentsUIState.value?.copy(isSavingChangesButtonEnabled = false)
         }
     }
 
@@ -91,11 +100,50 @@ class AddFileCommentsViewModel(
             }
     }
 
+    fun loadImage() {
+        viewModelScope.launch {
+            try {
+                _bitmap.value = _addFileCommentsUIState.value?.selectedFile?.fileId?.let { fileId ->
+                    driveRepository.loadImage(
+                        fileId
+                    )
+                }
+                // обработка успешной загрузки
+            } catch (e: Exception) {
+                _errorTimeoutEvent.postValue(true)
+            }
+        }
+    }
+
+    fun onBackClick(confirmed: Boolean = false) {
+        if (_addFileCommentsUIState.value?.isSavingChangesButtonEnabled == true && !confirmed) {
+            _showConfirmBackDialog.value = true
+        } else {
+            triggerEffect(AddCommentScreenEffect.BackToPreviousScreen)
+        }
+    }
+
     fun triggerEffect(newEffect: AddCommentScreenEffect) {
         _effect.value = newEffect
     }
 
+    fun dismissDialog(dialogType: String) {
+        when (dialogType) {
+            TIMEOUT_DIALOG_TYPE -> _errorTimeoutEvent.value = false
+            CONFIRM_BACK_DIALOG_TYPE -> _showConfirmBackDialog.value = false
+        }
+    }
+
     fun resetEffect() {
         _effect.value = null
+        _bitmap.value = null
+        onCleared()
+    }
+
+
+    companion object {
+
+        const val TIMEOUT_DIALOG_TYPE = "timeout_dialog_type"
+        const val CONFIRM_BACK_DIALOG_TYPE = "confirm_back_dialog_type"
     }
 }

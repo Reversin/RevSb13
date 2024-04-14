@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.api.services.drive.model.File
 import com.revsb_11.R
 import com.revsb_11.models.dataclasses.SelectedFile
 import com.revsb_11.utils.ExtractFileDetails
@@ -99,8 +98,8 @@ class SelectedFilesViewModel(
             _selectedFilesUIState.value?.copy(savedSelectedFilesList = model.getSelectedFiles())
     }
 
-    fun setGoogleAccount(account: GoogleSignInAccount) {
-        driveRepository.setGoogleAccount(account)
+    fun initDriveRepository(account: GoogleSignInAccount) {
+        driveRepository.initDriveRepository(account)
     }
 
     fun loadFolders() {
@@ -155,7 +154,7 @@ class SelectedFilesViewModel(
     }
 
     fun onEditFileCommentClick(selectedFile: SelectedFile) {
-        model.saveForTransferSelectedFile(selectedFile)
+        model.saveTransferSelectedFile(selectedFile)
         triggerEffect(SelectedFilesScreenEffect.NavigateToAddCommentScreen)
     }
 

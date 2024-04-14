@@ -145,51 +145,10 @@ fun SelectableFileCard(
                             fontSize = 11.sp,
                         )
                     }
-
                 }
             }
-
         }
-
-//        endAction = {
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .align(Alignment.CenterEnd),
-//
-//                ) {
-//                EditAction(
-//                    Modifier
-//                        .width(defaultActionSize)
-//                        .fillMaxHeight()
-//                        .offset {
-//                            IntOffset(
-//                                ((-state
-//                                    .requireOffset()) + actionSizePx)
-//                                    .roundToInt(), 0
-//                            )
-//                        }
-//                )
-//                DeleteAction(
-//                    Modifier
-//                        .width(defaultActionSize)
-//                        .fillMaxHeight()
-//                        .offset {
-//                            IntOffset(
-//                                ((-state
-//                                    .requireOffset() * 0.5f) + actionSizePx)
-//                                    .roundToInt(), 0
-//                            )
-//                        }
-//                )
-//            }
-//        },
-//        content = {
-//            SelectedFileCardContent(modifier, file)
-//        }
-
     }
-
 }
 
 

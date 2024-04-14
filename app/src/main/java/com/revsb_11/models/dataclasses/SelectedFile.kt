@@ -11,7 +11,8 @@ package com.revsb_11.models.dataclasses
  * @param fileOwner Владелец файла
  * @param fileMimeType MIME-тип файла
  * @param fileThumbnail Ссылка на миниатюру файла
- * @param fileViewLink Ссылка для просмотра файла в веб-интерфейсе Google Drive
+ * @param fileContentLink Ссылка для загрузки файла
+ * @param fileCommentChanged Флаг изменения комментария
  */
 data class SelectedFile(
     val fileName: String = "",
@@ -24,5 +25,6 @@ data class SelectedFile(
     val fileOwner: String = "",
     val fileMimeType: String = "",
     val fileThumbnail: String = "",
-    val fileViewLink: String = "",
+    val fileContentLink: String = "",
+    val fileCommentChanged: Boolean = false,
 )

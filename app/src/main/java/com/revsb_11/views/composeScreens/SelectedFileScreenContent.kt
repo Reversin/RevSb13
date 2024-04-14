@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.revsb_11.viewmodels.SelectedFilesViewModel
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -52,7 +51,7 @@ fun SelectedFilesScreenContent(
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
-                    viewModel.setGoogleAccount(account)
+                    viewModel.initDriveRepository(account)
                     if (viewModel.isDriveAccessGranted()) {
                         viewModel.loadImages()
                     } else {
